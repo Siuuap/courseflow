@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "-": "^0.0.1",
     "@supabase/supabase-js": "^2.39.3",
+    "axios": "^1.6.7",
     "next": "14.1.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "save": "^2.9.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",

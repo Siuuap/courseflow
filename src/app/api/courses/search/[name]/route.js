@@ -5,7 +5,7 @@ export async function GET(request, { params }) {
 
   const { data: courses, error } = await supabase
     .from("courses_test")
-    .select("* , lessons_test:course_id (name)")
+    .select("* , lessons_test (name)")
     .textSearch("name", searchName);
 
   if (error) {

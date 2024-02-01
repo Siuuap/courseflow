@@ -27,7 +27,7 @@ function Course({ course }) {
             {course.name}
           </h1> */}
           <a
-            href={`/coursedetails/${course.course_id}`}
+            href={`/ourcourse/${course.course_id}`}
             className="course-name hover:text-[#F47E20] leading-[30px] text-[24px] w-[325px] h-[30px]"
           >
             {course.name}

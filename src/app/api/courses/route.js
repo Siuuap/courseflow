@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET() {
   const { data: courses, error } = await supabase
     .from("courses_test")
-    .select("* , lessons_test:course_id (name)");
+    .select("* , lessons_test(name)");
   if (error) {
     console.error(error);
     throw new Error("Courses can not be reach");

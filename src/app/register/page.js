@@ -15,7 +15,6 @@ export default function Home() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData();
-
     formData.append("email", email);
     formData.append("password", password);
     formData.append("firstName", firstName);

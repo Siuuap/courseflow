@@ -17,25 +17,36 @@ function AuthProvider(props) {
   // make a login request
   const login = async (data) => {
     try {
+
+
       setState({ ...state, error: false, loading: true });
       const result = await axios.post(
         "http://localhost:3000/api/auth/login",
         data
       );
 
-      // const token = result.data.token;
-      // const userDataFromToken = jwtDecode(token);
+      const status = result.data.status;
 
-      // console.log(userDataFromToken);
+      if(status == 200)
+      {
+        setState({
+          error: false,
+          loading: false,
+        });
 
-      // setState({ ...state, user: userDataFromToken });
+        router.push("/homepage");
+      }
+      else
+      {
+        setState({
+          error: true,
+          loading: false,
+        });
+      }
 
-      //console.log(state);
-      router.push("/homepage");
 
     } catch (error) {
       setState({
-        ...state,
         error: true,
         loading: false,
       });

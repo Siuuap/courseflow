@@ -13,7 +13,7 @@ export async function POST(request) {
 
   //user validation
   if (!users[0]) {
-    return Response.json({ message: "user not found" });
+    return Response.json({ message: "user not found", status:401});
   }
 
   //password validation
@@ -22,6 +22,7 @@ export async function POST(request) {
   if (!isValidPassword) {
     return Response.json({
       message: "password is not valid",
+      status:401,
     });
   }
 
@@ -41,5 +42,5 @@ export async function POST(request) {
     .sign(secretKey);
 
   cookies().set("token", token);
-  return Response.json({ message: "login successfully", token });
+  return Response.json({ message: "login successfully", status : 200 });
 }

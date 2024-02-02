@@ -23,9 +23,6 @@ function Course({ course }) {
           <span className=" text-[#F47E20] ml-3">Course</span>
         </div>
         <div className="course-description-container m-3">
-          {/* <h1 className="text-[24px] leading-[30px]  hover:text-[#F47E20]">
-            {course.name}
-          </h1> */}
           <a
             href={`/ourcourse/${course.course_id}`}
             className="course-name hover:text-[#F47E20] leading-[30px] text-[24px] w-[325px] h-[30px]"

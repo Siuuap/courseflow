@@ -14,33 +14,31 @@ import { findBestMatch } from "string-similarity";
 
 export default function CourseDetail({ params }) {
   const [courseById, setCourseById] = useState([]);
+  const [courseName, setCourseName] = useState("");
   const id = params?.courseid;
 
   async function fetchCourse() {
     const res = await axios.get(`/api/courses/ourcourse/${id}`);
-    console.log(res);
-    setCourseById(res.data);
+
+    const course = res.data;
+    setCourseById(course);
   }
 
   useEffect(() => {
     fetchCourse();
   }, []);
 
-  console.log(courseById);
-  const course = courseById[0];
-  console.log(course);
-
   return (
     <>
       <div className="container w-full  my-[30px] flex flex-row mx-auto ">
         <div className="detail-container w-[1120px] self-center ">
           <img
-            src={course?.img_url}
+            src={courseById[0]?.img_url}
             className="w-[740px] h-[460px] rounded-[8px]"
           />
           <section className="detail-section my-12 w-[740px] ">
             <h1 className=" text-[36px] font-medium ">Course Detail</h1>
-            <p className="text-[#646D89] mt-6">{course?.description}</p>
+            <p className="text-[#646D89] mt-6">{courseById[0]?.description}</p>
           </section>
           <section>
             <h1 className="font-medium text-3xl my-[24px]">Module Samples</h1>
@@ -56,10 +54,12 @@ export default function CourseDetail({ params }) {
         <div className="sticky-box w-[357px] h-[450px] m-4 shadow-[0px_5px_5px_0px_rgba(100,109,137,1)] px-6 py-8 rounded-xl sticky top-10">
           <div>
             <p className="text-[#F47E20]">Course</p>
-            <h1 className="text-2xl font-bold">{course?.name}</h1>
-            <p className="text-[#646D89]">{course?.description.slice(0, 50)}</p>
+            <h1 className="text-2xl font-bold">{courseById[0]?.name}</h1>
+            <p className="text-[#646D89]">
+              {/* {courseById?.description.slice(0, 50)} */}
+            </p>
             <p className="text-2xl font-bold text-[#646D89]">
-              THB {course?.price + ".00"}
+              THB {courseById[0]?.price + ".00"}
             </p>
           </div>
           <div className="sticky-box-btn-container border-t-2 border-[#d6d9e7] mt-6 ">
@@ -72,13 +72,17 @@ export default function CourseDetail({ params }) {
           </div>
         </div>
       </div>
-      <InterestingCourse courseName={course?.name} />
+      <div className="intersting-course-section  mt-[280px]">
+        <h1 className="text-center h-[45px] text-5xl">
+          Other Interesting Course
+        </h1>
+        <InterestingCourse courseName={courseById[0]?.name} />
+      </div>
     </>
   );
 }
 
 function CourseAccordion({ lesson, index }) {
-  console.log(index);
   return (
     <div>
       <AccordionItem className="w-[740px]">
@@ -114,49 +118,53 @@ function InterestingCourse({ courseName }) {
   const [otherCourse, setOtherCourse] = useState([]);
   const [similarName, setSimilarName] = useState([]);
 
+  //fectchcourse
   async function getInterestingCourse() {
-    const res = await axios.get(`/api/courses`);
-    setOtherCourse(res.data);
-    console.log(res);
-  }
-
-  useEffect(() => {
-    getInterestingCourse();
-  }, []);
-  console.log(otherCourse);
-
-  function findSimilar() {
-    const stringSimilarity = require("string-similarity");
-    const refName = courseName;
-    console.log(refName);
-    if (refName) {
-      const ratingName = stringSimilarity.findBestMatch(
-        refName,
-        otherCourse.map((course) => course.name)
-      );
-      console.log(ratingName);
-      console.log(ratingName.ratings.slice(0, 3));
-      const result = ratingName.ratings.slice(0, 3);
-      console.log(result);
-      setSimilarName(result);
+    try {
+      const res = await axios.get(`/api/courses`);
+      setOtherCourse(res.data);
+    } catch (error) {
+      console.error(error);
     }
   }
 
-  useEffect(() => findSimilar(), [otherCourse]);
-  console.log(similarName);
-  console.log(similarName[0]?.target);
-  console.log(otherCourse);
+  // setRefName(courseName);
+  useEffect(() => {
+    getInterestingCourse();
+  }, []);
+
+  function findSimilar() {
+    const stringSimilarity = require("string-similarity");
+    // const refName = courseName;
+
+    if (typeof courseName === "string" && otherCourse.length >= 3) {
+      const ratingName = stringSimilarity.findBestMatch(
+        courseName,
+        otherCourse.map((course) => course.name)
+      );
+
+      const ratings = ratingName.ratings;
+
+      const sortRating = ratings.sort(
+        (a, b) => parseFloat(b.rating) - parseFloat(a.rating)
+      );
+
+      const result = sortRating.slice(0, 3);
+
+      setSimilarName(result);
+    }
+  }
+  useEffect(() => findSimilar(), [courseName]);
+
   return (
-    <div>
-      <ul>
-        {otherCourse.map((data, i) =>
-          data.name == similarName[0].target ||
-          data.name == similarName[1].target ||
-          data.name == similarName[2].target ? (
-            <OtherInterestingCourse data={data} key={i} />
-          ) : null
-        )}
-      </ul>
+    <div className="interesting-course-container flex content-center justify-center">
+      {otherCourse?.map((data, i) =>
+        data.name == similarName[0]?.target ||
+        data.name == similarName[1]?.target ||
+        data.name == similarName[2]?.target ? (
+          <OtherInterestingCourse data={data} key={i} />
+        ) : null
+      )}
     </div>
   );
 }

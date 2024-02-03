@@ -2,14 +2,17 @@ import { supabase } from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
-  const { data: courses, error } = await supabase
+  const { data, error } = await supabase
     .from("courses_test")
     .select("* , lessons_test(name)");
   if (error) {
     console.error(error);
     throw new Error("Courses can not be reach");
   }
-  return NextResponse.json(courses);
+  return NextResponse.json(
+    { message: "Fetching Successfully", data },
+    { status: 200 }
+  );
 }
 
 export async function POST(request) {

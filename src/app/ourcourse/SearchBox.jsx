@@ -23,11 +23,11 @@ export function SearchBox({ search, onSearch }) {
           className=" absolute top-[50px] left-[13px]"
         />
       </i>
-      <span className="self-center">
+      {/* <span className="self-center">
         {search.length < 7 &&
           search.length > 0 &&
           "Plese enter atlease 5 character"}
-      </span>
+      </span> */}
     </div>
   );
 }

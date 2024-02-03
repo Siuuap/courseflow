@@ -2,23 +2,19 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
 
 const AuthContext = React.createContext();
 
 function AuthProvider(props) {
   const [state, setState] = useState({
     loading: null,
-    error: false,
+    error: null,
+    user: null,
   });
-
   const router = useRouter();
 
-  // make a login request
-  const login = async (data) => {
+  async function login(data) {
     try {
-
-
       setState({ ...state, error: false, loading: true });
       const result = await axios.post(
         "http://localhost:3000/api/auth/login",
@@ -27,57 +23,84 @@ function AuthProvider(props) {
 
       const status = result.data.status;
 
-      if(status == 200)
-      {
+      if (status == 200) {
         setState({
           error: false,
           loading: false,
         });
 
         router.push("/homepage");
-      }
-      else
-      {
+      } else {
         setState({
           error: true,
           loading: false,
         });
       }
-
-
     } catch (error) {
       setState({
         error: true,
         loading: false,
       });
     }
-  };
+  }
 
   // register the user
-  const register = async (data) => {
+  async function register(data) {
     await axios.post("http://localhost:3000/api/auth/register", data);
     router.push("/login");
     router.refresh();
-  };
+  }
 
-  const logout = async () => {
+  async function logout() {
     await axios.post("http://localhost:3000/api/auth/logout");
     setState({ ...state, user: null, error: false });
     router.refresh();
-  };
+  }
 
-  //const isAuthenticated = Boolean(localStorage.getItem("token"));
+  async function adminRegister(data) {
+    try {
+      const responseFromServer = await axios.post(
+        "http://localhost:3000/api/auth/admin/register",
+        data
+      );
+      return responseFromServer;
+    } catch (error) {
+      console.log(`error from request`, error);
+    }
+  }
+
+  async function adminLogin(data) {
+    try {
+      const responseFromServer = await axios.post(
+        "http://localhost:3000/api/auth/admin/login",
+        data
+      );
+
+      return responseFromServer;
+    } catch (error) {
+      console.log(`error from request`, error);
+    }
+  }
 
   return (
     <AuthContext.Provider
-      value={{ state, setState, login, logout, register /*isAuthenticated */ }}
+      value={{
+        adminRegister,
+        adminLogin,
+        state,
+        setState,
+        login,
+        logout,
+        register,
+      }}
     >
       {props.children}
     </AuthContext.Provider>
   );
 }
 
-// this is a hook that consume AuthContext
-const useAuth = () => React.useContext(AuthContext);
+function useAuth() {
+  return React.useContext(AuthContext);
+}
 
 export { AuthProvider, useAuth };

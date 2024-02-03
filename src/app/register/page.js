@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useAuth } from "@/contexts/authentication";
+import { useAuth } from "@/contexts3/authentication";
 
 export default function Home() {
   const [email, setEmail] = useState("");

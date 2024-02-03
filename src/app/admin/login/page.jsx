@@ -4,7 +4,7 @@ import CourseFlowIcon from "@/assets/images/CourseFlowIcon.svg";
 import React from "react";
 
 import { useState } from "react";
-import { useAuth } from "@/context/authentication";
+import { useAuth } from "@/contexts/authentication";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 export default function adminRegisterPage() {

@@ -11,8 +11,10 @@ export async function middleware(request) {
         kty: "oct",
         k: process.env.SECRET_KEY,
       };
+      console.log("test success 2");
 
       const secretKey = await importJWK(secretJWK, "HS256");
+      console.log("test success 3");
       const { payload } = await jwtVerify(token.value, secretKey);
 
       return NextResponse.next();
@@ -24,8 +26,12 @@ export async function middleware(request) {
     }
   }
 
-  if ((request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register")) && request.cookies.get("token")) {
-      return NextResponse.redirect(new URL("/homepage", request.url));
+  if (
+    (request.nextUrl.pathname.startsWith("/login") ||
+      request.nextUrl.pathname.startsWith("/register")) &&
+    request.cookies.get("token")
+  ) {
+    return NextResponse.redirect(new URL("/homepage", request.url));
   }
 }
 

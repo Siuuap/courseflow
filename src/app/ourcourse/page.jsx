@@ -10,16 +10,15 @@ export default function Home() {
   const [course, setCourse] = useState([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  console.log(course);
   async function getCourse() {
-    if (search) {
-      const res = await axios.get(`./api/courses/search/${search}`);
-      setCourse(res.data);
-      console.log(res);
-    } else {
+    if (search && search.length >= 3) {
+      const res = await axios.get(`./api/courses/search/name?search=${search}`);
+      setCourse(res.data.data);
+    }
+    if (search.length === 0) {
       const res = await axios.get(`./api/courses`);
-      setCourse(res.data);
-      console.log(res);
+      setCourse(res.data.data);
     }
   }
   useEffect(() => {
@@ -35,13 +34,7 @@ export default function Home() {
 
         <SearchBox search={search} onSearch={setSearch} />
       </div>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <>
-          <CourseList course={course} />
-        </>
-      )}
+      {isLoading ? <Loading /> : <CourseList course={course} />}
     </>
   );
 }

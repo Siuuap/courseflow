@@ -12,14 +12,30 @@ function AuthProvider(props) {
   });
 
   async function adminRegister(data) {
-    const response = await axios.post(
-      "http://localhost:3000/api/auth/admin/registers",
-      data
-    );
+    try {
+      const responseFromServer = await axios.post(
+        "http://localhost:3000/api/auth/admin/register",
+        data
+      );
+      return responseFromServer;
+    } catch (error) {
+      console.log(`error from request`, error);
+    }
   }
+  async function adminLogin(data) {
+    try {
+      const responseFromServer = await axios.post(
+        "http://localhost:3000/api/auth/admin/login",
+        data
+      );
 
+      return responseFromServer;
+    } catch (error) {
+      console.log(`error from request`, error);
+    }
+  }
   return (
-    <AuthContext.Provider value={{ adminRegister }}>
+    <AuthContext.Provider value={{ adminRegister, adminLogin }}>
       {props.children}
     </AuthContext.Provider>
   );

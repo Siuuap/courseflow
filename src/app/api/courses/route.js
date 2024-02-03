@@ -17,7 +17,9 @@ export async function POST(request) {
   });
 }
 
-export async function GET() {
+export async function GET(request) {
+  const authToken = request.headers["authorization"];
+  console.log("authToken", authToken);
   const { data, error } = await supabase
     .from("courses_test_duplicate")
     .select("*");

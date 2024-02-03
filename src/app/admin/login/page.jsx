@@ -12,15 +12,18 @@ export default function adminRegisterPage() {
   // const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isEmailOK, setIsEmailOK] = useState(false);
-  const [isPasswordOk, setIsPasswordOk] = useState(false);
+  const [isEmailOK, setIsEmailOK] = useState(true);
+  const [isPasswordOk, setIsPasswordOk] = useState(true);
+  const [isLoginOk, setIsLoginOk] = useState(true);
   const [emailStatus, setEmailStatus] = useState("");
   const [passwordStatus, setPasswordStatus] = useState("");
-  const { adminRegister } = useAuth();
+  const [loginStatus, setLoginStatus] = useState("");
+  const { adminLogin } = useAuth();
   const router = useRouter();
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const data = { email, password };
+    setIsLoginOk(true);
     if (!email) {
       setIsEmailOK(false);
       setEmailStatus("Cannot be blanked");
@@ -28,18 +31,22 @@ export default function adminRegisterPage() {
       setIsEmailOK(true);
       setEmailStatus("");
     }
-    if (!password || password.length < 7) {
+    if (!password) {
       setIsPasswordOk(false);
-      setPasswordStatus(
-        "Cannot be blanked and must contain at least 7 characters"
-      );
+      setPasswordStatus("Cannot be blanked");
     } else {
       setIsPasswordOk(true);
       setPasswordStatus("");
     }
-    if (email && password && password.length >= 7) {
-      adminRegister(data);
-      return router.push("/admin/login");
+    if (email && password) {
+      const response = await adminLogin(data);
+
+      if (response.data.status === 401) {
+        setIsLoginOk(false);
+        setLoginStatus(response.data.message);
+        return;
+      }
+      router.push("/admin/dashboard");
     }
   }
 
@@ -93,7 +100,9 @@ export default function adminRegisterPage() {
         <div className="flex flex-col relative">
           <label htmlFor="email">Email</label>
           <input
-            className="p-[12px] border border-solid border-[#D6D9E4] rounded-[8px]"
+            className={`p-[12px] outline-none border border-solid border-[#D6D9E4] rounded-[8px] outline-none ${
+              isEmailOK ? "" : "border border-solid border-red-600"
+            } ${isLoginOk ? "" : "border border-solid border-red-600"}`}
             id="email"
             type="email"
             value={email}
@@ -109,7 +118,10 @@ export default function adminRegisterPage() {
         <div className="flex flex-col relative ">
           <label htmlFor="password">Password</label>
           <input
-            className="p-[12px] border border-solid border-[#D6D9E4] rounded-[8px]"
+            className={`p-[12px] outline-none border border-solid border-[#D6D9E4] rounded-[8px] ${
+              isEmailOK ? "" : "border border-solid border-red-600"
+            } ${isLoginOk ? "" : "border border-solid border-red-600"}
+            `}
             id="password"
             type="password"
             value={password}
@@ -122,9 +134,16 @@ export default function adminRegisterPage() {
             </p>
           ) : null}
         </div>
-        <button className="bg-[#2F5FAC] px-[32px] py-[18px] rounded-[12px] text-[#fff] text-base">
-          Login
-        </button>
+        <section className="relative flex justify-center w-full">
+          <button className="bg-[#2F5FAC] px-[32px] py-[18px] rounded-[12px] text-[#fff] text-base w-full">
+            Login
+          </button>
+          {!isLoginOk ? (
+            <p className="absolute top-[105%] left-0 text-red-600 text-[12px] text italic">
+              {loginStatus}
+            </p>
+          ) : null}
+        </section>
       </form>
     </section>
   );

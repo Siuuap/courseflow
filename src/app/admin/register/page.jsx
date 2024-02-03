@@ -18,7 +18,7 @@ export default function adminRegisterPage() {
   const [passwordStatus, setPasswordStatus] = useState("");
   const { adminRegister } = useAuth();
   const router = useRouter();
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const data = { email, password };
     if (!email) {
@@ -38,13 +38,19 @@ export default function adminRegisterPage() {
       setPasswordStatus("");
     }
     if (email && password && password.length >= 7) {
-      adminRegister(data);
+      const response = await adminRegister(data);
+
+      if (response.data.error?.code === "23505") {
+        setIsEmailOK(false);
+        setEmailStatus("This email already exists");
+        return;
+      }
       router.push("/admin/login");
     }
   }
 
   return (
-    <section className="bg-gradient-to-r from-[#2558DD] to-[#5697FF] h-dvh flex justify-center items-center">
+    <section className="bg-[#000] h-dvh flex justify-center items-center">
       <form
         className="flex flex-col p-[60px] gap-[40px] bg-white rounded-[8px]"
         onSubmit={(e) => handleSubmit(e)}
@@ -91,17 +97,15 @@ export default function adminRegisterPage() {
           </div>
         </div> */}
         <div className="flex flex-col relative">
-          <label htmlFor="email">
-            Email
-            <input
-              className="p-[12px] border border-solid border-[#D6D9E4] rounded-[8px]"
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter Email"
-            />
-          </label>
+          <label htmlFor="email">Email</label>
+          <input
+            className="p-[12px] border border-solid border-[#D6D9E4] rounded-[8px]"
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter Email"
+          />
           {!isEmailOK ? (
             <p className="absolute top-[105%] text-red-600 text-[10px] text italic">
               {emailStatus}
@@ -109,22 +113,20 @@ export default function adminRegisterPage() {
           ) : null}
         </div>
         <div className="flex flex-col relative ">
-          <label htmlFor="password">
-            Password
-            <input
-              className="p-[12px] border border-solid border-[#D6D9E4] rounded-[8px]"
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter Password"
-            />
-            {!isPasswordOk ? (
-              <p className="absolute top-[105%] text-red-600 text-[10px] text italic">
-                {passwordStatus}
-              </p>
-            ) : null}
-          </label>
+          <label htmlFor="password">Password</label>
+          <input
+            className="p-[12px] border border-solid border-[#D6D9E4] rounded-[8px]"
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter Password"
+          />
+          {!isPasswordOk ? (
+            <p className="absolute top-[105%] text-red-600 text-[10px] text italic">
+              {passwordStatus}
+            </p>
+          ) : null}
         </div>
         <button className="bg-[#2F5FAC] px-[32px] py-[18px] rounded-[12px] text-[#fff] text-base">
           Register

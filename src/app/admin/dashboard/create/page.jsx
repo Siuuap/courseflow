@@ -29,12 +29,15 @@ export default function DashBoardPage() {
   console.log(`coverImages is:`, coverImages);
   async function uploadfile() {}
   return (
-    <section className="flex justify-center mx-auto max-w-[1440px]">
-      {/* Box1 Sidebar*/}
-      <SideBar />
+    <section className="flex justify-center mx-auto max-w-[1440px] relative">
+      <div className="min-[0px]:hidden min-[1440px]:block">
+        {/* Box1 SideBar*/}
+        <SideBar />
+      </div>
+
       {/* Box2 upper*/}
-      <section className="bg-[#F6F7FC]">
-        <section className="bg-white flex justify-between px-[40px] py-[16px] items-center h-[92px] hover:#D6D9E4">
+      <section className="bg-[#F6F7FC] max-w-[1200px] flex flex-col min-[1440px]:ml-[240px]">
+        <section className=" bg-white h-[92px] min-[375px]:min-w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[320px]:px-[16px] flex justify-between items-center min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] ">
           <div className="flex">
             <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
               Add Course
@@ -53,8 +56,9 @@ export default function DashBoardPage() {
             </button>
           </div>
         </section>
+
         {/* Box2 Lower*/}
-        <section className="mt-12 m-10  bg-white flex flex-col gap-[40px] px-[40px] py-[60px]">
+        <section className="mt-12 m-10 bg-white flex flex-col gap-[40px]">
           <section className="flex flex-col">
             <label htmlFor="course-name">
               Course Name *
@@ -137,7 +141,8 @@ export default function DashBoardPage() {
               />
             </label>
           </section>
-          <section className="flex flex-col">
+
+          {/* <section className="flex flex-col">
             <label htmlFor="cover-image">
               Cover Image *
               <input
@@ -162,7 +167,6 @@ export default function DashBoardPage() {
               })}
             </section>
           </section>
-
           <section className="flex flex-col">
             <label htmlFor="video-trailer">
               Video Trailer *
@@ -184,7 +188,7 @@ export default function DashBoardPage() {
                 id="attach-file"
               />
             </label>
-          </section>
+          </section> */}
         </section>
       </section>
     </section>

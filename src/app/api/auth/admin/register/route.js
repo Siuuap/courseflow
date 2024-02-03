@@ -1,5 +1,7 @@
 import { supabase } from "@/utils/db";
 import bcrypt from "bcrypt";
+
+
 export async function POST(request) {
   const newAdmin = await request.json();
 

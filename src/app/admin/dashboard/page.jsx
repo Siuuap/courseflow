@@ -9,47 +9,6 @@ import Image from "next/image";
 import SideBar from "@/components/SideBar";
 import axios from "axios";
 import { useState } from "react";
-const mockData = [
-  {
-    id: 8,
-    image: ExamPic,
-    courseName: "Service Design Essentials",
-    lesson: "6 lessons",
-    price: "3,559.00",
-    created: "12/02/2022 10:30PM",
-    updated: "12/02/2022 10:30PM",
-    action: {
-      delete: { deleteIcon },
-      edit: { EditIcon },
-    },
-  },
-  {
-    id: 87,
-    image: ExamPic,
-    courseName: "Palm inwzaa",
-    lesson: "6 lessons",
-    price: "3,559.00",
-    created: "12/02/2022 10:30PM",
-    updated: "12/02/2022 10:30PM",
-    action: {
-      delete: { deleteIcon },
-      edit: { EditIcon },
-    },
-  },
-  {
-    id: 6,
-    image: ExamPic,
-    courseName: "Service Design Essentials",
-    lesson: "6 lessons",
-    price: "3,559.00",
-    created: "12/02/2022 10:30PM",
-    updated: "12/02/2022 10:30PM",
-    action: {
-      delete: { deleteIcon },
-      edit: { EditIcon },
-    },
-  },
-];
 
 export default function DashBoardPage() {
   const [courseData, setCourseData] = useState([]);
@@ -82,12 +41,15 @@ export default function DashBoardPage() {
   }, []);
 
   return (
-    <section className="flex justify-center mx-auto max-w-[1440px] ">
-      {/* Box1 SideBar*/}
-      <SideBar />
+    <section className="flex justify-center mx-auto max-w-[1440px] relative bg-[#F6F7FC] ">
+      <div className="min-[0px]:hidden min-[1440px]:block ">
+        {/* Box1 SideBar*/}
+        <SideBar />
+      </div>
+
       {/* Box2 upper*/}
-      <section className="bg-[#F6F7FC] max-w-[1200px] flex flex-col">
-        <section className=" bg-white h-[92px] min-[375px]:w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[320px]:px-[16px] flex justify-between items-center min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] ">
+      <section className="bg-[#F6F7FC] max-w-[1200px] flex flex-col min-[1440px]:ml-[240px]">
+        <section className=" bg-white h-[92px] rounded-lg  min-[0px]:min-w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[320px]:px-[16px] flex justify-between items-center min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] ">
           <div className="flex">
             <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
               Course
@@ -110,7 +72,7 @@ export default function DashBoardPage() {
           </div>
         </section>
         {/* Box2 Lower*/}
-        <section className="mt-12 m-10 ">
+        <section className="mt-12 m-10 bg-white flex flex-col gap-[40px]">
           <table className=" rounded-lg min-[0px]:hidden min-[1200px]:block bg-white">
             <thead className="bg-[#E4E6ED] flex rounded-t-lg text-[14px] ">
               <tr>

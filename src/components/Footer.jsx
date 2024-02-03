@@ -16,7 +16,7 @@ function Footer() {
         </Link>
         <div className="flex items-center justify-between gap-[96px]">
           <div className="text-[#C8CCDB] font-normal text-[16px] leading-6">
-            <Link href="/course">All Courses</Link>
+            <Link href="/ourcourse">All Courses</Link>
           </div>
           <div className="text-[#C8CCDB] font-normal text-[16px] leading-6">
             Bundle Package
@@ -47,7 +47,8 @@ function Footer() {
               src="/images/tw.png"
               alt="tw"
               width={48}
-              height={48}></Image>
+              height={48}
+            ></Image>
           </Link>
         </div>
       </nav>

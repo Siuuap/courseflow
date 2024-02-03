@@ -14,7 +14,7 @@ function Hero() {
             Welcome to Schooler! The one-stop online class management system
             that caters to all your educational needs!
           </div>
-          <Link href="/course">
+          <Link href="/ourcourse">
             <Button className="button z-50 absolute shadow-[4px 4px 24px 0px rgba(0, 0, 0, 0.08)] bg-[#2F5FAC] hover:bg-blue-400 text-white text-[20px] font-bold py-[18px] px-[32px] mt-[60px] rounded-[12px]">
               Our Courses
             </Button>

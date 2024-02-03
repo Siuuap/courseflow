@@ -15,7 +15,7 @@ function NavBar() {
       </Link>
       <section className="flex items-center justify-between gap-[56px]">
         <div className="text-[#191C77] font-bold text-[16px] leading-6">
-          <Link href="/course">Our Courses</Link>
+          <Link href="/ourcourse">Our Courses</Link>
         </div>
         <Button className="bg-[#2F5FAC] px-8 py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white font-bold text-[16px] leading-6">
           <Link href="/login">Login</Link>

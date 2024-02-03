@@ -1,5 +1,6 @@
-import { supabase } from "../../../utils/db.js";
+import { supabase } from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
+
 export async function GET() {
   const { data: courses, error } = await supabase
     .from("courses_test")
@@ -11,27 +12,19 @@ export async function GET() {
   return NextResponse.json(courses);
 }
 
-// export async function GET(query) {
-//   console.log(query);
-//   if (!query) {
-//     const { data: courses, error } = await supabase
-//       .from("courses_test")
-//       .select("* , lessons_test:course_id (name)");
-//     if (error) {
-//       console.error(error);
-//       throw new Error("Courses can not be reach");
-//     }
-//     return courses;
-//   } else {
-//     const { data: courses, error } = await supabase
-//       .from("courses_test")
-//       .select("* , lessons_test:course_id (name)")
-//       .textSearch("name", query);
+export async function POST(request) {
+  const reqData = await request.json();
+  const query = { ...reqData };
+  const { data, error } = await supabase.from("courses").insert(query);
 
-//     if (error) {
-//       console.error(error);
-//       throw new Error("Courses can not be reach");
-//     }
-//     return courses;
-//   }
-// }
+  if (error) {
+    return Response.json({
+      message: "Cannot create new course",
+      error,
+    });
+  }
+  return Response.json({
+    message: "Create new course successfully",
+    newCourse: reqData,
+  });
+}

@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "-": "^0.0.1",
     "@chakra-ui/react": "^2.8.2",
     "@supabase/supabase-js": "^2.39.3",
     "axios": "^1.6.7",

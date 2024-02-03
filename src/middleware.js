@@ -9,31 +9,14 @@ export async function middleware(request) {
       let token = request.cookies.get("token");
       const secretJWK = {
         kty: "oct",
-        k: process.env.SECRET_KEY, // Replace with your actual base64 encoded secret key
+        k: process.env.SECRET_KEY,
       };
 
       const secretKey = await importJWK(secretJWK, "HS256");
       const { payload } = await jwtVerify(token.value, secretKey);
 
-      // const requestHeaders = new Headers(request.headers);
-      // requestHeaders.set("user", JSON.stringify({ email: payload.email }));
-      // const response = NextResponse.next({
-      //   request: {
-      //     headers: requestHeaders,
-      //   },
-      // });
-      // return response;
-
       return NextResponse.next();
     } catch (error) {
-      // const requestHeaders = new Headers(request.headers);
-      // requestHeaders.set("user", JSON.stringify({ email: "" }));
-      // const response = NextResponse.next({
-      //   request: {
-      //     headers: requestHeaders,
-      //   },
-      // });
-      // return response;
       const response = NextResponse.next();
       response.cookies.delete("token");
 
@@ -41,18 +24,16 @@ export async function middleware(request) {
     }
   }
 
-  // if (request.nextUrl.pathname.startsWith("/api/auth/logout")) {
-  //   const requestHeaders = new Headers(request.headers);
-  //   requestHeaders.set("user", JSON.stringify({ email: "" }));
-  //   const response = NextResponse.next({
-  //     request: {
-  //       headers: requestHeaders,
-  //     },
-  //   });
-  //   return response;
-  // }
+  if ((request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register")) && request.cookies.get("token")) {
+      return NextResponse.redirect(new URL("/homepage", request.url));
+  }
 }
 
 export const config = {
-  matcher: ["/homepage/:path*", "/api/auth/logout/:path*"],
+  matcher: [
+    "/homepage/:path*",
+    "/api/auth/logout/:path*",
+    "/login/:path*",
+    "/register/:path*",
+  ],
 };

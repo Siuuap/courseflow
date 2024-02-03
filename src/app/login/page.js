@@ -2,7 +2,7 @@
 import { useAuth } from "@/contexts/authentication";
 import { useState } from "react";
 import Link from "next/link";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/NavBarTemp";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -13,7 +13,6 @@ export default function Home() {
     event.preventDefault();
 
     setState({ ...state, error: false, loading: true });
-  
 
     login({
       email,
@@ -23,7 +22,7 @@ export default function Home() {
 
   return (
     <>
-      <NavBar/>
+      <NavBar />
       <form
         className="flex flex-col justify-between  items-start gap-[50px] mx-[auto] p-[14px] max-w-[453px]  bg-slate-100 mt-[150px]"
         onSubmit={handleSubmit}
@@ -56,7 +55,9 @@ export default function Home() {
             }}
             value={password}
           ></input>
-          {state.error && <div className="  text-red-600">Incorrect username or password</div>}
+          {state.error && (
+            <div className="  text-red-600">Incorrect username or password</div>
+          )}
         </div>
 
         <button className=" bg-slate-300 w-full h-[60px]" type="submit">

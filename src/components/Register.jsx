@@ -32,7 +32,7 @@ const RegisterForm = () => {
       .join("");
 
     console.log(values);
-    var englishRegex = /^[A-Za-z]+$/;
+    const englishRegex = /^[A-Za-z]+$/;
 
     const isValid = englishRegex.test(fullname);
     return isValid;
@@ -133,7 +133,7 @@ const RegisterForm = () => {
           <input
             name="EducationalBackground"
             onChange={getValue}
-            value={values.eb}
+            value={values.EducationalBackground}
             type="text"
             placeholder="Enter Educational Background"
             className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
@@ -144,6 +144,7 @@ const RegisterForm = () => {
           <label htmlFor="text-[16px] mb-[4px]">Email</label>
           <input
             name="email"
+            value={values.email}
             onChange={getValue}
             placeholder="Enter Email"
             className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
@@ -152,6 +153,7 @@ const RegisterForm = () => {
           <label htmlFor="text-[16px] mb-[4px]">Password</label>
           <input
             name="password"
+            value={values.password}
             onChange={getValue}
             placeholder="Enter password"
             type="password"

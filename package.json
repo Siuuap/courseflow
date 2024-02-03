@@ -9,11 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
     "@supabase/supabase-js": "^2.39.3",
+    "axios": "^1.6.7",
+    "bcrypt": "^5.1.1",
+    "cookie": "^0.6.0",
+    "dotenv": "^16.4.1",
+    "jose": "^5.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "next": "14.1.0",
+    "next-auth": "^4.24.5",
     "react": "^18",
     "react-dom": "^18",
-    "react-hook-form": "^7.50.0"
+    "string-similarity": "^4.0.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",

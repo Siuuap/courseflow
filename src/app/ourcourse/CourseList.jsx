@@ -2,7 +2,7 @@ import { Link } from "next/link";
 
 export default function CourseList({ course }) {
   return (
-    <ul className="course-list mt-32 flex  flex-wrap justify-evenly max-w-[1120px] mx-auto ">
+    <ul className="course-list mt-32 flex  flex-wrap justify-evenly max-w-[1120px] mx-auto mb-[180px]">
       {course?.map((course) => (
         <Course key={course.course_id} course={course} />
       ))}
@@ -12,8 +12,8 @@ export default function CourseList({ course }) {
 
 function Course({ course }) {
   return (
-    <div className="course-container max-w-xs mt-16 mx-3 ">
-      <div className="course shadow-[0px_5px_5px_0px_rgba(100,109,137,1)] rounded-md">
+    <div className="course-container max-w-xs mt-16 mx-3  relative">
+      <div className="course shadow-[0px_5px_5px_0px_rgba(100,109,137,1)] rounded-md w-[320px] h-[538px]">
         <div className="course-img ">
           <img
             src={course.img_url}
@@ -33,7 +33,7 @@ function Course({ course }) {
             Description {course.description.slice(0, 120)}
           </p>
         </div>
-        <div className="course-detail-container  p-[16px] border-t-[1px]">
+        <div className="course-detail-container  p-[16px] border-t-[1px] absolute bottom-0 w-[320px]">
           <span className="mr-3 text-[#646D89] ">
             <i>
               <img src="icons/book.png" className="inline-block mr-3" />

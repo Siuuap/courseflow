@@ -11,6 +11,8 @@ import {
 } from "@chakra-ui/react";
 import { Course } from "../CourseList";
 import { findBestMatch } from "string-similarity";
+import SubFooter from "@/components/SubFooter";
+import Footer from "@/components/Footer";
 
 export default function CourseDetail({ params }) {
   const [courseById, setCourseById] = useState([]);
@@ -72,12 +74,14 @@ export default function CourseDetail({ params }) {
           </div>
         </div>
       </div>
-      <div className="intersting-course-section  mt-[280px]">
+      <div className="intersting-course-section  mt-[280px] mb-[180px]">
         <h1 className="text-center h-[45px] text-5xl">
           Other Interesting Course
         </h1>
         <InterestingCourse courseName={courseById[0]?.name} />
       </div>
+      <SubFooter />
+      <Footer />
     </>
   );
 }
@@ -122,7 +126,7 @@ function InterestingCourse({ courseName }) {
   async function getInterestingCourse() {
     try {
       const res = await axios.get(`/api/courses`);
-      setOtherCourse(res.data);
+      setOtherCourse(res.data.data);
     } catch (error) {
       console.error(error);
     }
@@ -195,13 +199,16 @@ function OtherInterestingCourse({ data }) {
         <div className="course-detail-container  p-[16px] border-t-[1px]">
           <span className="mr-3 text-[#646D89] ">
             <i>
-              <img src="icons/book.png" className="inline-block mr-3" />
+              <img src="public/icons/book.png" className="inline-block mr-3" />
             </i>
             {data?.lessons_test.length} Lesson(s)
           </span>
           <span className="text-[#646D89]">
             <i>
-              <img src="icons/clock.png" className="inline-block mr-3 " />
+              <img
+                src="/public/icons/clock.png"
+                className="inline-block mr-3 "
+              />
             </i>
             {data?.length} Hr.
           </span>

@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import CourseList from "./CourseList";
 import { SearchBox } from "./SearchBox.jsx";
 import { Loading } from "./Loading";
+import Footer from "@/components/Footer";
+import SubFooter from "@/components/SubFooter";
 
 export default function Home() {
   const [course, setCourse] = useState([]);
@@ -35,6 +37,8 @@ export default function Home() {
         <SearchBox search={search} onSearch={setSearch} />
       </div>
       {isLoading ? <Loading /> : <CourseList course={course} />}
+      <SubFooter />
+      <Footer />
     </>
   );
 }

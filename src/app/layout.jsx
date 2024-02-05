@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 
-import { Providers } from "../providers/providers";
+import { Providers } from "@/providers/providers";
 
 import SubFooter from "@/components/SubFooter";
 import Footer from "@/components/Footer";

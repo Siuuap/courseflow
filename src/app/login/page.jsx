@@ -27,9 +27,11 @@ export default function Home() {
         throw new Error("Failed to login");
       }
 
-      router.replace("/homepage");
+
+      router.replace("/");
     } catch {
-      setError(true)
+      setError(true);
+
     }
   };
 
@@ -68,10 +70,11 @@ export default function Home() {
             }}
             value={password}
           ></input>
-          
-          {error  &&
+
+          {error && (
             <div className="  text-red-600">Incorrect username or password</div>
-          }
+          )}
+
         </div>
 
         <button className=" bg-slate-300 w-full h-[60px]" type="submit">

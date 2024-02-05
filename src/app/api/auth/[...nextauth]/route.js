@@ -46,7 +46,6 @@ async function login(credentials) {
         throw new Error("wrong credentials");
       }
 
-    
       const isValidPassword = await bcrypt.compare(
         credentials.password,
         users[0].password
@@ -61,7 +60,6 @@ async function login(credentials) {
         role: "admin",
       };
 
-    
       return data;
     } catch (error) {
       throw new Error("something went wrong");
@@ -96,7 +94,7 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-         
+
           const user = await login(credentials);
 
           console.log(user);

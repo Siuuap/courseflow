@@ -9,13 +9,17 @@ export async function middleware(request) {
   ) {
     try {
       const sessionToken = request.cookies.get("next-auth.session-token").value;
-      return NextResponse.redirect(new URL("/homepage", request.url));
+
+      return NextResponse.redirect(new URL("/", request.url));
+
     } catch {
       return NextResponse.next();
     }
   }
 
-  if (request.nextUrl.pathname.startsWith("/admin/dashboard")) {
+
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+
     try {
       const sessionToken = request.cookies.get("next-auth.session-token").value;
 
@@ -36,5 +40,14 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/admin/dashboard/:path*", "/login/:path*", "/register/:path*"],
+
+  matcher: [
+    "/admin/addcourse/:path*",
+    "/admin/assignment/:path*",
+    "/admin/courselist/:path*",
+    "/admin/editcourse/:path*",
+    "/login/:path*",
+    "/register/:path*",
+  ],
+
 };

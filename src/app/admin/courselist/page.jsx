@@ -9,7 +9,7 @@ import Image from "next/image";
 import SideBar from "@/components/SideBar";
 import axios from "axios";
 import { useState } from "react";
-
+import AdminCourseLists from "@/components/AdminCourseLists";
 export default function DashBoardPage() {
   const [courseData, setCourseData] = useState([]);
 
@@ -45,9 +45,9 @@ export default function DashBoardPage() {
         <SideBar />
       </div>
 
-      {/* Box2 upper*/}
       <section className="bg-[#F6F7FC] max-w-[1200px] flex flex-col min-[1440px]:ml-[240px]">
-        <section className=" bg-white h-[92px] rounded-lg min-[0px]:min-w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[320px]:px-[16px] flex justify-between items-center min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] ">
+        {/* Box2 upper*/}
+        <section className=" bg-white flex justify-between items-center h-[92px] rounded-lg min-[0px]:min-w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[320px]:px-[16px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] ">
           <div className="flex">
             <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
               Course
@@ -68,6 +68,7 @@ export default function DashBoardPage() {
             </Link>
           </div>
         </section>
+
         {/* Box2 Lower*/}
         <section className="mt-12 m-10 bg-white flex flex-col gap-[40px]">
           <table className=" rounded-lg min-[0px]:hidden min-[1200px]:block bg-white">
@@ -172,79 +173,7 @@ export default function DashBoardPage() {
               )}
             </tbody>
           </table>
-          <section className="flex flex-col min-[0px]:block min-[1200px]:hidden">
-            {courseData.map(
-              (
-                {
-                  course_id,
-                  img_url,
-                  name,
-                  created_at,
-                  updated_at,
-                  lesson,
-                  price,
-                },
-                index
-              ) => {
-                return (
-                  <section
-                    key={index}
-                    className=" p-4 rounded-lg bg-white mb-4 flex flex-col items-center"
-                  >
-                    <section className="flex justify-center max-w-[500px]">
-                      <img
-                        src={img_url}
-                        alt="course-cover-image"
-                        className="rounded-lg "
-                      />
-                    </section>
-                    <section className="flex flex-col justify-start w-full">
-                      <section>
-                        <h2 className="font-bold text-[16px]">{name}</h2>
-                      </section>
-                      <section className="flex gap-4">
-                        <h2 className="w-[60px]">Lesson</h2>
-                        <p>{lesson} 6 lessons</p>
-                      </section>
-
-                      <section className="flex gap-4">
-                        <h2 className="w-[60px]">Price</h2>
-                        <p>{price}</p>
-                      </section>
-                      <section className="flex gap-4">
-                        <h2 className="w-[60px]">Create</h2>
-                        <p>{created_at}</p>
-                      </section>
-                      <section className="flex gap-4">
-                        <h2 className="w-[60px]">Update</h2>
-                        <p>{created_at}</p>
-                      </section>
-
-                      <section className="flex justify-center gap-[20px]">
-                        <button onClick={() => {}}>
-                          <Image
-                            className="w-[24px] h-[24px] hover:fill-red-600"
-                            src={deleteIcon}
-                            alt="delete-icon"
-                            onClick={() => {
-                              deleteCourses(course_id);
-                            }}
-                          />
-                        </button>
-                        <button>
-                          <Image
-                            className="w-[24px] h-[24px]"
-                            src={EditIcon}
-                            alt="edit-icon"
-                          />
-                        </button>
-                      </section>
-                    </section>
-                  </section>
-                );
-              }
-            )}
-          </section>
+          <AdminCourseLists courseData={courseData} />
         </section>
       </section>
     </section>

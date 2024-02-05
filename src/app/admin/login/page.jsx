@@ -2,11 +2,12 @@
 
 import CourseFlowIcon from "@/assets/images/CourseFlowIcon.svg";
 import React from "react";
-
 import { useState } from "react";
 import { useAuth } from "@/contexts/authentication";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { signIn } from "next-auth/react";
+
 export default function adminRegisterPage() {
   // const [firstName, setFirstName] = useState("");
   // const [lastName, setLastName] = useState("");
@@ -18,36 +19,57 @@ export default function adminRegisterPage() {
   const [emailStatus, setEmailStatus] = useState("");
   const [passwordStatus, setPasswordStatus] = useState("");
   const [loginStatus, setLoginStatus] = useState("");
-  const { adminLogin } = useAuth();
+  const [error, setError] = useState(false);
+  //const { adminLogin } = useAuth();
   const router = useRouter();
+
   async function handleSubmit(e) {
     e.preventDefault();
-    const data = { email, password };
-    setIsLoginOk(true);
-    if (!email) {
-      setIsEmailOK(false);
-      setEmailStatus("Cannot be blanked");
-    } else {
-      setIsEmailOK(true);
-      setEmailStatus("");
-    }
-    if (!password) {
-      setIsPasswordOk(false);
-      setPasswordStatus("Cannot be blanked");
-    } else {
-      setIsPasswordOk(true);
-      setPasswordStatus("");
-    }
-    if (email && password) {
-      const response = await adminLogin(data);
 
-      if (response.data.status === 401) {
-        setIsLoginOk(false);
-        setLoginStatus(response.data.message);
-        return;
+    try {
+      const res = await signIn("credentials", {
+        email: email,
+        password: password,
+        role: "admin",
+        redirect: false,
+      });
+
+
+      if (res.error) {
+        throw new Error("Failed to login");
       }
-      router.push("/admin/dashboard");
+
+      router.replace("/admin/dashboard");
+    } catch {
+      setError(true);
     }
+
+    // const data = { email, password };
+    // setIsLoginOk(true);
+    // if (!email) {
+    //   setIsEmailOK(false);
+    //   setEmailStatus("Cannot be blanked");
+    // } else {
+    //   setIsEmailOK(true);
+    //   setEmailStatus("");
+    // }
+    // if (!password) {
+    //   setIsPasswordOk(false);
+    //   setPasswordStatus("Cannot be blanked");
+    // } else {
+    //   setIsPasswordOk(true);
+    //   setPasswordStatus("");
+    // }
+    // if (email && password) {
+    //   const response = await adminLogin(data);
+
+    //   if (response.data.status === 401) {
+    //     setIsLoginOk(false);
+    //     setLoginStatus(response.data.message);
+    //     return;
+    //   }
+    //   router.push("/admin/dashboard");
+    // }
   }
 
   return (

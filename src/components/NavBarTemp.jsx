@@ -3,32 +3,38 @@ import Button from "./Button";
 import UserName from "./UserNameTemp";
 import Link from "next/link";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import { useSession, signOut } from "next-auth/react";
+import { Redirect } from "next/navigation";
 function NavBar() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
   const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   const getUser = async () => {
-    const result = await axios.get("http://localhost:3000/api/data");
-    setLoading(false);
-    setUserData(result.data);
+    console.log(status);
+    if (status === "authenticated") {
+      console.log(session.user);
 
-    // console.log(loading);
-    // console.log(userData);
+      setUserData({
+        ...session.user,
+      });
+    }
+    setLoading(false);
   };
 
   const handleLogout = async () => {
-    const result = await axios.post("http://localhost:3000/api/auth/logout");
-    // console.log(userData);
+    signOut();
     setUserData({});
+    router.push("/");
   };
 
   useEffect(() => {
     getUser();
-  }, []);
+  }, [status]);
 
   return (
     <nav className="min-[768px]:flex justify-between items-center mx-[auto] p-[14px] max-w-[1120px] min-[1200px]:px-[0px] h-[100px]">
@@ -39,7 +45,7 @@ function NavBar() {
         <a className="text-[#191C77]">Our Course</a>
 
         <div className="w-[189px]">
-          {!userData.email && !loading && (
+          {!loading && status === "unauthenticated" && (
             <Link href="/login">
               <Button className="bg-[#2F5FAC] px-8 py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white">
                 Login
@@ -48,7 +54,9 @@ function NavBar() {
           )}
 
           <div onClick={() => handleLogout()}>
-            {!loading && <UserName className="">{userData.firstName}</UserName>}
+            {!loading && status === "authenticated" && (
+              <UserName className="">{userData.firstName}</UserName>
+            )}
           </div>
         </div>
       </section>

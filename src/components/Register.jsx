@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Button from "./Button";
-
+import Link from "next/link";
 const RegisterForm = () => {
   const [values, setValues] = useState({
     fullname: "",
@@ -170,9 +170,11 @@ const RegisterForm = () => {
           </button>
           <section className="flex flex-row gap-[4px]">
             <div>Already have an account?</div>
-            <button className="text-[16px] text-[#2F5FAC] not-italic px-[8px]">
-              Log in
-            </button>
+            <Link href="/login">
+              <button className="text-[16px] text-[#2F5FAC] not-italic px-[8px]">
+                Log in
+              </button>
+            </Link>
           </section>
         </form>
       </section>

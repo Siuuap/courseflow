@@ -1,23 +1,31 @@
 "use client";
-import { useAuth } from "@/contexts/authentication";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBarTemp";
+import { signIn } from "next-auth/react";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, state, setState } = useAuth();
+  const router = useRouter();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setState({ ...state, error: false, loading: true });
+    try {
+      const res = await signIn("credentials", {
+        email: email,
+        password: password,
+        redirect: false,
+      });
 
-    login({
-      email,
-      password,
-    });
+      if (res.error) {
+        throw new Error("Failed to login");
+      }
+
+      router.replace("/homepage");
+    } catch {}
   };
 
   return (
@@ -55,9 +63,9 @@ export default function Home() {
             }}
             value={password}
           ></input>
-          {state.error && (
+          {/* {state.error && (
             <div className="  text-red-600">Incorrect username or password</div>
-          )}
+          )} */}
         </div>
 
         <button className=" bg-slate-300 w-full h-[60px]" type="submit">

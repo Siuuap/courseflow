@@ -1,16 +1,9 @@
 "use client";
-
-import Image from "next/image";
 import React, { useState } from "react";
-import CourseFlowIcon from "@/assets/images/CourseFlowIcon.svg";
-import CourseIcon from "@/assets/images/CourseIcon.svg";
-import TaskIcon from "@/assets/images/TaskIcon.svg";
-
-import LogoutIcon from "@/assets/images/LogoutIcon.svg";
-import { v4 as uuidv4 } from "uuid";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import SideBar from "@/components/SideBar";
+
 export default function DashBoardPage() {
   const [courseName, setCourseName] = useState("");
   const [price, setPrice] = useState("");
@@ -20,7 +13,7 @@ export default function DashBoardPage() {
   const [coverImages, setCoverImages] = useState({});
   const [videoTrailer, setVideoTrailer] = useState({});
   const [attachFile, setAttachFile] = useState({});
-  const router = useRouter();
+
   function handleCoverImage(e) {
     const uniqueId = Date.now();
     console.log(e);
@@ -45,12 +38,12 @@ export default function DashBoardPage() {
             <button className="min-[1440px]:hidden">💩</button>
           </div>
           <div className="flex gap-[16px] ">
-            <button
-              className="border border-solis border-[#F47E20] text-[#F47E20] px-[32px] py-[18px] rounded-[12px] text-base hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
-              onClick={() => router.push("/admin/dashboard")}
-            >
-              Cancel
-            </button>
+            <Link href="/admin/courselist">
+              <button className="border border-solis border-[#F47E20] text-[#F47E20] px-[32px] py-[18px] rounded-[12px] text-base hover:border-[#FBAA1C] hover:text-[#FBAA1C]">
+                Cancel
+              </button>
+            </Link>
+
             <button className="bg-[#2F5FAC] px-[32px] py-[18px] rounded-[12px] text-[#fff] text-base hover:bg-[#5483D0]">
               Create
             </button>
@@ -142,7 +135,7 @@ export default function DashBoardPage() {
             </label>
           </section>
 
-          {/* <section className="flex flex-col">
+          <section className="flex flex-col">
             <label htmlFor="cover-image">
               Cover Image *
               <input
@@ -188,7 +181,7 @@ export default function DashBoardPage() {
                 id="attach-file"
               />
             </label>
-          </section> */}
+          </section>
         </section>
       </section>
     </section>

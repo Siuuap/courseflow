@@ -100,7 +100,7 @@ export default function adminRegisterPage() {
         <div className="flex flex-col relative">
           <label htmlFor="email">Email</label>
           <input
-            className={`p-[12px] outline-none border border-solid border-[#D6D9E4] rounded-[8px] outline-none ${
+            className={`p-[12px] outline-none border border-solid border-[#D6D9E4] rounded-[8px] ${
               isEmailOK ? "" : "border border-solid border-red-600"
             } ${isLoginOk ? "" : "border border-solid border-red-600"}`}
             id="email"

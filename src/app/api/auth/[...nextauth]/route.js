@@ -24,7 +24,45 @@ async function login(credentials) {
         throw new Error("wrong credentials");
       }
 
-      return users[0];
+      const data = {
+        ...users[0],
+        role: "user",
+      };
+
+      return data;
+    } catch (error) {
+      throw new Error("something went wrong");
+    }
+  }
+
+  if (credentials.role === "admin") {
+    try {
+      const { data: users, error } = await supabase
+        .from("admins")
+        .select("*")
+        .eq("email", credentials.email);
+
+      if (!users[0]) {
+        throw new Error("wrong credentials");
+      }
+
+    
+      const isValidPassword = await bcrypt.compare(
+        credentials.password,
+        users[0].password
+      );
+
+      if (!isValidPassword) {
+        throw new Error("wrong credentials");
+      }
+
+      const data = {
+        ...users[0],
+        role: "admin",
+      };
+
+    
+      return data;
     } catch (error) {
       throw new Error("something went wrong");
     }
@@ -58,9 +96,10 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
+         
           const user = await login(credentials);
-          console.log(user);
 
+          console.log(user);
           return user;
         } catch (error) {
           throw new Error("Failed to login");
@@ -72,11 +111,17 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-    
-        token.userId = user.user_id;
-        token.email = user.email;
-        token.firstName = user.user_profiles[0].first_name;
-        token.lastName = user.user_profiles[0].last_name;
+        if (user.role === "user") {
+          token.userId = user.user_id;
+          token.email = user.email;
+          token.firstName = user.user_profiles[0].first_name;
+          token.lastName = user.user_profiles[0].last_name;
+          token.role = user.role;
+        }
+        if (user.role === "admin") {
+          token.adminId = user.admin_id;
+          token.role = user.role;
+        }
       }
 
       return token;
@@ -84,12 +129,20 @@ export const authOptions = {
 
     async session({ session, token }) {
       if (token) {
-        session.user.userId = token.userId;
-        session.user.email = token.email;
-        session.user.firstName = token.firstName;
-        session.user.lastName = token.lastName;
+        if (token.role === "user") {
+          session.user.userId = token.userId;
+          session.user.email = token.email;
+          session.user.firstName = token.firstName;
+          session.user.lastName = token.lastName;
+          session.user.role = token.role;
+        }
+
+        if (token.role === "admin") {
+          session.user.adminId = token.adminId;
+          session.user.role = token.role;
+        }
       }
-     
+
       return session;
     },
   },

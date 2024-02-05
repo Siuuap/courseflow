@@ -8,6 +8,8 @@ import { signIn } from "next-auth/react";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
+
   const router = useRouter();
 
   const handleSubmit = async (event) => {
@@ -26,7 +28,9 @@ export default function Home() {
       }
 
       router.replace("/homepage");
-    } catch {}
+    } catch {
+      setError(true)
+    }
   };
 
   return (
@@ -64,9 +68,10 @@ export default function Home() {
             }}
             value={password}
           ></input>
-          {/* {state.error && (
+          
+          {error  &&
             <div className="  text-red-600">Incorrect username or password</div>
-          )} */}
+          }
         </div>
 
         <button className=" bg-slate-300 w-full h-[60px]" type="submit">

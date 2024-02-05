@@ -11,5 +11,5 @@ export async function GET(request, { params }) {
   // .from("courses_test")
   // .select("* , lessons_test:course_id (name, sub_lessons:id (name))")
   // .eq("course_id", courseId)
-  return NextResponse.json(data);
+  return NextResponse.json({ message: "fetch successfully", data: data });
 }

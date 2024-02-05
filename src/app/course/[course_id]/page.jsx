@@ -14,14 +14,15 @@ import { findBestMatch } from "string-similarity";
 
 export default function CourseDetail({ params }) {
   const [courseById, setCourseById] = useState([]);
-  const [courseName, setCourseName] = useState("");
-  const id = params?.courseid;
+
+  const id = params?.course_id;
 
   async function fetchCourse() {
-    const res = await axios.get(`/api/courses/ourcourse/${id}`);
+    const res = await axios.get(`/api/courses/${id}`);
 
-    const course = res.data;
+    const course = res.data.data;
     setCourseById(course);
+    console.log(course);
   }
 
   useEffect(() => {
@@ -122,12 +123,12 @@ function InterestingCourse({ courseName }) {
   async function getInterestingCourse() {
     try {
       const res = await axios.get(`/api/courses`);
-      setOtherCourse(res.data);
+      setOtherCourse(res.data.data);
     } catch (error) {
       console.error(error);
     }
   }
-
+  console.log(otherCourse);
   // setRefName(courseName);
   useEffect(() => {
     getInterestingCourse();
@@ -201,7 +202,10 @@ function OtherInterestingCourse({ data }) {
           </span>
           <span className="text-[#646D89]">
             <i>
-              <img src="icons/clock.png" className="inline-block mr-3 " />
+              <img
+                src="public/icons/clock.png"
+                className="inline-block mr-3 "
+              />
             </i>
             {data?.length} Hr.
           </span>

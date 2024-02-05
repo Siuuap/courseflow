@@ -94,6 +94,7 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
+
           const user = await login(credentials);
 
           console.log(user);

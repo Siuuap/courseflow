@@ -6,7 +6,7 @@ import axios from "axios";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { Redirect } from "next/navigation";
+
 function NavBar() {
   const router = useRouter();
   const { data: session, status } = useSession();

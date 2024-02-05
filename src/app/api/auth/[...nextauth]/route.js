@@ -4,28 +4,30 @@ import { supabase } from "@/utils/db";
 import bcrypt from "bcrypt";
 
 async function login(credentials) {
-  try {
-    const { data: users, error } = await supabase
-      .from("users")
-      .select(`user_id, email,password, user_profiles(first_name,last_name)`)
-      .eq("email", credentials.email);
+  if (credentials.role === "user") {
+    try {
+      const { data: users, error } = await supabase
+        .from("users")
+        .select(`user_id, email,password, user_profiles(first_name,last_name)`)
+        .eq("email", credentials.email);
 
-    if (!users[0]) {
-      throw new Error("wrong credentials");
+      if (!users[0]) {
+        throw new Error("wrong credentials");
+      }
+
+      const isValidPassword = await bcrypt.compare(
+        credentials.password,
+        users[0].password
+      );
+
+      if (!isValidPassword) {
+        throw new Error("wrong credentials");
+      }
+
+      return users[0];
+    } catch (error) {
+      throw new Error("something went wrong");
     }
-
-    const isValidPassword = await bcrypt.compare(
-      credentials.password,
-      users[0].password
-    );
-
-    if (!isValidPassword) {
-      throw new Error("wrong credentials");
-    }
-
-    return users[0];
-  } catch (error) {
-    throw new Error("something went wrong");
   }
 }
 
@@ -48,10 +50,16 @@ export const authOptions = {
           type: "password",
           placeholder: "Enter your password",
         },
+        role: {
+          label: "user",
+          type: "text",
+          placeholder: "Enter your role",
+        },
       },
       async authorize(credentials) {
         try {
           const user = await login(credentials);
+          console.log(user);
 
           return user;
         } catch (error) {
@@ -64,11 +72,13 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+    
         token.userId = user.user_id;
         token.email = user.email;
         token.firstName = user.user_profiles[0].first_name;
         token.lastName = user.user_profiles[0].last_name;
       }
+
       return token;
     },
 
@@ -79,6 +89,7 @@ export const authOptions = {
         session.user.firstName = token.firstName;
         session.user.lastName = token.lastName;
       }
+     
       return session;
     },
   },

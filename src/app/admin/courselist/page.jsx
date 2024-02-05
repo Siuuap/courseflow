@@ -12,10 +12,14 @@ import { useState } from "react";
 import AdminCourseLists from "@/components/AdminCourseLists";
 export default function DashBoardPage() {
   const [courseData, setCourseData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [page, setpage] = useState();
 
   async function getCourses() {
     try {
-      const response = await axios.get("http://localhost:3000/api/courses");
+      const response = await axios.get(
+        `http://localhost:3000/api/courses?search=${search}`
+      );
       setCourseData(response.data.data);
     } catch (error) {
       console.log(error);
@@ -33,10 +37,10 @@ export default function DashBoardPage() {
       }
     }
   }
-
+  console.log(courseData);
   useEffect(() => {
     getCourses();
-  }, []);
+  }, [search, page]);
 
   return (
     <section className="flex justify-center mx-auto max-w-[1440px] relative bg-[#F6F7FC] ">
@@ -60,6 +64,10 @@ export default function DashBoardPage() {
               className="outline-none min-[375px]:w-[100px] min-[375px]:px-[12px] min-[375px]:py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px]"
               type="search"
               placeholder="Search..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
             />
             <Link href="/admin/addcourse">
               <button className="bg-[#2F5FAC] min-[375px]:px-[12px] min-[375px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">

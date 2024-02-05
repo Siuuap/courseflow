@@ -13,7 +13,9 @@ export default function Home() {
   console.log(course);
   async function getCourse() {
     if (search && search.length >= 3) {
-      const res = await axios.get(`./api/courses/search/name?search=${search}`);
+      const res = await axios.get(
+        `./api/courses?search=${search}&page=${page}`
+      );
       setCourse(res.data.data);
     }
     if (search.length === 0) {

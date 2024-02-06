@@ -8,25 +8,53 @@ import uploadFile from "@/assets/images/uploadFile.svg";
 import uploadImage from "@/assets/images/uploadImage.svg";
 import uploadVideo from "@/assets/images/uploadVideo.svg";
 import Image from "next/image";
+
+import axios from "axios";
 export default function DashBoardPage() {
   const [courseName, setCourseName] = useState("");
   const [price, setPrice] = useState("");
   const [duration, setDuration] = useState("");
   const [courseSummary, setCourseSummary] = useState("");
   const [courseDetail, setCourseDetail] = useState("");
+  const [imgUrl, setImgUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
+
   const [coverImages, setCoverImages] = useState([]);
   const [videoTrailer, setVideoTrailer] = useState({});
   const [attachFile, setAttachFile] = useState({});
 
   async function uploadCoverImage(e) {
     e.preventDefault();
-    const { data, error } = await supabaseAdmin.storage
-      .from("courseimg")
-      .upload(`test/${courseName}`, coverImages[0]);
-    if (error) {
-      console.log(error);
+    try {
+      const { data, error } = await supabaseAdmin.storage
+        .from("courseimg")
+        .upload(`test/${courseName}`, coverImages[0]);
+      console.log(`upload sucessfully`);
+
+      if (error) {
+        console.log(`error from database`, error);
+      }
+      const url = supabaseAdmin.storage
+        .from("courseimg")
+        .getPublicUrl(data.path);
+      console.log(`url`, url.data.publicUrl);
+      setImgUrl(url.data.publicUrl);
+
+      const formData = {
+        courseName,
+        price,
+        duration,
+        courseSummary,
+        courseDetail,
+        imgUrl,
+        videoUrl,
+        fileUrl,
+      };
+      createNewCourse(formData);
+    } catch (error) {
+      console.log(`error from request`, error);
     }
-    const url = supabaseAdmin.storage.from("courseimg").getPublicUrl(data.path);
   }
 
   function handleCoverImage(e) {
@@ -36,7 +64,15 @@ export default function DashBoardPage() {
     setCoverImages([...coverImages, e.target.files[0]]);
   }
 
-  async function uploadfile() {}
+  async function createNewCourse(formData) {
+    const data = formData;
+    try {
+      const response = await axios.post("/api/courses", data);
+      console.log(response);
+    } catch (error) {
+      console.log(`error from add new course request`, error);
+    }
+  }
   return (
     <section className="flex justify-center mx-auto max-w-[1440px] relative">
       <div className="min-[0px]:hidden min-[1440px]:block">
@@ -167,7 +203,11 @@ export default function DashBoardPage() {
             <section>
               {coverImages.length === 0 ? null : (
                 <div>
-                  <img src={URL.createObjectURL(coverImages[0])} alt={""} />
+                  <img
+                    className="h-[240px]"
+                    src={URL.createObjectURL(coverImages[0])}
+                    alt={""}
+                  />
                   <button
                     onClick={() => {
                       const newCoverImage = [...coverImages];

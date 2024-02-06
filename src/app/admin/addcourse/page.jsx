@@ -1,25 +1,41 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { supabaseAdmin } from "@/utils/db";
 
 import SideBar from "@/components/SideBar";
-
+import uploadFile from "@/assets/images/uploadFile.svg";
+import uploadImage from "@/assets/images/uploadImage.svg";
+import uploadVideo from "@/assets/images/uploadVideo.svg";
+import Image from "next/image";
 export default function DashBoardPage() {
   const [courseName, setCourseName] = useState("");
   const [price, setPrice] = useState("");
   const [duration, setDuration] = useState("");
   const [courseSummary, setCourseSummary] = useState("");
   const [courseDetail, setCourseDetail] = useState("");
-  const [coverImages, setCoverImages] = useState({});
+  const [coverImages, setCoverImages] = useState([]);
   const [videoTrailer, setVideoTrailer] = useState({});
   const [attachFile, setAttachFile] = useState({});
 
-  function handleCoverImage(e) {
-    const uniqueId = Date.now();
-    console.log(e);
-    setCoverImages({ ...coverImages, [uniqueId]: e.target.files[0] });
+  async function uploadCoverImage(e) {
+    e.preventDefault();
+    const { data, error } = await supabaseAdmin.storage
+      .from("courseimg")
+      .upload(`test/${courseName}`, coverImages[0]);
+    if (error) {
+      console.log(error);
+    }
+    const url = supabaseAdmin.storage.from("courseimg").getPublicUrl(data.path);
   }
-  console.log(`coverImages is:`, coverImages);
+
+  function handleCoverImage(e) {
+    e.preventDefault();
+    const id = Date.now();
+    console.log(e.target.files[0]);
+    setCoverImages([...coverImages, e.target.files[0]]);
+  }
+
   async function uploadfile() {}
   return (
     <section className="flex justify-center mx-auto max-w-[1440px] relative">
@@ -44,143 +60,166 @@ export default function DashBoardPage() {
               </button>
             </Link>
 
-            <button className="bg-[#2F5FAC] px-[32px] py-[18px] rounded-[12px] text-[#fff] text-base hover:bg-[#5483D0]">
+            <button
+              onClick={uploadCoverImage}
+              className="bg-[#2F5FAC] px-[32px] py-[18px] rounded-[12px] text-[#fff] text-base hover:bg-[#5483D0]"
+            >
               Create
             </button>
           </div>
         </section>
 
         {/* Box2 Lower*/}
-        <section className="mt-12 m-10 bg-white flex flex-col gap-[40px]">
-          <section className="flex flex-col">
-            <label htmlFor="course-name">
-              Course Name *
-              <input
-                className="border border-solid border-[#D6D9E4] rounded-md px-[16px] py-[12px]"
-                type="text"
-                name="course name"
-                id="course-name"
-                placeholder="Enter Course Name"
-                value={courseName}
-                onChange={(e) => {
-                  setCourseName(e.target.value);
-                }}
-              />
-            </label>
+        <section className="mt-12 m-10 bg-white flex flex-col gap-[40px] py-[40px] px-[100px] rounded-md">
+          <section className="flex flex-col gap-[4px]">
+            <label htmlFor="course-name">Course Name *</label>
+            <input
+              className="border border-solid border-[#D6D9E4] rounded-md px-[16px] py-[12px] outline-none"
+              type="text"
+              name="course name"
+              id="course-name"
+              placeholder="Enter Course Name"
+              value={courseName}
+              onChange={(e) => {
+                setCourseName(e.target.value);
+              }}
+            />
           </section>
           <section className="flex justify-between gap-[40px] min-[375px]:flex-col min-[1200px]:flex-row">
-            <section className="flex flex-col">
-              <label htmlFor="price">
-                Price *
-                <input
-                  className="border border-solid border-[#D6D9E4] rounded-md px-[16px] py-[12px]"
-                  type="text"
-                  name="price"
-                  id="price"
-                  placeholder="Enter Price"
-                  value={price}
-                  onChange={(e) => {
-                    setPrice(e.target.value);
-                  }}
-                />
-              </label>
+            <section className="flex flex-col basis-1/2 gap-[4px]">
+              <label htmlFor="price">Price *</label>
+              <input
+                className="border border-solid border-[#D6D9E4] rounded-md px-[16px] py-[12px] outline-none"
+                type="text"
+                name="price"
+                id="price"
+                placeholder="Enter Price"
+                value={price}
+                onChange={(e) => {
+                  setPrice(e.target.value);
+                }}
+              />
             </section>
-            <section className="flex flex-col ">
+            <section className="flex flex-col basis-1/2 gap-[4px]">
               <label htmlFor="total-learning-time">
-                Total Learning Time *
-                <input
-                  className="border border-solid border-[#D6D9E4] rounded-md px-[16px] py-[12px]"
-                  type="text"
-                  name="total-learning-time"
-                  id="total-learning-time"
-                  placeholder="Enter Duration"
-                  value={duration}
-                  onChange={(e) => {
-                    setDuration(e.target.value);
-                  }}
-                />
+                Total Learning Time *{" "}
               </label>
+              <input
+                className="border border-solid border-[#D6D9E4] rounded-md px-[16px] py-[12px] outline-none"
+                type="text"
+                name="total-learning-time"
+                id="total-learning-time"
+                placeholder="Enter Duration"
+                value={duration}
+                onChange={(e) => {
+                  setDuration(e.target.value);
+                }}
+              />
             </section>
           </section>
-          <section className="flex flex-col">
-            <label htmlFor="course-summary">
-              Course Summary *
-              <input
-                className="border border-solid border-[#D6D9E4] rounded-md px-[16px] py-[12px] h-[72px]"
-                type="text"
-                name="course-summary"
-                id="course-summary"
-                placeholder="Enter Course Summary"
-                value={courseSummary}
-                onChange={(e) => {
-                  setCourseSummary(e.target.value);
-                }}
-              />
-            </label>
+          <section className="flex flex-col gap-[4px]">
+            <label htmlFor="course-summary">Course Summary *</label>
+            <input
+              className="border border-solid border-[#D6D9E4] rounded-md px-[16px] py-[12px] h-[72px] outline-none p-[12px]"
+              type="text"
+              name="course-summary"
+              id="course-summary"
+              placeholder="Enter Course Summary"
+              value={courseSummary}
+              onChange={(e) => {
+                setCourseSummary(e.target.value);
+              }}
+            />
           </section>
-          <section className="flex flex-col">
-            <label htmlFor="course-detail">
-              Course Detail *
-              <input
-                className="flex border border-solid border-[#D6D9E4] rounded-md h-[192px]"
-                type="text"
-                name="course-detail"
-                id="course-detail"
-                placeholder="Enter Course Detail"
-                value={courseDetail}
-                onChange={(e) => {
-                  setCourseDetail(e.target.value);
-                }}
-              />
-            </label>
+          <section className="flex flex-col gap-[4px]">
+            <label htmlFor="course-detail">Course Detail * </label>
+            <input
+              className="flex border border-solid border-[#D6D9E4] rounded-md h-[192px] outline-none p-[12px]"
+              type="text"
+              name="course-detail"
+              id="course-detail"
+              placeholder="Enter Course Detail"
+              value={courseDetail}
+              onChange={(e) => {
+                setCourseDetail(e.target.value);
+              }}
+            />
           </section>
 
-          <section className="flex flex-col">
-            <label htmlFor="cover-image">
-              Cover Image *
-              <input
-                className="border border-solid border-[#D6D9E4] rounded-md"
-                type="file"
-                name="cover-image"
-                id="cover-image"
-                //เลือกได้หลายไฟล์
-                multiple
-                onChange={handleCoverImage}
-              />
-            </label>
+          <section className="flex flex-col gap-[8px]">
+            <label htmlFor="cover-image">Cover Image *</label>
+
+            <input
+              className="border border-solid border-[#D6D9E4] rounded-md "
+              type="file"
+              name="cover-image"
+              id="cover-image"
+              //เลือกได้หลายไฟล์
+              multiple
+              onChange={handleCoverImage}
+              hidden
+            />
+            <Image
+              className="cursor-pointer"
+              src={uploadImage}
+              alt="upload-cover-image"
+            />
             <section>
-              {Object.keys(coverImages).map((coverImageKey) => {
+              {coverImages.length === 0 ? null : (
+                <div>
+                  <img src={URL.createObjectURL(coverImages[0])} alt={""} />
+                  <button
+                    onClick={() => {
+                      const newCoverImage = [...coverImages];
+                      console.log(coverImages[0]);
+                      newCoverImage.splice(0, 1);
+                      setCoverImages(newCoverImage);
+                    }}
+                  >
+                    X
+                  </button>
+                </div>
+              )}
+
+              {/* {Object.keys(coverImages).map((coverImageKey) => {
                 const file = coverImages[coverImageKey];
-                console.log(`file is:`, file);
                 return (
                   <div key={coverImageKey}>
                     <img src={URL.createObjectURL(file)} alt={file.name} />
                   </div>
                 );
-              })}
+              })} */}
             </section>
           </section>
-          <section className="flex flex-col">
-            <label htmlFor="video-trailer">
-              Video Trailer *
-              <input
-                className="border border-solid border-[#D6D9E4] rounded-md"
-                type="file"
-                name="video-trailer"
-                id="video-trailer"
-              />
-            </label>
+          <section className="flex flex-col gap-[8px]">
+            <label htmlFor="video-trailer">Video Trailer *</label>
+            <input
+              className="border border-solid border-[#D6D9E4] rounded-md "
+              type="file"
+              name="video-trailer"
+              id="video-trailer"
+              hidden
+            />
+            <Image
+              className="cursor-pointer"
+              src={uploadVideo}
+              alt="upload-cover-image"
+            />
           </section>
-          <section className="flex flex-col">
-            <label htmlFor="attach-file">
-              Attach File (Optional)
-              <input
-                className="border border-solid border-[#D6D9E4] rounded-md"
-                type="file"
-                name="attach-file"
-                id="attach-file"
-              />
-            </label>
+          <section className="flex flex-col gap-[8px]">
+            <label htmlFor="attach-file">Attach File (Optional)</label>
+            <input
+              className="border border-solid border-[#D6D9E4] rounded-md"
+              type="file"
+              name="attach-file"
+              id="attach-file"
+              hidden
+            />
+            <Image
+              className="cursor-pointer"
+              src={uploadFile}
+              alt="upload-cover-image"
+            />
           </section>
         </section>
       </section>

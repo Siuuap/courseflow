@@ -1,6 +1,9 @@
-import Link from "next/link";
+"use strict";
 
+import Link from "next/link";
+import { useState } from "react";
 export default function CourseList({ course }) {
+  const [page, setPage] = useState(1);
   return (
     <ul className="course-list mt-32 flex  flex-wrap justify-evenly max-w-[1120px] mx-auto ">
       {course?.map((course) => (
@@ -37,7 +40,7 @@ function Course({ course }) {
               <i>
                 <img src="icons/book.png" className="inline-block mr-3" />
               </i>
-              {course.lessons_test.length} Lesson(s)
+              {course.lessons.length} Lesson(s)
             </span>
             <span className="text-[#646D89]">
               <i>

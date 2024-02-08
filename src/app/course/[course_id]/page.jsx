@@ -198,7 +198,7 @@ function OtherInterestingCourse({ data }) {
             <i>
               <img src="icons/book.png" className="inline-block mr-3" />
             </i>
-            {data?.lessons_test.length} Lesson(s)
+            {data?.lessons.length} Lesson(s)
           </span>
           <span className="text-[#646D89]">
             <i>

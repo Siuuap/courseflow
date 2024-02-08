@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function SideBar() {
   return (
-    <section className="border-r border-solid border-[#D6D9E4] h-screen fixed bg-[#fff] w-[240px]">
+    <section className="border border-solid border-[#F6F7FC] border-r-[#D6D9E4] h-screen fixed bg-[#fff] w-[240px] ">
       <div className="flex flex-col items-center p-[24px] pt-[40px]">
         <Link href="/admin/courselist">
           <Image

@@ -39,7 +39,7 @@ export default function Learning({ params }) {
 function LessonAccordion({ courseById }) {
   const course = courseById[0];
   const [progress, setProgress] = useState(50);
-  const [subProgress, setSubProgress] = useState(33);
+  const [subProgress, setSubProgress] = useState(90);
   console.log(courseById);
   return (
     <div className="shadow-[0px_5px_5px_0px_rgba(100,109,137,1)] rounded-md px-[24px] py-[32px]">
@@ -91,6 +91,7 @@ function LessonAccordion({ courseById }) {
 
 function CourseVideo({ courseById }) {
   const course = courseById[0];
+  console.log(course);
   return (
     <div className="my-[30px]">
       <div className="video-container ml-[15px]">

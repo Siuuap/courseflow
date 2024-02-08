@@ -11,7 +11,7 @@ function Hero() {
             Best Virtual Classroom Software
           </div>
           <div className="content w-[643px] pt-[24px] text-[20px] text-[#646D89] font-normal">
-            Welcome to Schooler! The one-stop online class management system
+            Welcome to Courseflow! The one-stop online class management system
             that caters to all your educational needs!
           </div>
           <Link href="/course">

@@ -8,11 +8,11 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  CircularProgress,
-  CircularProgressLabel,
 } from "@chakra-ui/react";
 import { Course } from "../CourseList";
 import { findBestMatch } from "string-similarity";
+import clockIcon from "@/assets/images/icons/clock.png";
+import bookIcon from "@/assets/images/icons/book.png";
 
 export default function CourseDetail({ params }) {
   const [courseById, setCourseById] = useState([]);
@@ -38,6 +38,7 @@ export default function CourseDetail({ params }) {
           <img
             src={courseById[0]?.img_url}
             className="w-[740px] h-[460px] rounded-[8px]"
+            alt={courseById[0]?.name}
           />
           <section className="detail-section my-12 w-[740px] ">
             <h1 className=" text-[36px] font-medium ">Course Detail</h1>
@@ -109,7 +110,6 @@ function CourseAccordion({ lesson, index }) {
             key={i}
             className="text-[#646D89] ml-10 w-[740px] "
           >
-            <CircularProgress value={progress} size="24px" thickness="30px" />
             {sublesson.name}
           </AccordionPanel>
         ))}
@@ -127,10 +127,12 @@ function InterestingCourse({ courseName }) {
     try {
       const res = await axios.get(`/api/courses`);
       setOtherCourse(res.data.data);
+      console.log(res);
     } catch (error) {
       console.error(error);
     }
   }
+
   console.log(otherCourse);
   // setRefName(courseName);
   useEffect(() => {
@@ -199,15 +201,16 @@ function OtherInterestingCourse({ data }) {
         <div className="course-detail-container  p-[16px] border-t-[1px]">
           <span className="mr-3 text-[#646D89] ">
             <i>
-              <img src="icons/book.png" className="inline-block mr-3" />
+              <img src={bookIcon} className="inline-block mr-3" />
             </i>
             {data?.lessons.length} Lesson(s)
           </span>
           <span className="text-[#646D89]">
             <i>
               <img
-                src="public/icons/clock.png"
-                className="inline-block mr-3 "
+                src={clockIcon}
+                alt="clockImg"
+                className="inline-block mr-3  "
               />
             </i>
             {data?.length} Hr.

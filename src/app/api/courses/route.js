@@ -7,7 +7,8 @@ export async function GET(request) {
   console.log(searchParams);
   const search = searchParams.get("search");
   console.log(`search =`, search);
-  const page = searchParams.get("page");
+  const page = searchParams.get("page") || 1;
+
   console.log(`page =`, page);
   const limit = 10;
   const start = (page - 1) * limit;

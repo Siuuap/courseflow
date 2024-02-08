@@ -10,19 +10,12 @@ export default function Home() {
   const [course, setCourse] = useState([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  console.log(course);
+  const [page, setPage] = useState(1);
   async function getCourse() {
-    if (search && search.length >= 3) {
-      const res = await axios.get(
-        `./api/courses?search=${search}&page=${page}`
-      );
-      setCourse(res.data.data);
-    }
-    if (search.length === 0) {
-      const res = await axios.get(`./api/courses`);
-      setCourse(res.data.data);
-    }
+    const res = await axios.get(`./api/courses?search=${search}&page=${page}`);
+    setCourse(res.data.data);
   }
+  console.log(course);
   useEffect(() => {
     getCourse();
   }, [search]);

@@ -12,6 +12,8 @@ export async function GET(request) {
   const limit = 10;
   const start = (page - 1) * limit;
   const end = start + limit - 1;
+
+  console.log(search);
   const { data, error } = search
     ? await supabase
         .from("courses")
@@ -22,6 +24,7 @@ export async function GET(request) {
         .from("courses")
         .select("* , lessons(name)")
         .range(start, end);
+
   if (error) {
     console.error(error);
     throw new Error("Courses can not be reach");

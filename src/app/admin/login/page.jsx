@@ -24,50 +24,38 @@ export default function adminRegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    try {
-      const res = await signIn("credentials", {
-        email: email,
-        password: password,
-        role: "admin",
-        redirect: false,
-      });
-
-      if (res.error) {
-        throw new Error("Failed to login");
-      }
-
-      router.replace("/admin/courselist");
-
-    } catch {
-      setError(true);
+    const data = { email, password };
+    setIsLoginOk(true);
+    if (!email) {
+      setIsEmailOK(false);
+      setEmailStatus("Cannot be blanked");
+    } else {
+      setIsEmailOK(true);
+      setEmailStatus("");
     }
-
-    // const data = { email, password };
-    // setIsLoginOk(true);
-    // if (!email) {
-    //   setIsEmailOK(false);
-    //   setEmailStatus("Cannot be blanked");
-    // } else {
-    //   setIsEmailOK(true);
-    //   setEmailStatus("");
-    // }
-    // if (!password) {
-    //   setIsPasswordOk(false);
-    //   setPasswordStatus("Cannot be blanked");
-    // } else {
-    //   setIsPasswordOk(true);
-    //   setPasswordStatus("");
-    // }
-    // if (email && password) {
-    //   const response = await adminLogin(data);
-
-    //   if (response.data.status === 401) {
-    //     setIsLoginOk(false);
-    //     setLoginStatus(response.data.message);
-    //     return;
-    //   }
-    //   router.push("/admin/dashboard");
-    // }
+    if (!password) {
+      setIsPasswordOk(false);
+      setPasswordStatus("Cannot be blanked");
+    } else {
+      setIsPasswordOk(true);
+      setPasswordStatus("");
+    }
+    if (email && password) {
+      try {
+        const res = await signIn("credentials", {
+          email: email,
+          password: password,
+          role: "admin",
+          redirect: false,
+        });
+        if (res.error) {
+          throw new Error("Failed to login");
+        }
+        router.replace("/admin/courselist");
+      } catch {
+        setError(true);
+      }
+    }
   }
 
   return (
@@ -91,7 +79,7 @@ export default function adminRegisterPage() {
         <div className="flex flex-col relative">
           <label htmlFor="email">Email</label>
           <input
-            className={`p-[12px] outline-none border border-solid border-[#D6D9E4] rounded-[8px] outline-none ${
+            className={`p-[12px] outline-none border border-solid border-[#D6D9E4] rounded-[8px] ${
               isEmailOK ? "" : "border border-solid border-red-600"
             } ${isLoginOk ? "" : "border border-solid border-red-600"}`}
             id="email"

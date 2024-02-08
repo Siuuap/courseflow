@@ -8,8 +8,6 @@ import { useAuth } from "@/contexts/authentication";
 import { useRouter } from "next/navigation";
 
 export default function adminRegisterPage() {
-  // const [firstName, setFirstName] = useState("");
-  // const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isEmailOK, setIsEmailOK] = useState(false);
@@ -18,6 +16,7 @@ export default function adminRegisterPage() {
   const [passwordStatus, setPasswordStatus] = useState("");
   const { adminRegister } = useAuth();
   const router = useRouter();
+
   async function handleSubmit(e) {
     e.preventDefault();
     const data = { email, password };
@@ -45,6 +44,7 @@ export default function adminRegisterPage() {
         setEmailStatus("This email already exists");
         return;
       }
+
       router.push("/admin/login");
     }
   }
@@ -66,36 +66,7 @@ export default function adminRegisterPage() {
             Admin Register
           </p>
         </div>
-        {/* <div className="flex gap-5">
-          <div className="flex flex-col relative w-full">
-            <label htmlFor="email">First Name</label>
-            <input
-              className="p-[12px] border border-solid border-[#D6D9E4] rounded-[8px] w-full"
-              id="email"
-              type="email"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder="Enter Email"
-            />
-            <p className="absolute top-[105%] text-red-600 text-[10px] text italic">
-              Cannot be blanked
-            </p>
-          </div>
-          <div className="flex flex-col relative w-full">
-            <label htmlFor="email">Last Name</label>
-            <input
-              className="p-[12px] border border-solid border-[#D6D9E4] rounded-[8px] w-full"
-              id="email"
-              type="email"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder="Enter Email"
-            />
-            <p className="absolute top-[105%] text-red-600 text-[10px] text italic">
-              Cannot be blanked
-            </p>
-          </div>
-        </div> */}
+
         <div className="flex flex-col relative">
           <label htmlFor="email">Email</label>
           <input

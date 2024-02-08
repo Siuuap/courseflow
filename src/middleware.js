@@ -19,7 +19,6 @@ export async function middleware(request) {
   if (request.nextUrl.pathname.startsWith("/admin")) {
     try {
       const sessionToken = request.cookies.get("next-auth.session-token").value;
-
       const result = await decode({
         token: sessionToken,
         secret: process.env.NEXTAUTH_SECRET,

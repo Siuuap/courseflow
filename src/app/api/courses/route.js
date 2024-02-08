@@ -1,24 +1,26 @@
 import { supabase } from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 import { useSearchParams } from "next/navigation";
-
+import multer from "multer";
 export async function GET(request) {
   const searchParams = request.nextUrl.searchParams;
   console.log(searchParams);
   const search = searchParams.get("search");
-  const page = 2;
+  console.log(`search =`, search);
+  const page = searchParams.get("page");
+  console.log(`page =`, page);
   const limit = 10;
   const start = (page - 1) * limit;
   const end = start + limit - 1;
   const { data, error } = search
     ? await supabase
-        .from("courses_test")
-        .select("* , lessons_test(name)")
+        .from("courses")
+        .select("* , lessons(name)")
         .ilike("name", `%${search}%`)
         .limit(limit)
     : await supabase
-        .from("courses_test")
-        .select("* , lessons_test(name)")
+        .from("courses")
+        .select("* , lessons(name)")
         .range(start, end);
   if (error) {
     console.error(error);
@@ -32,7 +34,17 @@ export async function GET(request) {
 
 export async function POST(request) {
   const reqData = await request.json();
-  const query = { ...reqData };
+  console.log(reqData);
+  const query = {
+    name: reqData.courseName,
+    description: reqData.courseDetail,
+    price: Number(reqData.price).toFixed(2),
+    length: Number(reqData.duration),
+    img_url: reqData.imgUrl,
+    video_url: reqData.videoUrl,
+    attach_file: reqData.attachFile,
+  };
+  console.log(query);
   const { data, error } = await supabase.from("courses").insert(query);
 
   if (error) {

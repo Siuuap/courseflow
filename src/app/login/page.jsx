@@ -23,6 +23,7 @@ export default function Home() {
         redirect: false,
       });
 
+      
       if (res.error) {
         throw new Error("Failed to login");
       }

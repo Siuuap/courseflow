@@ -42,10 +42,11 @@ async function login(credentials) {
         .select("*")
         .eq("email", credentials.email);
 
+      console.log(users);
       if (!users[0]) {
         throw new Error("wrong credentials");
       }
-
+      console.log("test3");
       const isValidPassword = await bcrypt.compare(
         credentials.password,
         users[0].password
@@ -94,10 +95,9 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-
           const user = await login(credentials);
-
           console.log(user);
+
           return user;
         } catch (error) {
           throw new Error("Failed to login");

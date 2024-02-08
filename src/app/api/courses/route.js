@@ -6,20 +6,25 @@ export async function GET(request) {
   const searchParams = request.nextUrl.searchParams;
   console.log(searchParams);
   const search = searchParams.get("search");
-  const page = 2;
+  console.log(`search =`, search);
+  const page = searchParams.get("page");
+  console.log(`page =`, page);
   const limit = 10;
   const start = (page - 1) * limit;
   const end = start + limit - 1;
+
+  console.log(search);
   const { data, error } = search
     ? await supabase
-        .from("courses_test")
-        .select("* , lessons_test(name)")
+        .from("courses")
+        .select("* , lessons(name)")
         .ilike("name", `%${search}%`)
         .limit(limit)
     : await supabase
-        .from("courses_test")
-        .select("* , lessons_test(name)")
+        .from("courses")
+        .select("* , lessons(name)")
         .range(start, end);
+
   if (error) {
     console.error(error);
     throw new Error("Courses can not be reach");

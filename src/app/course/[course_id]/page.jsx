@@ -8,6 +8,8 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  CircularProgress,
+  CircularProgressLabel,
 } from "@chakra-ui/react";
 import { Course } from "../CourseList";
 import { findBestMatch } from "string-similarity";
@@ -107,7 +109,8 @@ function CourseAccordion({ lesson, index }) {
             key={i}
             className="text-[#646D89] ml-10 w-[740px] "
           >
-            ● {sublesson.name}
+            <CircularProgress value={progress} size="24px" thickness="30px" />
+            {sublesson.name}
           </AccordionPanel>
         ))}
       </AccordionItem>

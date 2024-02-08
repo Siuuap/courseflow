@@ -37,7 +37,7 @@ function Course({ course }) {
               <i>
                 <img src="icons/book.png" className="inline-block mr-3" />
               </i>
-              {course.lessons_test.length} Lesson(s)
+              {course?.lessons.length} Lesson(s)
             </span>
             <span className="text-[#646D89]">
               <i>

@@ -3,12 +3,12 @@ import { supabase } from "@/utils/db";
 export async function GET(request, { params }) {
   const id = params.course_id;
   const { data, error } = await supabase
-    .from("courses_test")
-    .select("*, lessons_test(name ,sub_lessons(name)))")
+    .from("courses")
+    .select("*, lessons(name ,sub_lessons(name)))")
     .eq("course_id", id);
 
   if (error) {
-    return Response.json({ message: "Fetch successfully", data: data });
+    return Response.json({ message: "Fetch error" });
   }
   return Response.json({ message: "Fetch successfully", data: data });
 }
@@ -32,10 +32,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(req, { params }) {
   const id = params.course_id;
   console.log(id);
-  const result = await supabase
-    .from("courses_test_duplicate")
-    .delete()
-    .eq("course_id", id);
+  const result = await supabase.from("courses").delete().eq("course_id", id);
   console.log(result);
   if (result.error) {
     return Response.json({

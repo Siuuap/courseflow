@@ -1,7 +1,7 @@
 import { supabase } from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 import { useSearchParams } from "next/navigation";
-
+import multer from "multer";
 export async function GET(request) {
   const searchParams = request.nextUrl.searchParams;
   console.log(searchParams);
@@ -37,7 +37,17 @@ export async function GET(request) {
 
 export async function POST(request) {
   const reqData = await request.json();
-  const query = { ...reqData };
+  console.log(reqData);
+  const query = {
+    name: reqData.courseName,
+    description: reqData.courseDetail,
+    price: Number(reqData.price).toFixed(2),
+    length: Number(reqData.duration),
+    img_url: reqData.imgUrl,
+    video_url: reqData.videoUrl,
+    attach_file: reqData.attachFile,
+  };
+  console.log(query);
   const { data, error } = await supabase.from("courses").insert(query);
 
   if (error) {

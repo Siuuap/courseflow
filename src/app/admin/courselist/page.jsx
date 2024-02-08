@@ -13,12 +13,12 @@ import AdminCourseLists from "@/components/AdminCourseLists";
 export default function DashBoardPage() {
   const [courseData, setCourseData] = useState([]);
   const [search, setSearch] = useState("");
-  const [page, setpage] = useState();
+  const [page, setpage] = useState(1);
 
   async function getCourses() {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/courses?search=${search}`
+        `http://localhost:3000/api/courses?search=${search}&page=${page}`
       );
       setCourseData(response.data.data);
     } catch (error) {
@@ -43,25 +43,43 @@ export default function DashBoardPage() {
   }, [search, page]);
 
   return (
-    <section className="flex justify-center mx-auto max-w-[1440px] relative bg-[#F6F7FC] ">
+    <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
         {/* Box1 SideBar*/}
         <SideBar />
       </div>
 
-      <section className="bg-[#F6F7FC] max-w-[1200px] flex flex-col min-[1440px]:ml-[240px]">
+      <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
         {/* Box2 upper*/}
-        <section className=" bg-white flex justify-between items-center h-[92px] rounded-lg min-[0px]:min-w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[320px]:px-[16px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] ">
-          <div className="flex">
-            <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
-              Course
-            </p>
-            <button className="min-[1440px]:hidden">💩</button>
-          </div>
+        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px]">
+          <div className="flex w-full items-center justify-between">
+            <div className="flex">
+              <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
+                Course
+              </p>
+              <button className="min-[1440px]:hidden">💩</button>
+            </div>
 
-          <div className="flex gap-[10px] ">
+            <div className="flex gap-[10px] ">
+              <input
+                className="outline-none min-[0px]:hidden min-[768px]:block px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px]"
+                type="search"
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+              />
+              <Link href="/admin/addcourse">
+                <button className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
+                  + Add Course
+                </button>
+              </Link>
+            </div>
+          </div>
+          <div className="min-[0px]:w-full">
             <input
-              className="outline-none min-[375px]:w-[100px] min-[375px]:px-[12px] min-[375px]:py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px]"
+              className="outline-none min-[0px]:block min-[0px]:w-full min-[768px]:hidden px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] "
               type="search"
               placeholder="Search..."
               value={search}
@@ -69,18 +87,13 @@ export default function DashBoardPage() {
                 setSearch(e.target.value);
               }}
             />
-            <Link href="/admin/addcourse">
-              <button className="bg-[#2F5FAC] min-[375px]:px-[12px] min-[375px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
-                + Add Course
-              </button>
-            </Link>
           </div>
         </section>
 
-        {/* Box2 Lower*/}
-        <section className="mt-12 m-10 bg-white flex flex-col gap-[40px]">
-          <table className=" rounded-lg min-[0px]:hidden min-[1200px]:block bg-white">
-            <thead className="bg-[#E4E6ED] flex rounded-t-lg text-[14px] ">
+        <section className="mx-auto min-[0px]:mt-[130px] min-[768px]:mt-[120px] m-[40px] flex flex-col items-center gap-[40px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg">
+          {/* Box2 Courselist Box*/}
+          <table className="border border-solid border-[#F6F7FC] rounded-lg min-[0px]:hidden min-[1200px]:block bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]">
+            <thead className="bg-[#E4E6ED] flex rounded-t-lg text-[14px] w-full">
               <tr>
                 <th className="w-[48px] px-[16px] py-[10px] "></th>
                 <th className="w-[96px] px-[16px] py-[10px] font-normal">
@@ -115,7 +128,7 @@ export default function DashBoardPage() {
                     name,
                     created_at,
                     updated_at,
-                    lesson,
+                    lessons,
                     price,
                   },
                   index
@@ -143,7 +156,7 @@ export default function DashBoardPage() {
 
                       <td className="w-[268px] px-[16px] py-[32px]">{name}</td>
                       <td className="w-[105px] px-[16px] py-[32px] text-center">
-                        {lesson}
+                        {lessons.length}
                       </td>
                       <td className="w-[105px] px-[16px] py-[32px] text-center">
                         {price}
@@ -181,7 +194,9 @@ export default function DashBoardPage() {
               )}
             </tbody>
           </table>
-          <AdminCourseLists courseData={courseData} />
+          <section className="flex flex-col min-[375px]:block min-[1200px]:hidden min-[375px]:w-[375px] min-[768px]:w-[768px]">
+            <AdminCourseLists courseData={courseData} />
+          </section>
         </section>
       </section>
     </section>

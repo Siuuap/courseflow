@@ -11,18 +11,14 @@ export async function middleware(request) {
       const sessionToken = request.cookies.get("next-auth.session-token").value;
 
       return NextResponse.redirect(new URL("/", request.url));
-
     } catch {
       return NextResponse.next();
     }
   }
 
-
   if (request.nextUrl.pathname.startsWith("/admin")) {
-
     try {
       const sessionToken = request.cookies.get("next-auth.session-token").value;
-
       const result = await decode({
         token: sessionToken,
         secret: process.env.NEXTAUTH_SECRET,
@@ -40,7 +36,6 @@ export async function middleware(request) {
 }
 
 export const config = {
-
   matcher: [
     "/admin/addcourse/:path*",
     "/admin/assignment/:path*",
@@ -49,5 +44,4 @@ export const config = {
     "/login/:path*",
     "/register/:path*",
   ],
-
 };

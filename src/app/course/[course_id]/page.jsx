@@ -21,7 +21,7 @@ export default function CourseDetail({ params }) {
 
   async function fetchCourse() {
     const res = await axios.get(`/api/courses/${id}`);
-
+    console.log(res);
     const course = res.data.data;
     setCourseById(course);
     console.log(course);
@@ -47,7 +47,7 @@ export default function CourseDetail({ params }) {
             <h1 className="font-medium text-3xl my-[24px]">Module Samples</h1>
             <div>
               <Accordion defaultIndex={[0]} allowMultiple>
-                {courseById[0]?.lessons_test?.map((lesson, i) => (
+                {courseById[0]?.lessons?.map((lesson, i) => (
                   <CourseAccordion lesson={lesson} index={i} key={i} />
                 ))}
               </Accordion>
@@ -201,7 +201,7 @@ function OtherInterestingCourse({ data }) {
             <i>
               <img src="icons/book.png" className="inline-block mr-3" />
             </i>
-            {data?.lessons_test.length} Lesson(s)
+            {data?.lessons.length} Lesson(s)
           </span>
           <span className="text-[#646D89]">
             <i>

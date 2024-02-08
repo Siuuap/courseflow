@@ -2,11 +2,12 @@ import { supabase } from "@/utils/db";
 
 export async function GET(request, { params }) {
   const id = params.course_id;
+  console.log(`id is:`, id);
   const { data, error } = await supabase
     .from("courses")
     .select("*, lessons(name ,sub_lessons(name)))")
     .eq("course_id", id);
-
+  console.log(`data:`, data);
   if (error) {
     return Response.json({ message: "Fetch error" });
   }

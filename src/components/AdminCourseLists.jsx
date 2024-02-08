@@ -10,65 +10,68 @@ import { useState } from "react";
 
 export default function AdminCourseLists({ courseData }) {
   return (
-    <section className="flex flex-col min-[0px]:block min-[1200px]:hidden">
+    <>
       {courseData.map(
         (
-          { course_id, img_url, name, created_at, updated_at, lesson, price },
+          { course_id, img_url, name, created_at, updated_at, lessons, price },
           index
         ) => {
-          const createdDate = new Date(img_url);
-          console.log(createdDate);
           return (
             <section
               key={index}
-              className=" p-4 rounded-lg bg-white mb-4 flex flex-col items-center"
+              className=" p-4 rounded-lg bg-white mb-4 flex flex-col min-[768px]:flex-row items-start"
             >
-              <section className="flex justify-center max-w-[500px]">
+              <section className="flex justify-center min-[768px]:basis-1/2 min-[375px]:mb-[10px]">
                 <img
                   src={img_url}
                   alt="course-cover-image"
-                  className="rounded-lg "
+                  className="rounded-lg min-[768px]:w-[300px]"
                 />
               </section>
-              <section className="flex flex-col justify-start w-full">
+              <section className="flex flex-col justify-start min-[768px]:basis-1/2 gap-[8px]">
                 <section>
                   <h2 className="font-bold text-[16px]">{name}</h2>
                 </section>
                 <section className="flex gap-4">
-                  <h2 className="w-[60px]">Lesson</h2>
-                  <p>{lesson} 6 lessons</p>
+                  <h2 className="basis-[20%]">Lesson</h2>
+                  <p>{lessons.length} lessons</p>
                 </section>
 
                 <section className="flex gap-4">
-                  <h2 className="w-[60px]">Price</h2>
+                  <h2 className="basis-[20%]">Price</h2>
                   <p>{price}</p>
                 </section>
                 <section className="flex gap-4">
-                  <h2 className="w-[60px]">Create</h2>
+                  <h2 className="basis-[20%]">Created</h2>
                   <p>{created_at}</p>
                 </section>
                 <section className="flex gap-4">
-                  <h2 className="w-[60px]">Update</h2>
-                  <p>{created_at}</p>
+                  <h2 className="basis-[20%]">Updated</h2>
+                  <p>{updated_at}</p>
                 </section>
 
-                <section className="flex justify-center gap-[20px]">
-                  <button onClick={() => {}}>
+                <section className="flex justify-center gap-[20px] basis-full mt-[12px]">
+                  <button
+                    className="flex justify-center items-center basis-1/2 bg-[#F1F2F6] hover:bg-[#C8CCDB] rounded-lg p-2"
+                    onClick={() => {}}
+                  >
                     <Image
-                      className="w-[24px] h-[24px] hover:fill-red-600"
+                      className="w-[24px] h-[24px] fill-red-600"
                       src={deleteIcon}
                       alt="delete-icon"
                       onClick={() => {
                         deleteCourses(course_id);
                       }}
                     />
+                    Delete
                   </button>
-                  <button>
+                  <button className="flex justify-center items-center basis-1/2 bg-[#F1F2F6] hover:bg-[#C8CCDB] rounded-lg p-2">
                     <Image
                       className="w-[24px] h-[24px]"
                       src={EditIcon}
                       alt="edit-icon"
                     />
+                    Edit
                   </button>
                 </section>
               </section>
@@ -76,6 +79,6 @@ export default function AdminCourseLists({ courseData }) {
           );
         }
       )}
-    </section>
+    </>
   );
 }

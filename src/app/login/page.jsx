@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import NavBar from "@/components/NavBarTemp";
+import NavBar from "@/components/NavBar";
 import { signIn } from "next-auth/react";
 
 export default function Home() {
@@ -23,6 +23,7 @@ export default function Home() {
         redirect: false,
       });
 
+      
       if (res.error) {
         throw new Error("Failed to login");
       }

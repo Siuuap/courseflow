@@ -2,7 +2,6 @@
 import Button from "./Button";
 import UserName from "./UserNameTemp";
 import Link from "next/link";
-import axios from "axios";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";

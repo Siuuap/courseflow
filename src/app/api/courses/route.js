@@ -4,12 +4,11 @@ import { useSearchParams } from "next/navigation";
 import multer from "multer";
 export async function GET(request) {
   const searchParams = request.nextUrl.searchParams;
-  console.log(searchParams);
+
   const search = searchParams.get("search");
-  console.log(`search =`, search);
+
   const page = searchParams.get("page") || 1;
 
-  console.log(`page =`, page);
   const limit = 10;
   const start = (page - 1) * limit;
   const end = start + limit - 1;

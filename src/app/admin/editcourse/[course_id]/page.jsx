@@ -10,69 +10,10 @@ import uploadVideo from "@/assets/images/uploadVideo.svg";
 import Image from "next/image";
 import LessonBox from "@/components/LessonBox";
 import axios from "axios";
-export default function DashBoardPage() {
-  const [courseName, setCourseName] = useState("");
-  const [price, setPrice] = useState("");
-  const [duration, setDuration] = useState("");
-  const [courseSummary, setCourseSummary] = useState("");
-  const [courseDetail, setCourseDetail] = useState("");
-  const [imgUrl, setImgUrl] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [fileUrl, setFileUrl] = useState("");
+export default function EditCourse({ params }) {
+  const course_id = params.course_id;
 
-  const [coverImages, setCoverImages] = useState([]);
-  const [videoTrailer, setVideoTrailer] = useState({});
-  const [attachFile, setAttachFile] = useState({});
-
-  async function uploadCoverImage(e) {
-    e.preventDefault();
-    try {
-      const { data, error } = await supabaseAdmin.storage
-        .from("courseimg")
-        .upload(`test/${courseName}`, coverImages[0]);
-      console.log(`upload sucessfully`);
-
-      if (error) {
-        console.log(`error from database`, error);
-      }
-      const url = supabaseAdmin.storage
-        .from("courseimg")
-        .getPublicUrl(data.path);
-      console.log(`url`, url.data.publicUrl);
-      setImgUrl(url.data.publicUrl);
-
-      const formData = {
-        courseName,
-        price,
-        duration,
-        courseSummary,
-        courseDetail,
-        imgUrl,
-        videoUrl,
-        fileUrl,
-      };
-      createNewCourse(formData);
-    } catch (error) {
-      console.log(`error from request`, error);
-    }
-  }
-
-  function handleCoverImage(e) {
-    e.preventDefault();
-    const id = Date.now();
-    console.log(e.target.files[0]);
-    setCoverImages([...coverImages, e.target.files[0]]);
-  }
-
-  async function createNewCourse(formData) {
-    const data = formData;
-    try {
-      const response = await axios.post("/api/courses", data);
-      console.log(response);
-    } catch (error) {
-      console.log(`error from add new course request`, error);
-    }
-  }
+  console.log(course_id);
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -86,7 +27,7 @@ export default function DashBoardPage() {
           <div className="flex w-full items-center justify-between">
             <div className="flex">
               <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
-                Add Course
+                Course 'CourseName'
               </p>
               <button className="min-[1440px]:hidden">💩</button>
             </div>
@@ -97,11 +38,10 @@ export default function DashBoardPage() {
                   Cancel
                 </button>
               </Link>
-              <Link href="/admin/addcourse">
-                <button className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
-                  Create
-                </button>
-              </Link>
+
+              <button className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
+                Edit
+              </button>
             </div>
           </div>
         </section>

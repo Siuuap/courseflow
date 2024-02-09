@@ -52,7 +52,7 @@ export default function DashBoardPage() {
       <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
         {/* Box2 upper*/}
         <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px]">
-          <div className="flex w-full items-center justify-between">
+          <div className="flex w-full items-center justify-between relative ">
             <div className="flex">
               <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
                 Course
@@ -62,7 +62,7 @@ export default function DashBoardPage() {
 
             <div className="flex gap-[10px] ">
               <input
-                className="outline-none min-[0px]:hidden min-[768px]:block px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px]"
+                className="outline-none min-[375px]:absolute min-[375px]:top-[60px] min-[375px]:left-0 min-[375px]:w-full  min-[768px]:static  min-[768px]:block min-[768px]:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px]"
                 type="search"
                 placeholder="Search..."
                 value={search}
@@ -76,17 +76,6 @@ export default function DashBoardPage() {
                 </button>
               </Link>
             </div>
-          </div>
-          <div className="min-[0px]:w-full">
-            <input
-              className="outline-none min-[0px]:block min-[0px]:w-full min-[768px]:hidden px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] "
-              type="search"
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-            />
           </div>
         </section>
 
@@ -162,14 +151,14 @@ export default function DashBoardPage() {
                         {price}
                       </td>
                       <td className="w-[188px] px-[10px] py-[32px] text-center">
-                        {created_at}
+                        {new Date(created_at).toLocaleTimeString()}
                       </td>
                       <td className="w-[190px] px-[10px] py-[32px] text-center">
                         {updated_at}
                       </td>
                       <td className="w-[120px] px-[16px] py-[32px]">
                         <div className="flex gap-[17px] justify-center items-center">
-                          <button onClick={() => {}}>
+                          <button className="flex justify-center items-center">
                             <Image
                               className="w-[24px] h-[24px] hover:fill-red-600"
                               src={deleteIcon}
@@ -179,13 +168,15 @@ export default function DashBoardPage() {
                               }}
                             />
                           </button>
-                          <button>
-                            <Image
-                              className="w-[24px] h-[24px]"
-                              src={EditIcon}
-                              alt="edit-icon"
-                            />
-                          </button>
+                          <Link href={`/admin/editcourse/${course_id}`}>
+                            <button className="flex justify-center items-center">
+                              <Image
+                                className="w-[24px] h-[24px]"
+                                src={EditIcon}
+                                alt="edit-icon"
+                              />
+                            </button>
+                          </Link>
                         </div>
                       </td>
                     </tr>

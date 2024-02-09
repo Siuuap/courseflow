@@ -1,19 +1,9 @@
-"use strict";
-
 import Link from "next/link";
-import { useState } from "react";
-export default function CourseList({ course }) {
-  const [page, setPage] = useState(1);
-  return (
-    <ul className="course-list mt-32 flex  flex-wrap justify-evenly max-w-[1120px] mx-auto ">
-      {course?.map((course) => (
-        <Course key={course.course_id} course={course} />
-      ))}
-    </ul>
-  );
-}
+import BookIcon from "@/assets/images/icons/BookIcon.svg"
+import ClockIcon from "@/assets/images/icons/ClockIcon.svg"
+import Image from "next/image";
 
-function Course({ course }) {
+function CourseCard({ course }) {
   return (
     <Link href={`/course/${course.course_id}`}>
       <div className="course-container max-w-xs mt-16 mx-3 relative ">
@@ -38,15 +28,13 @@ function Course({ course }) {
           <div className="course-detail-container  p-[16px] border-t-[1px]  absolute bottom-0 w-[320px]">
             <span className="mr-3 text-[#646D89]">
               <i>
-                <img src="icons/book.png" className="inline-block mr-3" />
+                <Image src={BookIcon} className="inline-block mr-3" />
               </i>
-
               {course?.lessons.length} Lesson(s)
-
             </span>
             <span className="text-[#646D89]">
               <i>
-                <img src="icons/clock.png" className="inline-block mr-3 " />
+                <Image src={ClockIcon} className="inline-block mr-3 " />
               </i>
               {course.length} Hr.
             </span>
@@ -56,3 +44,5 @@ function Course({ course }) {
     </Link>
   );
 }
+
+export default CourseCard;

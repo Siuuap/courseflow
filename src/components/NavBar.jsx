@@ -8,7 +8,7 @@ import LogOutIcon from "@/assets/images/NavBar/LogOutIcon.svg";
 
 import Image from "next/image";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import {
@@ -39,10 +39,7 @@ function NavBar() {
   const [loading, setLoading] = useState(true);
 
   const getUser = async () => {
-    console.log(status);
     if (status === "authenticated") {
-      console.log(session.user);
-
       setUserData({
         ...session.user,
       });

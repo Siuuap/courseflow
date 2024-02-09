@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
-import CourseList from "./CourseList";
-import { SearchBox } from "./SearchBox.jsx";
+import CourseList from "@/components/CourseList.jsx";
+import SearchBox from "@/components/SerachBox";
 import { Loading } from "./Loading";
 
 export default function Home() {

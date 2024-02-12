@@ -99,31 +99,46 @@ export default function EditCourse({ params }) {
               />
             </section>
             <section className="flex flex-col gap-[8px]">
-              <label htmlFor="coverImage">Course Image *</label>
-              <input
-                className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]"
-                id="coverImage"
-                type="file"
-              />
-              <Image src={uploadImage} alt="image-with-upload-image-text" />
+              <label
+                htmlFor="coverImage"
+                className="w-fit cursor-pointer flex flex-col gap-[8px]"
+              >
+                Course Image *
+                <input
+                  className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                  id="coverImage"
+                  type="file"
+                />
+                <Image src={uploadImage} alt="image-with-upload-image-text" />
+              </label>
             </section>
             <section className="flex flex-col gap-[8px]">
-              <label htmlFor="videoTrailer">Video Trailer *</label>
-              <input
-                className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]"
-                id="videoTraile"
-                type="file"
-              />
-              <Image src={uploadVideo} alt="image-with-upload-video-text" />
+              <label
+                htmlFor="videoTrailer"
+                className="w-fit cursor-pointer flex flex-col gap-[8px]"
+              >
+                Video Trailer *
+                <input
+                  className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                  id="videoTraile"
+                  type="file"
+                />
+                <Image src={uploadVideo} alt="image-with-upload-video-text" />
+              </label>
             </section>
             <section className="flex flex-col gap-[8px]">
-              <label htmlFor="videoTrailer">Attach File (Optional)</label>
-              <input
-                className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]"
-                id="videoTraile"
-                type="file"
-              />
-              <Image src={uploadFile} alt="image-with-upload-file-text" />
+              <label
+                htmlFor="videoTrailer"
+                className="w-fit cursor-pointer flex flex-col gap-[8px]"
+              >
+                Attach File (Optional)
+                <input
+                  className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                  id="videoTraile"
+                  type="file"
+                />
+                <Image src={uploadFile} alt="image-with-upload-file-text" />
+              </label>
             </section>
           </section>
           <LessonBox />

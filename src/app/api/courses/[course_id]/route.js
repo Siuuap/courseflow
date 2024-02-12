@@ -37,7 +37,7 @@ export async function DELETE(req, { params }) {
   console.log(result);
   if (result.error) {
     return Response.json({
-      message: "Cannot delete course from the data base",
+      message: "Cannot delete course from the database",
       error: result.error,
     });
   }

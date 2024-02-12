@@ -17,13 +17,10 @@ export async function GET(request) {
   const { data, error } = search
     ? await supabase
         .from("courses")
-        .select("* , lessons(name)")
+        .select("* , lessons(*)")
         .ilike("name", `%${search}%`)
         .limit(limit)
-    : await supabase
-        .from("courses")
-        .select("* , lessons(name)")
-        .range(start, end);
+    : await supabase.from("courses").select("* , lessons(*)").range(start, end);
 
   if (error) {
     console.error(error);

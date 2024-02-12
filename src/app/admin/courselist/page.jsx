@@ -42,6 +42,19 @@ export default function DashBoardPage() {
     getCourses();
   }, [search, page]);
 
+  function formatDate(d) {
+    const date = new Date(d);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+    return `${day}/${month}/${year} ${time}`;
+  }
+
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -151,10 +164,10 @@ export default function DashBoardPage() {
                         {price}
                       </td>
                       <td className="w-[188px] px-[10px] py-[32px] text-center">
-                        {new Date(created_at).toLocaleTimeString()}
+                        {formatDate(created_at)}
                       </td>
                       <td className="w-[190px] px-[10px] py-[32px] text-center">
-                        {updated_at}
+                        {formatDate(updated_at)}
                       </td>
                       <td className="w-[120px] px-[16px] py-[32px]">
                         <div className="flex gap-[17px] justify-center items-center">

@@ -1,41 +1,41 @@
 "use client";
 import React, { useState } from "react";
-import Button from "./Button";
 import Link from "next/link";
+import { useAuth } from "@/contexts/authentication";
+
 const RegisterForm = () => {
   const [values, setValues] = useState({
     fullname: "",
-    password: "",
     dateofBirth: "",
     EducationalBackground: "",
     email: "",
+    password: "",
   });
 
-  const getValue = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
-  };
+  const { register } = useAuth();
+  const [error, setError] = useState("");
+  const [fullnameError, setfullnameError] = useState("");
+  const [dateError, setDateError] = useState(false);
+  const [emailError, setemailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [EducationalBackgroundError, setEducationalBackgroundError] =
+    useState("");
 
-  const [errors, setErrors] = useState({
-    fullname: false,
-    password: false,
-    passwordLength: false,
-    dateofBirthempty: false,
-    dateofBirth: false,
-    email: false,
-  });
-
-  const checkName = (value) => {
-    let fullname = value;
-    fullname = fullname
-      .split(" ")
-      .filter((word) => word !== "")
-      .join("");
-
-    console.log(values);
-    const englishRegex = /^[A-Za-z]+$/;
-
-    const isValid = englishRegex.test(fullname);
-    return isValid;
+    const handleChange = (e) => {
+      let { name, value } = e.target;
+  
+      if (name === 'fullName') {
+          const nameParts = value.split(' ');
+  
+          const firstName = nameParts[0];
+          const lastName = nameParts.length > 1 ? nameParts[1] : '';
+  
+          // Now you can use firstName and lastName as needed
+          // For example, you can add them to the values object:
+          value = { firstName, lastName };
+      }
+  
+      setValues({ ...values, [name]: value ,[e.target.name]: e.target.value });
   };
 
   const validateDateofBirth = (date) => {
@@ -48,7 +48,7 @@ const RegisterForm = () => {
       dateofBirth: ageDifference <= 6 || isNaN(selectedDate.getTime()),
     };
 
-    setErrors((prevErrors) => ({
+    setDateError((prevErrors) => ({
       ...prevErrors,
       ...errors,
     }));
@@ -56,43 +56,48 @@ const RegisterForm = () => {
     return errors.dateofBirth;
   };
 
-  const validatePassword = (password) => {
-    // Define regular expressions for password criteria
-    const digitRegex = /\d/;
-    const uppercaseRegex = /[A-Z]/;
-    const lowercaseRegex = /[a-z]/;
-    const specialCharRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const dateOfBirthError = validateDateofBirth(values.dateofBirth);
+    const data = {
+      ...values,
+    };
 
-    // Check if the password includes a number
-    const hasDigit = digitRegex.test(password);
-
-    // Check if the password includes optional criteria
-    const hasUppercase = uppercaseRegex.test(password);
-    const hasLowercase = lowercaseRegex.test(password);
-    const hasSpecialChar = specialCharRegex.test(password);
-
-    // Check if at least one optional criteria is met
-    const hasOptionalCriteria = hasUppercase || hasLowercase || hasSpecialChar;
-
-    // Check if the password meets the requirements
-    if (hasDigit && hasOptionalCriteria) {
-      return true; // Password is valid
+    if (dateOfBirthError) {
+      setDateError(true); // เปลี่ยน state เป็น true เมื่อมีข้อผิดพลาด
     } else {
-      return false; // Password is not valid
+      setDateError("");
     }
-  };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+    // ตรวจสอบข้อผิดพลาดอื่น ๆ และตั้งค่า state ตามปกติ
 
-    setErrors({
-      fullname: !checkName(values.fullname),
-      password: !(values.password.trim() && values.password.length < 12),
-      dateofBirthempty: !values.dateofBirth.trim(),
-      dateofBirth: validateDateofBirth(values.dateofBirth),
-      EducationalBackground: !values.eb.trim(),
-      email: !(values.email.trim() && values.email.includes("@")),
-    });
+    if (!/^[a-zA-Z]+ (?:['-]?[a-zA-Z]+)?$/g.test(values.fullname.trim())) {
+      setfullnameError("Please enter name");
+    } else {
+      setfullnameError("");
+    }
+
+    if (!values.EducationalBackground.trim()) {
+      setEducationalBackgroundError("Please enter EducationalBackground");
+    } else {
+      setEducationalBackgroundError("");
+    }
+
+    if (!values.email.match(/^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[A-Za-z]+$/)) {
+      setemailError("Email is required");
+    } else {
+      setemailError("");
+    }
+
+    if (!values.password.trim()) {
+      setPasswordError("Password is required");
+    } else if (values.password.length < 12) {
+      setPasswordError("Password must be at least 12 characters");
+    } else {
+      setPasswordError("");
+    }
+    const response = await register(data);
+    console.log(data);
   };
 
   return (
@@ -102,69 +107,87 @@ const RegisterForm = () => {
           Register to start learning!
         </div>
         <form className="flex flex-col mt-9 ">
-          <label htmlFor=" text-black  max-md:max-w-full">Name</label>
-          <input
-            name="fullname"
-            onChange={getValue}
-            value={values.fullname}
-            placeholder="Enter Name and Lastname"
-            className="gap-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
-          ></input>
-          {errors.fullname && (
-            <span className="text-red-600">กรุณากรอกชื่อ</span>
-          )}
+          <div className="flex flex-col relative">
+            <label htmlFor=" text-black max-md:max-w-full">Name</label>
+            <input
+              name="fullname"
+              onChange={handleChange}
+              value={values.fullname}
+              placeholder="Enter Name and Lastname"
+              className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+            ></input>
+            {fullnameError && (
+              <p className="absolute top-[70%] text-red-600">{fullnameError}</p>
+            )}
+          </div>
+          <div className="flex flex-col relative">
+            <label htmlFor="text-[16px] mb-[4px]">Date of Birth</label>
+            <input
+              max={new Date().toISOString().split("T")[0]}
+              name="dateofBirth"
+              value={values.dateofBirth}
+              onChange={handleChange}
+              type="date"
+              placeholder="DD/MM/YY"
+              className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+            ></input>
+            {dateError && (
+              <p className="absolute top-[70%] text-red-600">
+                Please enter your date of birth and be at least 6 years old
+              </p>
+            )}
+          </div>
 
-          <label htmlFor="text-[16px] mb-[4px]">Date of Birth</label>
-          <input
-            name="dateofBirth"
-            value={values.dateofBirth}
-            onChange={getValue}
-            type="date"
-            placeholder="DD/MM/YY"
-            className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
-          ></input>
-          {errors.dateofBirthempty && (
-            <div className="text-red-600">Please enter your date of birth</div>
-          )}
-          {errors.dateofBirth && (
-            <div className="text-red-600">You must be at least 6 years old</div>
-          )}
-          <label htmlFor="text-[16px] mb-[4px]">Educational Background</label>
-          <input
-            name="EducationalBackground"
-            onChange={getValue}
-            value={values.EducationalBackground}
-            type="text"
-            placeholder="Enter Educational Background"
-            className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
-          ></input>
-          {errors.fullname && (
-            <p className=" mt-[50px]  text-red-600">กรุณากรอกข้อมูล</p>
-          )}
-          <label htmlFor="text-[16px] mb-[4px]">Email</label>
-          <input
-            name="email"
-            value={values.email}
-            onChange={getValue}
-            placeholder="Enter Email"
-            className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
-          ></input>
-          {errors.password && <p className=" text-red-600">กรุณากรอก email</p>}
-          <label htmlFor="text-[16px] mb-[4px]">Password</label>
-          <input
-            name="password"
-            value={values.password}
-            onChange={getValue}
-            placeholder="Enter password"
-            type="password"
-            className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
-          ></input>
-          {errors.password && (
-            <p className=" text-red-600">กรุณากรอกพาสเวิร์ด</p>
-          )}
+          <div className="flex flex-col relative">
+            <label htmlFor="text-[16px] mb-[4px]">Educational Background</label>
+            <input
+              name="EducationalBackground"
+              onChange={handleChange}
+              //value={values.EducationalBackground}
+              type="text"
+              placeholder="Enter Educational Background"
+              className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+            ></input>
+            {EducationalBackgroundError && (
+              <p className="absolute top-[70%] text-red-600">
+                {EducationalBackgroundError}
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-col relative">
+            <label htmlFor="text-[16px] mb-[4px]">Email</label>
+            <input
+              name="email"
+              //value={values.email}
+              onChange={handleChange}
+              placeholder="Enter Email"
+              className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+            ></input>
+
+            {emailError && (
+              <p className="absolute top-[70%] text-red-600">{emailError}</p>
+            )}
+          </div>
+          <div className="flex flex-col relative">
+            <label htmlFor="text-[16px] mb-[4px]">Password</label>
+            <input
+              name="password"
+              //value={values.password}
+              onChange={handleChange}
+              placeholder="Enter password"
+              type="password"
+              className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+            ></input>
+
+            {passwordError && (
+              <p className="absolute top-[70%] text-red-600">{passwordError}</p>
+            )}
+          </div>
+
           <button
             onClick={handleSubmit}
-            className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] bg-blue-800 rounded-xl shadow justify-center items-center gap-2.5 inline-flex"
+            className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] text-white bg-blue-800 rounded-xl shadow justify-center items-center gap-2.5 inline-flex"
           >
             Register
           </button>

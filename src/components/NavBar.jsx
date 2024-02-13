@@ -8,7 +8,7 @@ import LogOutIcon from "@/assets/images/NavBar/LogOutIcon.svg";
 
 import Image from "next/image";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import {
@@ -35,24 +35,18 @@ function NavBar() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  const [userData, setUserData] = useState({});
-  const [loading, setLoading] = useState(true);
+  //const [userData, setUserData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const getUser = async () => {
-    console.log(status);
+    console.log(session);
     if (status === "authenticated") {
-      console.log(session.user);
-
-      setUserData({
-        ...session.user,
-      });
+      setIsLoading(false);
     }
-    setLoading(false);
   };
 
   const handleLogout = async () => {
     signOut();
-    setUserData({});
     router.push("/");
   };
 
@@ -77,23 +71,23 @@ function NavBar() {
           </div>
 
           <div className="w-[189px]">
-            {!loading && status === "unauthenticated" && (
+            {!session?.user?.firstName && (
               <Link href="/login">
                 <Button className="bg-[#2F5FAC] px-8 py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white font-bold text-[16px] leading-6">
                   Login
                 </Button>
               </Link>
             )}
-            {!loading && status === "authenticated" && (
+            {session?.user?.firstName &&  (
               <div className="flex  flex-row  justify-start items-center gap-[10px]">
                 <img
-                  src="https://img.freepik.com/photos-premium/image-generee-par-ai-portrait-bel-homme-asiatique_803126-1182.jpg"
+                  src={session.user.url}
                   className=" w-[50px] h-[50px] rounded-[50%]"
                 />
 
                 <Menu isLazy>
                   <MenuButton>
-                    {userData.firstName} <ChevronDownIcon />{" "}
+                    {session.user.firstName} <ChevronDownIcon />{" "}
                   </MenuButton>
                   <MenuList width={"10px"} minW={"200px"}>
                     {/* MenuItems are not rendered unless Menu is open */}
@@ -101,7 +95,11 @@ function NavBar() {
                       <Image src={ProfileIcon} className=" mr-[10px]" />
                       Profile
                     </MenuItem>
-                    <MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        router.push("/user");
+                      }}
+                    >
                       <Image src={MyCourseIcon} className=" mr-[10px]" />
                       My Courses
                     </MenuItem>

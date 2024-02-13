@@ -8,7 +8,7 @@ async function login(credentials) {
     try {
       const { data: users, error } = await supabase
         .from("users")
-        .select(`user_id, email,password, user_profiles(first_name,last_name)`)
+        .select(`user_id, email,password, user_profiles(first_name,last_name,img_url)`)
         .eq("email", credentials.email);
 
       if (!users[0]) {
@@ -114,6 +114,7 @@ export const authOptions = {
           token.email = user.email;
           token.firstName = user.user_profiles[0].first_name;
           token.lastName = user.user_profiles[0].last_name;
+          token.url = user.user_profiles[0].img_url;
           token.role = user.role;
         }
         if (user.role === "admin") {
@@ -132,6 +133,7 @@ export const authOptions = {
           session.user.email = token.email;
           session.user.firstName = token.firstName;
           session.user.lastName = token.lastName;
+          session.user.url = token.url;
           session.user.role = token.role;
         }
 

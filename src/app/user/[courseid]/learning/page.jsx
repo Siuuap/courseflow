@@ -152,7 +152,6 @@ function LessonAccordion({ courseById, handleVideo, subLessonProgress }) {
                 <AccordionPanel pb={4} key={i}>
                   <CircularProgress
                     size="14px"
-                    // value={subLessonProgress[i].status}
                     value={findMatchId(subLessonProgress, subLesson)}
                     max="100"
                     thickness={15}

@@ -30,7 +30,7 @@ export default function Learning({ params }) {
     async function fetchCourseById() {
       const courseId = params.courseid;
       console.log(courseId);
-      const res = await axios.get(`/api/view/${courseId}`);
+      const res = await axios.get(`/api/learning/${courseId}`);
 
       setCourseById(res.data.data);
       setSubLessonProgress(res.data.data[0].users_sub_lessons);
@@ -43,12 +43,14 @@ export default function Learning({ params }) {
     fetchCourseById();
   }, [params.courseid]);
 
+  console.log(courseById[0]);
+
   function handleUpdateSubProgress(e) {
     let currentSubProgress = (e.target.currentTime / e.target.duration) * 100;
     if (currentSubProgress >= 85) {
       currentSubProgress = 100;
     }
-
+    console.log(currentSubProgress);
     let newSublessonProgress = subLessonProgress.map((arr) => arr);
 
     const newProgress = newSublessonProgress.find((object, i) => {
@@ -57,6 +59,18 @@ export default function Learning({ params }) {
         currentSubProgress - 15 >= object.status
       ) {
         newSublessonProgress[i] = { ...object, status: currentSubProgress };
+
+        async function putNewStatus() {
+          const courseId = params.courseid;
+          const res = await axios.put(
+            `/api/learning/${courseId}?user=53&subid=${
+              object.sub_lesson_id
+            }&status=${Math.floor(currentSubProgress)}&usercourseid=${
+              object.user_course_id
+            }`
+          );
+        }
+        putNewStatus();
         return true;
       }
     });
@@ -91,6 +105,15 @@ export default function Learning({ params }) {
 function LessonAccordion({ courseById, handleVideo, subLessonProgress }) {
   const course = courseById[0];
   const [progress, setProgress] = useState(50);
+  console.log(subLessonProgress);
+
+  function findMatchId(subLessonProgress, sublesson) {
+    const match = subLessonProgress.filter(
+      (id) => id.sub_lesson_id === sublesson.sub_lesson_id
+    );
+    console.log(match[0].status);
+    return match[0].status;
+  }
 
   return (
     <div className="shadow-[0px_5px_5px_0px_rgba(100,109,137,1)] rounded-md px-[24px] py-[32px]">
@@ -129,7 +152,8 @@ function LessonAccordion({ courseById, handleVideo, subLessonProgress }) {
                 <AccordionPanel pb={4} key={i}>
                   <CircularProgress
                     size="14px"
-                    value={subLessonProgress[i].status}
+                    // value={subLessonProgress[i].status}
+                    value={findMatchId(subLessonProgress, subLesson)}
                     max="100"
                     thickness={15}
                     className="pb-[3px] mr-[10px]"

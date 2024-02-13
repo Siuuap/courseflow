@@ -1,12 +1,12 @@
 import Link from "next/link";
-import BookIcon from "@/assets/images/icons/BookIcon.svg"
-import ClockIcon from "@/assets/images/icons/ClockIcon.svg"
+import BookIcon from "@/assets/images/icons/BookIcon.svg";
+import ClockIcon from "@/assets/images/icons/ClockIcon.svg";
 import Image from "next/image";
 
 function CourseCard({ course }) {
   return (
     <Link href={`/course/${course.course_id}`}>
-      <div className="course-container max-w-xs mt-16 mx-3 relative ">
+      <div className="course-container max-w-xs mb-[16px] relative ">
         <div className="course shadow-[0px_5px_5px_0px_rgba(100,109,137,1)] rounded-md w-[320px] h-[538px]">
           <div className="course-img ">
             <img
@@ -28,13 +28,21 @@ function CourseCard({ course }) {
           <div className="course-detail-container  p-[16px] border-t-[1px]  absolute bottom-0 w-[320px]">
             <span className="mr-3 text-[#646D89]">
               <i>
-                <Image src={BookIcon} className="inline-block mr-3" />
+                <Image
+                  src={BookIcon}
+                  className="inline-block mr-3"
+                  alt="book icon"
+                />
               </i>
-              {course?.lessons.length} Lesson(s)
+              {course?.lessons?.length} Lesson(s)
             </span>
             <span className="text-[#646D89]">
               <i>
-                <Image src={ClockIcon} className="inline-block mr-3 " />
+                <Image
+                  src={ClockIcon}
+                  className="inline-block mr-3 "
+                  alt="clock icon"
+                />
               </i>
               {course.length} Hr.
             </span>

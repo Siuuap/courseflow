@@ -16,6 +16,15 @@ export async function middleware(request) {
     }
   }
 
+  if (request.nextUrl.pathname.startsWith("/user")) {
+    try {
+      const sessionToken = request.cookies.get("next-auth.session-token").value;
+      return NextResponse.next();
+    } catch {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
   if (request.nextUrl.pathname.startsWith("/admin")) {
     try {
       const sessionToken = request.cookies.get("next-auth.session-token").value;
@@ -43,5 +52,6 @@ export const config = {
     "/admin/editcourse/:path*",
     "/login/:path*",
     "/register/:path*",
+    "/user",
   ],
 };

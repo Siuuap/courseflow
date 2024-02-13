@@ -9,7 +9,6 @@ function InterestingCourse() {
     try {
       const res = await axios.get(`/api/courses`);
       setOtherCourse(res.data.data);
-     
     } catch (error) {
       console.error(error);
     }
@@ -20,8 +19,8 @@ function InterestingCourse() {
   }, []);
 
   return (
-    <div className="interesting-course-container flex content-center justify-center">
-      {otherCourse?.slice(0,3).map((item) => {
+    <div className="interesting-course-container flex content-center justify-center gap-[24px]">
+      {otherCourse?.slice(0, 3).map((item) => {
         return (
           <>
             <CourseCard course={item} />

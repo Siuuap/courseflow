@@ -1,23 +1,26 @@
-function SearchBox({ search, onSearch }) {
-    return (
-      <div className="flex self-center flex-col relative">
-        <input
-          type="text"
-          id="search-box"
-          placeholder="Search..."
-          className="max-w-50 self-center mt-10 rounded-md h-10 border border-
-          [#CCD0D7] border-solid p-[20]  text-center"
-          value={search}
-          onChange={(e) => onSearch(e.target.value)}
-        />
-        <i>
-          <img
-            src="icons/magnifying.png"
-            className=" absolute top-[50px] left-[13px]"
-          />
-        </i>
-      </div>
-    );
-  }
+import MagnifyingIcon from "@/assets/images/icons/magnifying.svg";
+import Image from "next/image";
 
-  export default SearchBox
+function SearchBox({ search, onSearch }) {
+  return (
+    <div className="flex self-center flex-col relative mt-10 ">
+      <input
+        type="text"
+        id="search-box"
+        placeholder="Search..."
+        className="max-w-350 self-center rounded-md  border border-
+          [#CCD0D7] border-solid p-[8px] pl-[50px] w-[357px]"
+        value={search}
+        onChange={(e) => onSearch(e.target.value)}
+      />
+
+      <Image
+        src={MagnifyingIcon}
+        alt="magnifying icon"
+        className=" absolute top-[9px] left-[13px]"
+      />
+    </div>
+  );
+}
+
+export default SearchBox;

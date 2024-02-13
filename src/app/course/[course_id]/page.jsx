@@ -67,7 +67,7 @@ export default function CourseDetail({ params }) {
       </div>
 
       <div className="intersting-course-section  mt-[200px] mb-[200px]">
-        <h1 className="text-center h-[45px] text-5xl">
+        <h1 className="text-center h-[45px] text-5xl mb-16">
           Other Interesting Course
         </h1>
         <InterestingCourse />

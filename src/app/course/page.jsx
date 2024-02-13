@@ -4,7 +4,9 @@ import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import CourseList from "@/components/CourseList.jsx";
 import SearchBox from "@/components/SerachBox";
-import { Loading } from "./Loading";
+import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
+import { resolve } from "styled-jsx/css";
 
 export default function Home() {
   const [course, setCourse] = useState([]);
@@ -22,14 +24,20 @@ export default function Home() {
 
   return (
     <>
-      <div className="our-course-container flex flex-col justify-item-center mt-16 ">
+      <NavBar />
+      <div className="our-course-container flex flex-col justify-item-center mt-16">
         <h1 className="our-courses text-center text-3xl font-bold">
           Our Courses
         </h1>
 
         <SearchBox search={search} onSearch={setSearch} />
       </div>
-      {isLoading ? <Loading /> : <CourseList course={course} />}
+
+      <div className="mb-[190px]">
+        <CourseList course={course} />
+      </div>
+
+      <Footer />
     </>
   );
 }

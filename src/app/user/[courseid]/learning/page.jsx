@@ -25,8 +25,6 @@ export default function Learning({ params }) {
   function handleVideo(url, id) {
     setCurrentVideo({ url, id });
   }
-  console.log(subLessonProgress);
-  console.log(currentVideo);
 
   useEffect(() => {
     async function fetchCourseById() {
@@ -36,46 +34,35 @@ export default function Learning({ params }) {
 
       setCourseById(res.data.data);
       setSubLessonProgress(res.data.data[0].users_sub_lessons);
+      setCurrentVideo({
+        url: res.data.data[0].courses.lessons[0].sub_lessons[0].video_url,
+        id: res.data.data[0].courses.lessons[0].sub_lessons[0].sub_lesson_id,
+      });
       setIsloading(true);
     }
     fetchCourseById();
   }, [params.courseid]);
 
   function handleUpdateSubProgress(e) {
-    const currentSubProgress = (e.target.currentTime / e.target.duration) * 100;
+    let currentSubProgress = (e.target.currentTime / e.target.duration) * 100;
+    if (currentSubProgress >= 85) {
+      currentSubProgress = 100;
+    }
 
     let newSublessonProgress = subLessonProgress.map((arr) => arr);
-    console.log(newSublessonProgress);
 
-    const newProgress = newSublessonProgress.find((o, i) => {
+    const newProgress = newSublessonProgress.find((object, i) => {
       if (
-        (o.sub_lesson_id === currentVideo.id &&
-          currentSubProgress - 20 >= o.status) ||
-        100
+        object.sub_lesson_id === currentVideo.id &&
+        currentSubProgress - 15 >= object.status
       ) {
-        newSublessonProgress[i] = { status: currentSubProgress };
+        newSublessonProgress[i] = { ...object, status: currentSubProgress };
         return true;
       }
     });
-    console.log(newProgress);
-    console.log(newSublessonProgress);
+
     setSubLessonProgress(newSublessonProgress);
-    // courseById[0].users_sub_lessons.map((sub) => {
-    //   if (currentVideo.id === sub.sub_lesson_id) {
-    //     console.log(sub);
-    //     return sub;
-    //  }
-    // });
-
-    // if (currentSubProgress - 20 >= currentSubLesson[0].status || 100) {
-    //   const newProgress = subLessonProgress.map((sub) => {
-    //     if (sub.sub_lesson_id === currentSubLesson[0].sub_lesson_id) {
-    //       sub.status = currentSubProgress;
-    //     }
-    //   });
   }
-
-  console.log(currentVideo);
 
   return (
     <>
@@ -88,7 +75,7 @@ export default function Learning({ params }) {
             subLessonProgress={subLessonProgress}
           />
         )}
-        {isLoading == true && (
+        {isLoading == true && currentVideo && (
           <CourseVideo
             courseById={courseById}
             currentVideo={currentVideo}
@@ -104,9 +91,6 @@ export default function Learning({ params }) {
 function LessonAccordion({ courseById, handleVideo, subLessonProgress }) {
   const course = courseById[0];
   const [progress, setProgress] = useState(50);
-
-  console.log(subLessonProgress);
-  console.log(course);
 
   return (
     <div className="shadow-[0px_5px_5px_0px_rgba(100,109,137,1)] rounded-md px-[24px] py-[32px]">
@@ -174,8 +158,6 @@ function CourseVideo({ courseById, currentVideo, handleUpdateSubProgress }) {
 
   useEffect(() => setPlayingVideo(currentVideo), [currentVideo]);
 
-  console.log(playingVideo);
-
   return (
     <div className="my-[30px]">
       <div className="video-container ml-[15px]">
@@ -189,17 +171,7 @@ function CourseVideo({ courseById, currentVideo, handleUpdateSubProgress }) {
           onTimeUpdate={(e) => handleUpdateSubProgress(e)}
           controls
         >
-          <source
-            src={
-              !playingVideo.url
-                ? course.courses.lessons[0].sub_lessons[0].video_url
-                : playingVideo.url
-            }
-            // src="https://inhlygnonkpslheuiypd.supabase.co/storage/v1/object/public/courseintrovideo/exam_video%20(online-video-cutter.com).mp4?t=2024-02-06T17%3A04%3A04.843Z"
-            type="video/mp4"
-          >
-            {console.log(currentVideo)}
-          </source>
+          <source src={currentVideo.url} type="video/mp4"></source>
         </video>
         <div className="assignment-section mt-[50px] bg-[#E5ECF8] p-[15px] rounded-md relative">
           <div className="assignment-container flex flex-col items-start ">

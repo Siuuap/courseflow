@@ -17,7 +17,6 @@ export default function AddLesson() {
   const [lessonName, setLessonName] = useState("");
   const [subLesson, setSubLesson] = useState([
     {
-      subLessonNumber: "",
       subLessonName: "",
       video: {},
       created_at: Date.now(),
@@ -26,7 +25,10 @@ export default function AddLesson() {
 
   const { lessons, setLessons } = useLessonContext();
   function handleAddSubLesson() {
-    setSubLesson([...subLesson, { subLessonName: "", video: {} }]);
+    setSubLesson([
+      ...subLesson,
+      { subLessonName: "", video: {}, created_at: Date.now() },
+    ]);
   }
 
   function handleDeleteSubLesson(e, index) {
@@ -63,7 +65,7 @@ export default function AddLesson() {
     newLesson.push(data);
     setLessons(newLesson);
   }
-  
+
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -180,7 +182,7 @@ export default function AddLesson() {
                         <input
                           name="video"
                           id="video"
-                          className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] "
+                          className="min-[375px]:w-[200px] outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] "
                           type="file"
                           placeholder="Lesson Name"
                           value={videoUrl}

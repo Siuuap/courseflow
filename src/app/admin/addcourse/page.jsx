@@ -8,12 +8,13 @@ import CancelIcon from "@/assets/images/CancelIcon.svg";
 import uploadFile from "@/assets/images/uploadFile.svg";
 import uploadImage from "@/assets/images/uploadImage.svg";
 import uploadVideo from "@/assets/images/uploadVideo.svg";
-import XIcon from "@/assets/images/XIcon.svg";
+import playTheVideoIcon from "@/assets/images/playTheVideoIcon.svg";
 import Image from "next/image";
 import LessonBox from "@/components/LessonBox";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useLessonContext } from "@/contexts/lessonContext";
+import { useSession, signOut } from "next-auth/react";
 
 export default function AddCourse() {
   const {
@@ -35,54 +36,26 @@ export default function AddCourse() {
     attachFile,
     setAttachFile,
     setLessons,
+    previewImage,
+    setPreviewImage,
+    previewVideo,
+    setPreviewVideo,
+    previewFile,
+    setPreviewFile,
   } = useLessonContext();
-
-  // const [imgUrl, setImgUrl] = useState("");
-  // const [videoUrl, setVideoUrl] = useState("");
-  // const [fileUrl, setFileUrl] = useState("");
 
   function handleCoverImage(e) {
     setCoverImages(e.target.files[0]);
+    setPreviewImage(URL.createObjectURL(e.target.files[0]));
   }
 
   function handleRemoveImage(e, index) {
     console.log(index);
   }
+
   function handleUploadVideo(e) {
     setVideoTrailer(e.target.files[0]);
-  }
-
-  async function uploadCoverImage(e) {
-    e.preventDefault();
-    try {
-      const { data, error } = await supabaseAdmin.storage
-        .from("courseimg")
-        .upload(`test/${courseName}`, coverImages[0]);
-      console.log(`upload sucessfully`);
-
-      if (error) {
-        console.log(`error from database`, error);
-      }
-      const url = supabaseAdmin.storage
-        .from("courseimg")
-        .getPublicUrl(data.path);
-      console.log(`url`, url.data.publicUrl);
-      setImgUrl(url.data.publicUrl);
-
-      const formData = {
-        courseName,
-        price,
-        duration,
-        courseSummary,
-        courseDetail,
-        coverImages,
-        videoTrailer,
-        attachFile,
-      };
-      createNewCourse(formData);
-    } catch (error) {
-      console.log(`error from request`, error);
-    }
+    setPreviewVideo(URL.createObjectURL(e.target.files[0]));
   }
 
   async function createNewCourse(formData) {
@@ -94,9 +67,11 @@ export default function AddCourse() {
       console.log(`error from add new course request`, error);
     }
   }
+
   async function handleSubmmitCourse() {
     const id = uuidv4();
     if (lessons.length === 0) {
+      return alert("Please add at least one lesson");
     }
     const courseData = {
       courseName,
@@ -109,7 +84,6 @@ export default function AddCourse() {
       attachFile,
       lessons,
     };
-    console.log(courseData);
 
     try {
       const { data, error } = await supabaseAdmin.storage
@@ -119,7 +93,6 @@ export default function AddCourse() {
       courseData.img_url = supabaseAdmin.storage
         .from("courses")
         .getPublicUrl(data.path, coverImages).data.publicUrl;
-      console.log(courseData);
     } catch (error) {
       console.log(error);
     }
@@ -127,43 +100,67 @@ export default function AddCourse() {
     try {
       const { data, error } = await supabaseAdmin.storage
         .from("courses")
-        .upload(`${courseName}/videoTrailer/${courseName}`, videoTrailer);
+        .upload(`${courseName}/videoTrailer/videotrailer`, videoTrailer);
       courseData.video_url = supabaseAdmin.storage
         .from("courses")
         .getPublicUrl(data.path, coverImages).data.publicUrl;
     } catch (error) {
       console.log(`error`, error);
     }
-
     getUrlfromSubLesson(courseData.lessons);
-    // let videoUrl = supabaseAdmin.storage
-    //   .from("courses")
-    //   .getPublicUrl(data.path, videoTrailer);
-    // console.log(videoUrl);
+
+    console.log(`courseData`, courseData);
+    handleCreateNewCourse(courseData);
   }
   async function getUrlfromSubLesson(lesson) {
-    const lessonData = lesson;
-    console.log(`lessonData`, lessonData);
+    const lessonData = [...lesson];
     for (let i = 0; i < lessonData.length; i++) {
+      lessonData[i].lesson_number = i + 1;
       for (let j = 0; j < lessonData[i].subLesson.length; j++) {
+        lessonData[i].subLesson[j].subLesson_number = j + 1;
         const video = lessonData[i].subLesson[j].video;
-        console.log(`video`, video);
-        // try {
-        //   const { data, error } = await supabaseAdmin.storage
-        //     .from("courses")
-        //     .upload(
-        //       `${courseName}/lessons/${lessonData[i].subLesson[j].name}`,
-        //       video
-        //     );
-        //   lessonData[i].subLesson[j].video = supabaseAdmin.storage
-        //     .from("courses")
-        //     .getPublicUrl(data.path, video).data.publicUrl;
-        // } catch (error) {
-        //   console.log(`error`, error);
-        // }
+        try {
+          const { data, error } = await supabaseAdmin.storage
+            .from("courses")
+            .upload(
+              `${courseName}/lessons/lesson ${i + 1}/sublesson${j + 1}`,
+              video
+            );
+          lessonData[i].subLesson[j].video_url = supabaseAdmin.storage
+            .from("courses")
+            .getPublicUrl(data.path, video).data.publicUrl;
+        } catch (error) {
+          console.log(`error`, error);
+        }
+        setLessons(lessonData);
       }
     }
-    console.log(lessonData);
+  }
+  async function handleCreateNewCourse(data) {
+    let lessons = data.lessons;
+    for (let i = 0; i < lessons.length; i++) {
+      for (let j = 0; j < lessons[i].subLesson[j].length; j++) {
+        delete lessons[i].subLesson[j].video;
+      }
+    }
+    console.log(`lessons`, lessons);
+    const courseData = {
+      name: data.courseName,
+      description: data.courseDetail,
+      price: data.price,
+      length: data.totalLearningTime,
+      summary: data.courseSummary,
+      learning_time: data.totalLearningTime,
+      img_url: data.img_url,
+      video_url: data.video_url,
+      attached_file_url: data.attached_file_url,
+    };
+
+    // try {
+    //   const res = await axios.post("/api/courses", courseData);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   return (
@@ -276,7 +273,7 @@ export default function AddCourse() {
 
             <section className="flex flex-col gap-[8px]">
               <p>Course Image *</p>
-              {Object.keys(coverImages).length === 0 ? (
+              {!previewImage ? (
                 <label
                   htmlFor="coverImage"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -291,51 +288,69 @@ export default function AddCourse() {
                   />
                 </label>
               ) : (
-                Object.keys(coverImages).map((key) => {
-                  const file = coverImages[key];
-                  return (
-                    <div key={key} className="relative w-fit">
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={file.name}
-                        className="w-[240px] h-[240px] rounded-lg"
-                      />
-                      <p>{file.name}</p>
-                      <Image
-                        src={CancelIcon}
-                        alt="cancel icon"
-                        className="absolute -top-[7px] -right-[11px]"
-                        // onClick={(e, index) => handleRemoveImage(e, index)}
-                        onClick={() => alert("hello")}
-                      />
-                      {/* <button className="flex justify-center items-center w-[16px] h-[16px] absolute top-0 right-0 bg-[#9B2FAC] text-[#fff] rounded-[100%]">
-                          <Image src={XIcon} alt="X Icon" />
-                        </button> */}
-                    </div>
-                  );
-                })
+                <div className="relative w-fit">
+                  <img
+                    src={previewImage}
+                    alt={coverImages.name}
+                    className="w-[240px] h-[240px] rounded-lg"
+                  />
+                  <p>{coverImages.name}</p>
+                  <Image
+                    src={CancelIcon}
+                    alt="cancel icon"
+                    className="absolute -top-[7px] -right-[11px]"
+                    onClick={(e) => {
+                      setCoverImages({});
+                      setPreviewImage(null);
+                    }}
+                  />
+                </div>
               )}
             </section>
             <section className="flex flex-col gap-[8px]">
-              <label
-                htmlFor="videoTrailer"
-                className="w-fit cursor-pointer flex flex-col gap-[8px]"
-              >
-                Video Trailer *
-                <input
-                  className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
-                  id="videoTrailer"
-                  type="file"
-                  onChange={(e) => {
-                    handleUploadVideo(e);
-                  }}
-                />
-                {Object.keys(videoTrailer).length === 0 ? null : (
-                  <video src={URL.createObjectURL(videoTrailer)}></video>
-                )}
-                <p>{videoTrailer.name}</p>
-                <Image src={uploadVideo} alt="image-with-upload-video-text" />
-              </label>
+              <p> Video Trailer *</p>
+              {!previewVideo ? (
+                <label
+                  htmlFor="videoTrailer"
+                  className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                >
+                  <Image src={uploadVideo} alt="image-with-upload-image-text" />
+                  <input
+                    className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                    id="videoTrailer"
+                    type="file"
+                    onChange={(e) => {
+                      handleUploadVideo(e);
+                    }}
+                  />
+                </label>
+              ) : (
+                <div>
+                  <div className="w-fit relative ">
+                    <video
+                      src={previewVideo}
+                      alt={videoTrailer.name}
+                      className="w-[240px] h-[240px] rounded-lg "
+                    ></video>
+
+                    <Image
+                      src={CancelIcon}
+                      alt="cancel icon"
+                      className="absolute -top-[7px] -right-[11px]"
+                      onClick={(e) => {
+                        setVideoTrailer({});
+                        setPreviewVideo(null);
+                      }}
+                    />
+                    <Image
+                      src={playTheVideoIcon}
+                      alt="play the video icon"
+                      className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
+                    />
+                  </div>
+                  <p>{videoTrailer.name}</p>
+                </div>
+              )}
             </section>
             <section className="flex flex-col gap-[8px]">
               <label
@@ -345,7 +360,7 @@ export default function AddCourse() {
                 Attach File (Optional)
                 <input
                   id="attachFile"
-                  className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                  className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] "
                   type="file"
                 />
                 <Image src={uploadFile} alt="image-with-upload-file-text" />

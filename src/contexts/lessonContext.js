@@ -14,6 +14,10 @@ export function LessonProvider({ children }) {
   const [videoTrailer, setVideoTrailer] = useState({});
   const [attachFile, setAttachFile] = useState({});
   const [lessons, setLessons] = useState([]);
+
+  const [previewImage, setPreviewImage] = useState(null);
+  const [previewVideo, setPreviewVideo] = useState(null);
+  const [previewFile, setPreviewFile] = useState(null);
   return (
     <LessonContext.Provider
       value={{
@@ -35,6 +39,12 @@ export function LessonProvider({ children }) {
         setAttachFile,
         lessons,
         setLessons,
+        previewImage,
+        setPreviewImage,
+        previewVideo,
+        setPreviewVideo,
+        previewFile,
+        setPreviewFile,
       }}
     >
       {children}

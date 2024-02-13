@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 
 export async function POST(request) {
   const req = await request.json();
-  console.log(req);
   let nameParts = req.fullname.split(" ");
   let firstName = nameParts[0];
   let lastName = nameParts[1];
@@ -11,12 +10,6 @@ export async function POST(request) {
   let password = req.password;
   const dateofBirth = req.dateofBirth;
   const EducationalBackground = req.EducationalBackground;
-  console.log(email);
-  console.log(password);
-  console.log(EducationalBackground);
-  console.log(dateofBirth);
-  console.log(firstName);
-  console.log(lastName);
 
   const salt = await bcrypt.genSalt(10);
   password = await bcrypt.hash(password, salt);

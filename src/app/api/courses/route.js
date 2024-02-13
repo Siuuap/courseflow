@@ -1,7 +1,7 @@
 import { supabase } from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 import { useSearchParams } from "next/navigation";
-import multer from "multer";
+
 export async function GET(request) {
   const searchParams = request.nextUrl.searchParams;
   console.log(searchParams);

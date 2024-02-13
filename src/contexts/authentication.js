@@ -13,7 +13,7 @@ function AuthProvider(props) {
   });
   const router = useRouter();
 
-  async function login(data) {
+  async function login(e) {
     try {
       setState({ ...state, error: false, loading: true });
       const result = await axios.post(
@@ -104,4 +104,3 @@ function useAuth() {
 }
 
 export { AuthProvider, useAuth };
-

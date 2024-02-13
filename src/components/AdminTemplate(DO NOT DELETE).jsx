@@ -47,7 +47,7 @@ export default function AdminTemplate() {
         {/* Contaner (outer gray box) */}
         <section className="mx-auto min-[0px]:mt-[130px] min-[768px]:mt-[120px] m-[40px] flex flex-col items-center gap-[40px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg">
           {/* Content (inner box) don't forget to check display block*/}
-          <section className="flex flex-col min-[375px]:block min-[375px]:w-[375px] min-[768px]:w-[768px] border border-solid border-[#F6F7FC] rounded-lg min-[0px]:hidden min-[1200px]:block bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]"></section>
+          <section className="flex flex-col min-[375px]:block min-[375px]:w-[375px] min-[768px]:w-[768px] border border-solid border-[#F6F7FC] rounded-lg min-[0px]:hidden bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]"></section>
         </section>
       </section>
     </section>

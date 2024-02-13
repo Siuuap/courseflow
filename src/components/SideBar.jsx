@@ -6,8 +6,11 @@ import CourseIcon from "@/assets/images/CourseIcon.svg";
 import TaskIcon from "@/assets/images/TaskIcon.svg";
 import LogoutIcon from "@/assets/images/LogoutIcon.svg";
 import Link from "next/link";
-
+import { useSession, signOut } from "next-auth/react";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 export default function SideBar() {
+  const router = useRouter();
   return (
     <section className="border border-solid border-[#F6F7FC] border-r-[#D6D9E4] h-screen fixed bg-[#fff] w-[240px] ">
       <div className="flex flex-col items-center p-[24px] pt-[40px]">
@@ -40,7 +43,13 @@ export default function SideBar() {
         </div>
       </Link>
 
-      <div className="flex gap-[16px] py-[16px] px-[24px] hover:bg-[#F1F2F6] cursor-pointer">
+      <div
+        className="flex gap-[16px] py-[16px] px-[24px] hover:bg-[#F1F2F6] cursor-pointer"
+        onClick={() => {
+          signOut();
+          router.refresh();
+        }}
+      >
         <Image src={LogoutIcon} alt="logout-icon" width={24} height={24} />
         <p>Logout</p>
       </div>

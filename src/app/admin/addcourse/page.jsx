@@ -15,26 +15,26 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useLessonContext } from "@/contexts/lessonContext";
 import { useSession, signOut } from "next-auth/react";
-
+import FileIcon from "@/assets/images/FileIcon.svg";
 export default function AddCourse() {
   const {
-    courseName,
-    setCourseName,
+    name,
+    setName,
     price,
     setPrice,
-    totalLearningTime,
-    setTotalLearningTime,
-    courseSummary,
-    setCourseSummary,
-    courseDetail,
-    setCourseDetail,
-    coverImages,
-    setCoverImages,
+    length,
+    setLength,
+    summary,
+    setSummary,
+    description,
+    setDescription,
+    coverImage,
+    setCoverImage,
     videoTrailer,
     setVideoTrailer,
+    attachedFile,
+    setAttachedFile,
     lessons,
-    attachFile,
-    setAttachFile,
     setLessons,
     previewImage,
     setPreviewImage,
@@ -42,22 +42,42 @@ export default function AddCourse() {
     setPreviewVideo,
     previewFile,
     setPreviewFile,
+    resetToDefault,
   } = useLessonContext();
-
+  const [nameStatus, setNameStatus] = useState("");
+  const [priceStatus, setPriceStatus] = useState("");
+  const [lengthStatus, setLengthStatus] = useState("");
+  const [summaryStatus, setSummaryStatus] = useState("");
+  const [descriptionStatus, setDescriptionStatus] = useState("");
+  const [coverImageStatus, setCoverImageStatus] = useState("");
+  const [videoTrailerStatus, setVideoTrailerStatus] = useState("");
+  function setStatusToDefault() {
+    setNameStatus("");
+    setPriceStatus("");
+    setLengthStatus("");
+    setSummaryStatus("");
+    setDescriptionStatus("");
+    setCoverImageStatus("");
+    setVideoTrailerStatus("");
+  }
   function handleCoverImage(e) {
-    setCoverImages(e.target.files[0]);
-    setPreviewImage(URL.createObjectURL(e.target.files[0]));
+    if (e.target.files[0].size > 5000000) {
+      setCoverImageStatus("File size should be less than 5MB");
+      return;
+    }
+    setCoverImage(e.target.files[0]);
   }
 
-  function handleRemoveImage(e, index) {
-    console.log(index);
-  }
-
-  function handleUploadVideo(e) {
+  function handleVideoTrailer(e) {
+    if (e.target.files[0].size > 20000000) {
+      setVideoTrailerStatus("File size should be less than 20MB");
+      return;
+    }
     setVideoTrailer(e.target.files[0]);
-    setPreviewVideo(URL.createObjectURL(e.target.files[0]));
   }
-
+  function handleAttachedFile(e) {
+    setAttachedFile(e.target.files[0]);
+  }
   async function createNewCourse(formData) {
     const data = formData;
     try {
@@ -69,66 +89,154 @@ export default function AddCourse() {
   }
 
   async function handleSubmmitCourse() {
-    const id = uuidv4();
-    if (lessons.length === 0) {
-      return alert("Please add at least one lesson");
+    setStatusToDefault();
+    const course_id = uuidv4();
+
+    if (
+      !name ||
+      !price ||
+      !length ||
+      !summary ||
+      !description ||
+      !coverImage.name ||
+      !videoTrailer.name ||
+      lessons.length === 0
+    ) {
+      if (!name) {
+        setNameStatus("Please enter course name");
+      }
+      if (!price) {
+        setPriceStatus("Please enter price");
+      }
+      if (!length) {
+        setLengthStatus("Please enter total learning time");
+      }
+      if (!summary) {
+        setSummaryStatus("Please enter summary");
+      }
+
+      if (!description) {
+        setDescriptionStatus("Please enter description");
+      }
+      if (!coverImage.name) {
+        setCoverImageStatus("Please upload cover image");
+      }
+      if (!videoTrailer.name) {
+        setVideoTrailerStatus("Please upload video trailer");
+      }
+      if (lessons.length === 0) {
+        alert("Please add at least one lesson");
+      }
+      return;
     }
+
     const courseData = {
-      courseName,
+      course_id: course_id,
+      name,
       price,
-      totalLearningTime,
-      courseSummary,
-      courseDetail,
-      coverImages,
+      length,
+      summary,
+      description,
+      coverImage,
       videoTrailer,
-      attachFile,
+      attachedFile,
       lessons,
     };
+    console.log(`courseData`, courseData);
 
+    //upload cover image
     try {
       const { data, error } = await supabaseAdmin.storage
         .from("courses")
-        .upload(`${courseName}/coverImage/${coverImages.name}`, coverImages);
+        .upload(`${course_id}/coverImage/${coverImage.name}`, coverImage, {
+          cacheControl: "3600",
+          upsert: false,
+        });
 
       courseData.img_url = supabaseAdmin.storage
         .from("courses")
-        .getPublicUrl(data.path, coverImages).data.publicUrl;
+        .getPublicUrl(data.path, coverImage).data.publicUrl;
     } catch (error) {
       console.log(error);
     }
 
+    //upload video trailer
     try {
       const { data, error } = await supabaseAdmin.storage
         .from("courses")
-        .upload(`${courseName}/videoTrailer/videotrailer`, videoTrailer);
+        .upload(`${course_id}/videoTrailer/videotrailer`, videoTrailer, {
+          cacheControl: "3600",
+          upsert: false,
+        });
       courseData.video_url = supabaseAdmin.storage
         .from("courses")
-        .getPublicUrl(data.path, coverImages).data.publicUrl;
+        .getPublicUrl(data.path, videoTrailer).data.publicUrl;
     } catch (error) {
       console.log(`error`, error);
     }
-    getUrlfromSubLesson(courseData.lessons);
 
-    console.log(`courseData`, courseData);
+    //upload file
+    if (attachedFile.name) {
+      try {
+        const { data, error } = await supabaseAdmin.storage
+          .from("courses")
+          .upload(`${course_id}/file/file`, attachedFile, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+        courseData.attached_file_url = supabaseAdmin.storage
+          .from("courses")
+          .getPublicUrl(data.path, attachedFile).data.publicUrl;
+      } catch (error) {
+        console.log(`error`, error);
+      }
+    } else {
+      courseData.attached_file_url = null;
+    }
+    for (let i = 0; i < lessons.length; i++) {
+      const lesson_id = uuidv4();
+      courseData.lessons[i].lesson_id = lesson_id;
+      courseData.lessons[i].lesson_number = i + 1;
+    }
+
+    // const lessonData = [...courseData.lessons];
+    // for (let i = 0; i < lessonData.length; i++) {
+    //   for (let j = 0; j < lessonData[i].subLesson.length; j++) {
+    //     const sub_lesson_id = uuidv4();
+    //     lessonData[i].subLesson[j].sub_lesson_id = sub_lesson_id;
+    //     lessonData[i].subLesson[j].sub_lesson_number = j + 1;
+    //     const video = lessonData[i].subLesson[j].video;
+    //     setLessons(lessonData);
+    //   }
+    // }
+    // console.log(`courseData na`, courseData);
+    getUrlfromSubLesson(courseData);
     handleCreateNewCourse(courseData);
   }
-  async function getUrlfromSubLesson(lesson) {
-    const lessonData = [...lesson];
+
+  async function getUrlfromSubLesson(courseData) {
+    const lessonData = [...courseData.lessons];
     for (let i = 0; i < lessonData.length; i++) {
-      lessonData[i].lesson_number = i + 1;
       for (let j = 0; j < lessonData[i].subLesson.length; j++) {
-        lessonData[i].subLesson[j].subLesson_number = j + 1;
+        const sub_lesson_id = uuidv4();
+        lessonData[i].subLesson[j].sub_lesson_id = sub_lesson_id;
+        lessonData[i].subLesson[j].sub_lesson_number = j + 1;
         const video = lessonData[i].subLesson[j].video;
         try {
           const { data, error } = await supabaseAdmin.storage
             .from("courses")
             .upload(
-              `${courseName}/lessons/lesson ${i + 1}/sublesson${j + 1}`,
-              video
+              `${courseData.course_id}/lessons/${lessonData[i].lesson_id}/${lessonData[i].subLesson[j].sub_lesson_id}/sublesson${lessonData[i].subLesson[j].sub_lesson_number}`,
+              video,
+              {
+                cacheControl: "3600",
+                upsert: false,
+              }
             );
           lessonData[i].subLesson[j].video_url = supabaseAdmin.storage
             .from("courses")
             .getPublicUrl(data.path, video).data.publicUrl;
+          delete lessonData[i].subLesson[j].video;
         } catch (error) {
           console.log(`error`, error);
         }
@@ -136,31 +244,27 @@ export default function AddCourse() {
       }
     }
   }
+
   async function handleCreateNewCourse(data) {
-    let lessons = data.lessons;
-    for (let i = 0; i < lessons.length; i++) {
-      for (let j = 0; j < lessons[i].subLesson[j].length; j++) {
-        delete lessons[i].subLesson[j].video;
-      }
-    }
-    console.log(`lessons`, lessons);
     const courseData = {
-      name: data.courseName,
-      description: data.courseDetail,
+      course_id: data.course_id,
+      name: data.name,
+      description: data.description,
       price: data.price,
-      length: data.totalLearningTime,
-      summary: data.courseSummary,
-      learning_time: data.totalLearningTime,
+      length: data.length,
+      summary: data.summary,
       img_url: data.img_url,
       video_url: data.video_url,
       attached_file_url: data.attached_file_url,
+      lessons: data.lessons,
     };
-
-    // try {
-    //   const res = await axios.post("/api/courses", courseData);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    console.log(`courseData before post`, courseData);
+    try {
+      const res = await axios.post("/api/courses", courseData);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -183,7 +287,10 @@ export default function AddCourse() {
 
             <div className="flex gap-[10px] ">
               <Link href="/admin/courselist">
-                <button className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]">
+                <button
+                  className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
+                  onClick={() => resetToDefault()}
+                >
                   Cancel
                 </button>
               </Link>
@@ -203,24 +310,33 @@ export default function AddCourse() {
         <section className="mx-auto min-[375px]:mt-[80px] min-[1440px]:mt-[120px] m-[40px] flex flex-col items-center justify-center gap-[30px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg w-full ">
           {/* Content (inner box) */}
           <section className="flex flex-col gap-[40px] min-[375px]:w-[350px] min-[768px]:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
-            <section className="flex flex-col gap-[4px]">
+            <section className="relative flex flex-col gap-[4px]">
               <label htmlFor="name">Course Name *</label>
               <input
-                className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]"
+                className={`${
+                  nameStatus ? `border-[red]` : `border-[#D6D9E4]`
+                } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
                 id="name"
                 type="text"
                 placeholder="Course Name"
-                value={courseName}
+                value={name}
                 onChange={(e) => {
-                  setCourseName(e.target.value);
+                  setName(e.target.value);
                 }}
               />
+              {nameStatus && (
+                <p className="absolute text-[red] top-[105%] text-[14px]">
+                  {nameStatus}
+                </p>
+              )}
             </section>
             <section className="flex gap-[40px] min-[375px]:flex-col min-[768px]:flex-row">
-              <section className="flex flex-col gap-[4px] basis-1/2">
+              <section className="relative flex flex-col gap-[4px] basis-1/2">
                 <label htmlFor="price">Price *</label>
                 <input
-                  className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]"
+                  className={`${
+                    priceStatus ? `border-[red]` : `border-[#D6D9E4]`
+                  } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
                   id="price"
                   type="number"
                   placeholder="Price"
@@ -229,51 +345,78 @@ export default function AddCourse() {
                     setPrice(e.target.value);
                   }}
                 />
+                {priceStatus && (
+                  <p className="absolute text-[red] top-[105%] text-[14px]">
+                    {priceStatus}
+                  </p>
+                )}
               </section>
-              <section className="flex flex-col gap-[4px] basis-1/2">
-                <label htmlFor="price">Total Learning Time *</label>
+              <section className="relative flex flex-col gap-[4px] basis-1/2">
+                <label htmlFor="length">Total Learning Time *</label>
                 <input
-                  className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]"
+                  className={`${
+                    lengthStatus ? `border-[red]` : `border-[#D6D9E4]`
+                  } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
                   id="length"
                   type="text"
                   placeholder="Total Learning Time"
-                  value={totalLearningTime}
+                  value={length}
                   onChange={(e) => {
-                    setTotalLearningTime(e.target.value);
+                    setLength(e.target.value);
                   }}
                 />
+                {lengthStatus && (
+                  <p className="absolute text-[red] top-[105%] text-[14px]">
+                    {lengthStatus}
+                  </p>
+                )}
               </section>
             </section>
-            <section className="flex flex-col gap-[4px]">
+            <section className="relative flex flex-col gap-[4px]">
               <label htmlFor="summary">Course Summary *</label>
               <input
-                className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]"
+                className={`${
+                  summaryStatus ? `border-[red]` : `border-[#D6D9E4]`
+                } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
                 id="summary"
                 type="text"
                 placeholder="Course Summary"
-                value={courseSummary}
+                value={summary}
                 onChange={(e) => {
-                  setCourseSummary(e.target.value);
+                  setSummary(e.target.value);
                 }}
               />
+              {summaryStatus && (
+                <p className="absolute text-[red] top-[105%] text-[14px]">
+                  {summaryStatus}
+                </p>
+              )}
             </section>
-            <section className="flex flex-col gap-[4px]">
+            <section className="relative flex flex-col gap-[4px]">
               <label htmlFor="description">Course Detail *</label>
               <input
-                className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]"
+                className={`${
+                  descriptionStatus ? `border-[red]` : `border-[#D6D9E4]`
+                } outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]`}
                 id="description"
                 type="text"
                 placeholder="Course Detail"
-                value={courseDetail}
+                value={description}
                 onChange={(e) => {
-                  setCourseDetail(e.target.value);
+                  setDescription(e.target.value);
                 }}
               />
+              {descriptionStatus && (
+                <p className="absolute text-[red] top-[105%] text-[14px]">
+                  {descriptionStatus}
+                </p>
+              )}
             </section>
 
-            <section className="flex flex-col gap-[8px]">
+            <section className={`relative flex flex-col gap-[8px] `}>
               <p>Course Image *</p>
-              {!previewImage ? (
+
+              {!coverImage.name ? (
                 <label
                   htmlFor="coverImage"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -283,33 +426,37 @@ export default function AddCourse() {
                     className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
                     id="coverImage"
                     type="file"
-                    accept="image/jpeg imgae/jpg image/png video/*"
+                    accept="image/jpeg, imgae/jpg, image/png "
                     onChange={handleCoverImage}
                   />
+                  {coverImageStatus && (
+                    <p className="absolute top-[102%] text-[red] text-[14px]">
+                      {coverImageStatus}
+                    </p>
+                  )}
                 </label>
               ) : (
                 <div className="relative w-fit">
                   <img
-                    src={previewImage}
-                    alt={coverImages.name}
+                    src={URL.createObjectURL(coverImage)}
+                    alt={coverImage.name}
                     className="w-[240px] h-[240px] rounded-lg"
                   />
-                  <p>{coverImages.name}</p>
+                  <p>{coverImage.name}</p>
                   <Image
                     src={CancelIcon}
                     alt="cancel icon"
                     className="absolute -top-[7px] -right-[11px]"
                     onClick={(e) => {
-                      setCoverImages({});
-                      setPreviewImage(null);
+                      setCoverImage({});
                     }}
                   />
                 </div>
               )}
             </section>
-            <section className="flex flex-col gap-[8px]">
+            <section className="relative flex flex-col gap-[8px]">
               <p> Video Trailer *</p>
-              {!previewVideo ? (
+              {!videoTrailer.name ? (
                 <label
                   htmlFor="videoTrailer"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -319,16 +466,22 @@ export default function AddCourse() {
                     className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
                     id="videoTrailer"
                     type="file"
+                    accept="video/mp4,video/mov,video/avi"
                     onChange={(e) => {
-                      handleUploadVideo(e);
+                      handleVideoTrailer(e);
                     }}
                   />
+                  {videoTrailerStatus && (
+                    <p className="absolute top-[102%] text-[red] text-[14px]">
+                      {videoTrailerStatus}
+                    </p>
+                  )}
                 </label>
               ) : (
                 <div>
                   <div className="w-fit relative ">
                     <video
-                      src={previewVideo}
+                      src={URL.createObjectURL(videoTrailer)}
                       alt={videoTrailer.name}
                       className="w-[240px] h-[240px] rounded-lg "
                     ></video>
@@ -339,7 +492,6 @@ export default function AddCourse() {
                       className="absolute -top-[7px] -right-[11px]"
                       onClick={(e) => {
                         setVideoTrailer({});
-                        setPreviewVideo(null);
                       }}
                     />
                     <Image
@@ -353,18 +505,36 @@ export default function AddCourse() {
               )}
             </section>
             <section className="flex flex-col gap-[8px]">
-              <label
-                htmlFor="attachFile"
-                className="w-fit cursor-pointer flex flex-col gap-[8px]"
-              >
-                Attach File (Optional)
-                <input
-                  id="attachFile"
-                  className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] "
-                  type="file"
-                />
-                <Image src={uploadFile} alt="image-with-upload-file-text" />
-              </label>
+              <p>Attach File (Optional)</p>
+              {!attachedFile.name ? (
+                <label
+                  htmlFor="attachFile"
+                  className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                >
+                  <input
+                    id="attachFile"
+                    className="outline-none min-[375px]:w-[200px] border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                    type="file"
+                    onChange={(e) => {
+                      handleAttachedFile(e);
+                    }}
+                  />
+                  <Image src={uploadFile} alt="image-with-upload-file-text" />
+                </label>
+              ) : (
+                <div className="relative flex bg-[#E5ECF8] w-[200px] h-[90px] items-center justify-start p-[16px] rounded-lg gap-[30px]">
+                  <Image src={FileIcon} alt={attachedFile.name} />
+                  <Image
+                    src={CancelIcon}
+                    alt="cancel icon"
+                    className="absolute -top-[7px] -right-[11px]"
+                    onClick={(e) => {
+                      setAttachedFile({});
+                    }}
+                  />
+                  <p>{attachedFile.name}</p>
+                </div>
+              )}
             </section>
           </section>
           <LessonBox />

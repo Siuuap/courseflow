@@ -26,7 +26,7 @@ export default function LessonBox() {
   }
 
   return (
-    <section className=" min-[375px]:w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] ">
+    <section className=" min-[375px]:w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]">
       <section className="flex justify-between items-center mb-[30px] w-full p-[16px]">
         <p className="text-[24px] ">Lesson</p>
         <Link href="/admin/addlesson">
@@ -36,19 +36,22 @@ export default function LessonBox() {
         </Link>
       </section>
       {/* Lesson Table */}
-      <section className="hidden min-[768px]:flex bg-[#E4E6ED] rounded-t-lg px-[24px] py-[10px] mx-[16px] min-[1440px]:m-[0px]">
-        <section className="hidden min-[768px]:block w-[56px] "></section>
-        <section className="hidden min-[768px]:block w-[48px] "></section>
-        <section className="hidden min-[768px]:block w-[500px] ">
-          <p>Lesson name</p>
+      {lessons.length === 0 ? null : (
+        <section className="hidden min-[768px]:flex bg-[#E4E6ED] rounded-t-lg px-[24px] py-[10px] mx-[16px] min-[1440px]:m-[0px]">
+          <section className="hidden min-[768px]:block w-[56px] "></section>
+          <section className="hidden min-[768px]:block w-[48px] "></section>
+          <section className="hidden min-[768px]:block w-[500px] ">
+            <p>Lesson name</p>
+          </section>
+          <section className="w-[396px] ">
+            <p>Sub-lesson</p>
+          </section>
+          <section className="w-[120px] text-center">
+            <p>Action</p>
+          </section>
         </section>
-        <section className="w-[396px] ">
-          <p>Sub-lesson</p>
-        </section>
-        <section className="w-[120px] text-center">
-          <p>Action</p>
-        </section>
-      </section>
+      )}
+
       <section className="flex flex-col gap-[10px] min-[768px]:gap-[0px]">
         {lessons.map(({ lessonName, subLesson }, index) => {
           return (

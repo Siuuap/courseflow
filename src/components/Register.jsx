@@ -21,21 +21,21 @@ const RegisterForm = () => {
   const [EducationalBackgroundError, setEducationalBackgroundError] =
     useState("");
 
-    const handleChange = (e) => {
-      let { name, value } = e.target;
-  
-      if (name === 'fullName') {
-          const nameParts = value.split(' ');
-  
-          const firstName = nameParts[0];
-          const lastName = nameParts.length > 1 ? nameParts[1] : '';
-  
-          // Now you can use firstName and lastName as needed
-          // For example, you can add them to the values object:
-          value = { firstName, lastName };
-      }
-  
-      setValues({ ...values, [name]: value ,[e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    let { name, value } = e.target;
+
+    if (name === "fullName") {
+      const nameParts = value.split(" ");
+
+      const firstName = nameParts[0];
+      const lastName = nameParts.length > 1 ? nameParts[1] : "";
+
+      // Now you can use firstName and lastName as needed
+      // For example, you can add them to the values object:
+      value = { firstName, lastName };
+    }
+
+    setValues({ ...values, [name]: value, [e.target.name]: e.target.value });
   };
 
   const validateDateofBirth = (date) => {

@@ -7,7 +7,7 @@ import TaskIcon from "@/assets/images/TaskIcon.svg";
 import LogoutIcon from "@/assets/images/LogoutIcon.svg";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Router } from "next/router";
+
 import { useRouter } from "next/navigation";
 export default function SideBar() {
   const router = useRouter();

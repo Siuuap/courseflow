@@ -54,7 +54,7 @@ export default function DashBoardPage() {
     });
     return `${day}/${month}/${year} ${time}`;
   }
-
+  console.log(courseData);
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -138,7 +138,7 @@ export default function DashBoardPage() {
                   return (
                     <tr key={index} className="flex justify-center">
                       <td className=" flex w-[48px] items-center justify-center">
-                        {course_id}
+                        {index + 1}
                       </td>
                       <td className="w-[96px] flex justify-center items-center">
                         {/* <Image

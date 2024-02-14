@@ -21,7 +21,20 @@ export default function Learning({ params }) {
   const [isLoading, setIsloading] = useState(false);
 
   const [subLessonProgress, setSubLessonProgress] = useState([]);
+  const [progress, setProgress] = useState(0);
 
+  useEffect(() => {
+    function sumProgress() {
+      const progressPercentage = subLessonProgress.map((sub) => sub.status);
+      const sumProgress =
+        progressPercentage.reduce(function (acc, cur) {
+          return acc + cur;
+        }, 0) / progressPercentage.length;
+      console.log(sumProgress);
+      setProgress(Math.floor(sumProgress));
+    }
+    sumProgress();
+  }, [subLessonProgress]);
   function handleVideo(url, id) {
     setCurrentVideo({ url, id });
   }
@@ -42,8 +55,6 @@ export default function Learning({ params }) {
     }
     fetchCourseById();
   }, [params.courseid]);
-
-  console.log(courseById[0]);
 
   function handleUpdateSubProgress(e) {
     let currentSubProgress = (e.target.currentTime / e.target.duration) * 100;
@@ -87,6 +98,7 @@ export default function Learning({ params }) {
             courseById={courseById}
             handleVideo={handleVideo}
             subLessonProgress={subLessonProgress}
+            progress={progress}
           />
         )}
         {isLoading == true && currentVideo && (
@@ -102,9 +114,14 @@ export default function Learning({ params }) {
   );
 }
 
-function LessonAccordion({ courseById, handleVideo, subLessonProgress }) {
+function LessonAccordion({
+  courseById,
+  handleVideo,
+  subLessonProgress,
+  progress,
+}) {
   const course = courseById[0];
-  const [progress, setProgress] = useState(50);
+
   console.log(subLessonProgress);
 
   function findMatchId(subLessonProgress, sublesson) {

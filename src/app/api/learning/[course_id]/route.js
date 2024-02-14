@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
   const courseId = params.course_id;
-  const userId = 53;
+  const userId = 32;
   const { data, error } = await supabase
     .from("users_courses")
     .select("*,courses(*,lessons(*,sub_lessons(*))),users_sub_lessons(*)")
@@ -18,7 +18,7 @@ export async function GET(req, { params }) {
 
 export async function PUT(request, { params }) {
   const courseId = params.course_id;
-  const userId = 53;
+  const userId = 32;
   const searchParams = request.nextUrl.searchParams;
   const status = searchParams.get("status");
   const subLessonId = searchParams.get("subid");

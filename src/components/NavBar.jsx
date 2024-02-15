@@ -35,24 +35,10 @@ function NavBar() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  //const [userData, setUserData] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-
-  const getUser = async () => {
-    console.log(session);
-    if (status === "authenticated") {
-      setIsLoading(false);
-    }
-  };
-
   const handleLogout = async () => {
     signOut();
     router.push("/");
   };
-
-  useEffect(() => {
-    getUser();
-  }, [status]);
 
   return (
     <div className=" shadow-md">
@@ -71,14 +57,14 @@ function NavBar() {
           </div>
 
           <div className="w-[189px]">
-            {!session?.user?.firstName && (
+            {status === "unauthenticated" && (
               <Link href="/login">
                 <Button className="bg-[#2F5FAC] px-8 py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white font-bold text-[16px] leading-6">
                   Login
                 </Button>
               </Link>
             )}
-            {session?.user?.firstName &&  (
+            {status === "authenticated" && (
               <div className="flex  flex-row  justify-start items-center gap-[10px]">
                 <img
                   src={session.user.url}
@@ -91,7 +77,11 @@ function NavBar() {
                   </MenuButton>
                   <MenuList width={"10px"} minW={"200px"}>
                     {/* MenuItems are not rendered unless Menu is open */}
-                    <MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        router.push("/user/edit_profile");
+                      }}
+                    >
                       <Image src={ProfileIcon} className=" mr-[10px]" />
                       Profile
                     </MenuItem>
@@ -107,7 +97,11 @@ function NavBar() {
                       <Image src={HomeworkIcon} className=" mr-[10px]" />
                       My Homework
                     </MenuItem>
-                    <MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        router.push("/user/desire_course");
+                      }}
+                    >
                       <Image src={DesireCourseIcon} className=" mr-[10px]" />
                       My Desire Courses
                     </MenuItem>

@@ -16,6 +16,9 @@ import { v4 as uuidv4 } from "uuid";
 import { useLessonContext } from "@/contexts/lessonContext";
 import { useSession, signOut } from "next-auth/react";
 import FileIcon from "@/assets/images/FileIcon.svg";
+
+import { useRouter } from "next/navigation";
+
 export default function AddCourse() {
   const {
     name,
@@ -51,6 +54,8 @@ export default function AddCourse() {
   const [descriptionStatus, setDescriptionStatus] = useState("");
   const [coverImageStatus, setCoverImageStatus] = useState("");
   const [videoTrailerStatus, setVideoTrailerStatus] = useState("");
+
+  const router = useRouter();
   function setStatusToDefault() {
     setNameStatus("");
     setPriceStatus("");
@@ -142,7 +147,6 @@ export default function AddCourse() {
       attachedFile,
       lessons,
     };
-    console.log(`courseData`, courseData);
 
     //upload cover image
     try {
@@ -193,57 +197,77 @@ export default function AddCourse() {
     } else {
       courseData.attached_file_url = null;
     }
+
+    // Generate lesson_id and sub_lesson_id
     for (let i = 0; i < lessons.length; i++) {
       const lesson_id = uuidv4();
       courseData.lessons[i].lesson_id = lesson_id;
       courseData.lessons[i].lesson_number = i + 1;
     }
 
-    // const lessonData = [...courseData.lessons];
-    // for (let i = 0; i < lessonData.length; i++) {
-    //   for (let j = 0; j < lessonData[i].subLesson.length; j++) {
-    //     const sub_lesson_id = uuidv4();
-    //     lessonData[i].subLesson[j].sub_lesson_id = sub_lesson_id;
-    //     lessonData[i].subLesson[j].sub_lesson_number = j + 1;
-    //     const video = lessonData[i].subLesson[j].video;
-    //     setLessons(lessonData);
-    //   }
-    // }
-    // console.log(`courseData na`, courseData);
-    getUrlfromSubLesson(courseData);
-    handleCreateNewCourse(courseData);
-  }
-
-  async function getUrlfromSubLesson(courseData) {
-    const lessonData = [...courseData.lessons];
-    for (let i = 0; i < lessonData.length; i++) {
-      for (let j = 0; j < lessonData[i].subLesson.length; j++) {
+    for (let i = 0; i < courseData.lessons.length; i++) {
+      for (let j = 0; j < courseData.lessons[i].subLesson.length; j++) {
         const sub_lesson_id = uuidv4();
-        lessonData[i].subLesson[j].sub_lesson_id = sub_lesson_id;
-        lessonData[i].subLesson[j].sub_lesson_number = j + 1;
-        const video = lessonData[i].subLesson[j].video;
+        courseData.lessons[i].subLesson[j].sub_lesson_id = sub_lesson_id;
+        courseData.lessons[i].subLesson[j].sub_lesson_number = j + 1;
+      }
+    }
+
+    for (let i = 0; i < courseData.lessons.length; i++) {
+      for (let j = 0; j < courseData.lessons[i].subLesson.length; j++) {
+        const video = courseData.lessons[i].subLesson[j].video;
         try {
           const { data, error } = await supabaseAdmin.storage
             .from("courses")
             .upload(
-              `${courseData.course_id}/lessons/${lessonData[i].lesson_id}/${lessonData[i].subLesson[j].sub_lesson_id}/sublesson${lessonData[i].subLesson[j].sub_lesson_number}`,
+              `${courseData.course_id}/lessons/${courseData.lessons[i].lesson_id}/${courseData.lessons[i].subLesson[j].sub_lesson_id}/sublesson${courseData.lessons[i].subLesson[j].sub_lesson_number}`,
               video,
               {
                 cacheControl: "3600",
                 upsert: false,
               }
             );
-          lessonData[i].subLesson[j].video_url = supabaseAdmin.storage
+          courseData.lessons[i].subLesson[j].video_url = supabaseAdmin.storage
             .from("courses")
             .getPublicUrl(data.path, video).data.publicUrl;
-          delete lessonData[i].subLesson[j].video;
+          delete courseData.lessons[i].subLesson[j].video;
         } catch (error) {
           console.log(`error`, error);
         }
-        setLessons(lessonData);
       }
     }
+
+    // getUrlfromSubLesson(courseData);
+    handleCreateNewCourse(courseData);
   }
+
+  // async function getUrlfromSubLesson(data) {
+  //   const lessonData = [...data.lessons];
+  //   for (let i = 0; i < lessonData.length; i++) {
+  //     for (let j = 0; j < lessonData[i].subLesson.length; j++) {
+  //       const video = lessonData[i].subLesson[j].video;
+  //       try {
+  //         const { data, error } = await supabaseAdmin.storage
+  //           .from("courses")
+  //           .upload(
+  //             `${courseData.course_id}/lessons/${lessonData[i].lesson_id}/${lessonData[i].subLesson[j].sub_lesson_id}/sublesson${lessonData[i].subLesson[j].sub_lesson_number}`,
+  //             video,
+  //             {
+  //               cacheControl: "3600",
+  //               upsert: false,
+  //             }
+  //           );
+  //         lessonData[i].subLesson[j].video_url = supabaseAdmin.storage
+  //           .from("courses")
+  //           .getPublicUrl(data.path, video).data.publicUrl;
+  //         delete lessonData[i].subLesson[j].video;
+  //       } catch (error) {
+  //         console.log(`error`, error);
+  //       }
+  //       setLessons(lessonData);
+  //     }
+  //   }
+  // }
 
   async function handleCreateNewCourse(data) {
     const courseData = {
@@ -265,6 +289,8 @@ export default function AddCourse() {
     } catch (error) {
       console.log(error);
     }
+    resetToDefault();
+    router.push("/admin/courselist");
   }
 
   return (

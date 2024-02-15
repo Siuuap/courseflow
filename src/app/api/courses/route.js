@@ -82,8 +82,6 @@ export async function POST(request) {
     }
   }
 
-  let subLessons = [];
-
   for (let i = 0; i < lessons.length; i++) {
     const subLesson = lessons[i].subLesson;
     console.log(`sublesson na`, subLesson);

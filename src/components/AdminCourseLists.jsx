@@ -9,6 +9,28 @@ import axios from "axios";
 import { useState } from "react";
 import { useAuth } from "@/contexts/authentication";
 export default function AdminCourseLists({ courseData }) {
+  async function getCourses() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/courses?search=${search}&page=${page}`
+      );
+      setCourseData(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function deleteCourses(course_id) {
+    const id = course_id;
+    if (window.confirm("Are you sure you want to delete?")) {
+      try {
+        await axios.delete(`http://localhost:3000/api/courses/${id}`);
+        getCourses();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
   return (
     <>
       {courseData.map(
@@ -53,15 +75,14 @@ export default function AdminCourseLists({ courseData }) {
                 <section className="flex justify-center gap-[20px] basis-full mt-[12px]">
                   <button
                     className="flex justify-center items-center basis-1/2 bg-[#F1F2F6] hover:bg-[#C8CCDB] rounded-lg p-2"
-                    onClick={() => {}}
+                    onClick={() => {
+                      deleteCourses(course_id);
+                    }}
                   >
                     <Image
                       className="w-[24px] h-[24px] fill-red-600"
                       src={deleteIcon}
                       alt="delete-icon"
-                      onClick={() => {
-                        deleteCourses(course_id);
-                      }}
                     />
                     Delete
                   </button>

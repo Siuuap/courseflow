@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
 import Link from "next/link";
-import { supabaseAdmin } from "@/utils/db";
+import { supabase } from "@/utils/db";
 
 import SideBar from "@/components/SideBar";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useLessonContext } from "@/contexts/lessonContext";
 import { useSession, signOut } from "next-auth/react";
 import FileIcon from "@/assets/images/FileIcon.svg";
-
+import HamburgerMenu from "@/components/HamburgerMenu";
 import { useRouter } from "next/navigation";
 
 export default function AddCourse() {
@@ -150,14 +150,14 @@ export default function AddCourse() {
 
     //upload cover image
     try {
-      const { data, error } = await supabaseAdmin.storage
+      const { data, error } = await supabase.storage
         .from("courses")
         .upload(`${course_id}/coverImage/${coverImage.name}`, coverImage, {
           cacheControl: "3600",
           upsert: false,
         });
 
-      courseData.img_url = supabaseAdmin.storage
+      courseData.img_url = supabase.storage
         .from("courses")
         .getPublicUrl(data.path, coverImage).data.publicUrl;
     } catch (error) {
@@ -166,13 +166,13 @@ export default function AddCourse() {
 
     //upload video trailer
     try {
-      const { data, error } = await supabaseAdmin.storage
+      const { data, error } = await supabase.storage
         .from("courses")
         .upload(`${course_id}/videoTrailer/videotrailer`, videoTrailer, {
           cacheControl: "3600",
           upsert: false,
         });
-      courseData.video_url = supabaseAdmin.storage
+      courseData.video_url = supabase.storage
         .from("courses")
         .getPublicUrl(data.path, videoTrailer).data.publicUrl;
     } catch (error) {
@@ -182,13 +182,13 @@ export default function AddCourse() {
     //upload file
     if (attachedFile.name) {
       try {
-        const { data, error } = await supabaseAdmin.storage
+        const { data, error } = await supabase.storage
           .from("courses")
           .upload(`${course_id}/file/file`, attachedFile, {
             cacheControl: "3600",
             upsert: false,
           });
-        courseData.attached_file_url = supabaseAdmin.storage
+        courseData.attached_file_url = supabase.storage
           .from("courses")
           .getPublicUrl(data.path, attachedFile).data.publicUrl;
       } catch (error) {
@@ -217,7 +217,7 @@ export default function AddCourse() {
       for (let j = 0; j < courseData.lessons[i].subLesson.length; j++) {
         const video = courseData.lessons[i].subLesson[j].video;
         try {
-          const { data, error } = await supabaseAdmin.storage
+          const { data, error } = await supabase.storage
             .from("courses")
             .upload(
               `${courseData.course_id}/lessons/${courseData.lessons[i].lesson_id}/${courseData.lessons[i].subLesson[j].sub_lesson_id}/sublesson${courseData.lessons[i].subLesson[j].sub_lesson_number}`,
@@ -227,7 +227,7 @@ export default function AddCourse() {
                 upsert: false,
               }
             );
-          courseData.lessons[i].subLesson[j].video_url = supabaseAdmin.storage
+          courseData.lessons[i].subLesson[j].video_url = supabase.storage
             .from("courses")
             .getPublicUrl(data.path, video).data.publicUrl;
           delete courseData.lessons[i].subLesson[j].video;
@@ -240,34 +240,6 @@ export default function AddCourse() {
     // getUrlfromSubLesson(courseData);
     handleCreateNewCourse(courseData);
   }
-
-  // async function getUrlfromSubLesson(data) {
-  //   const lessonData = [...data.lessons];
-  //   for (let i = 0; i < lessonData.length; i++) {
-  //     for (let j = 0; j < lessonData[i].subLesson.length; j++) {
-  //       const video = lessonData[i].subLesson[j].video;
-  //       try {
-  //         const { data, error } = await supabaseAdmin.storage
-  //           .from("courses")
-  //           .upload(
-  //             `${courseData.course_id}/lessons/${lessonData[i].lesson_id}/${lessonData[i].subLesson[j].sub_lesson_id}/sublesson${lessonData[i].subLesson[j].sub_lesson_number}`,
-  //             video,
-  //             {
-  //               cacheControl: "3600",
-  //               upsert: false,
-  //             }
-  //           );
-  //         lessonData[i].subLesson[j].video_url = supabaseAdmin.storage
-  //           .from("courses")
-  //           .getPublicUrl(data.path, video).data.publicUrl;
-  //         delete lessonData[i].subLesson[j].video;
-  //       } catch (error) {
-  //         console.log(`error`, error);
-  //       }
-  //       setLessons(lessonData);
-  //     }
-  //   }
-  // }
 
   async function handleCreateNewCourse(data) {
     const courseData = {
@@ -304,11 +276,11 @@ export default function AddCourse() {
         {/* Box2 upper*/}
         <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px] z-10">
           <div className="flex w-full items-center justify-between">
-            <div className="flex">
+            <div className="flex gap-[8px] items-center">
               <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
                 Add Course
               </p>
-              <button className="min-[1440px]:hidden">💩</button>
+              <HamburgerMenu />
             </div>
 
             <div className="flex gap-[10px] ">

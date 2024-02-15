@@ -71,14 +71,14 @@ export default function DashBoardPage() {
               <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
                 Course
               </p>
-              <div className="min-[1440px]:hidden">
-                <HamburgerMenu />
+              <div className="min-[1440px]:hidden border border-solid border-[#D6D9E4] w-[30px] h-[30px] flex justify-center items-center rounded-md">
+                <HamburgerMenu className="p-[20px]" />
               </div>
             </div>
 
             <div className="flex gap-[10px] ">
               <input
-                className="outline-none min-[0px]:absolute min-[0px]:top-[60px] min-[0px]:left-0 min-[0px]:w-full min-[768px]:static min-[768px]:block min-[768px]:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px]"
+                className="outline-none min-[0px]:absolute min-[0px]:top-[60px] min-[0px]:left-0 min-[0px]:w-full min-[768px]:static min-[768px]:block min-[768px]:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] min-[1440px]:w-[320`px]"
                 type="search"
                 placeholder="Search..."
                 value={search}
@@ -143,7 +143,7 @@ export default function DashBoardPage() {
                       key={index}
                       className="flex flex-col min-[768px]:flex-row min-[768px]:justify-center min-[1200px]:justify-center gap-[14px] min-[768px]:gap-[20px] min-[1200px]:gap-[0px] "
                     >
-                      <div className="flex w-[48px] items-center justify-center min-[0px]:hidden min-[1200px]:block min-[1200px]:px-[16px] min-[1200px]:py-[32px]  text-center">
+                      <div className="flex w-[48px] items-center justify-center min-[0px]:hidden min-[1200px]:block min-[1200px]:px-[0px] min-[1200px]:py-[32px] text-center">
                         {index + 1}
                       </div>
                       <div className="min-[0px]:w-full min-[768px]:w-[50%] flex justify-center items-center min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[1200px]:w-[96px] ">

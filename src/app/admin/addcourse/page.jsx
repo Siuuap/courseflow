@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "@/utils/db";
 
@@ -220,7 +220,7 @@ export default function AddCourse() {
           const { data, error } = await supabase.storage
             .from("courses")
             .upload(
-              `${courseData.course_id}/lessons/${courseData.lessons[i].lesson_id}/${courseData.lessons[i].subLesson[j].sub_lesson_id}/sublesson${courseData.lessons[i].subLesson[j].sub_lesson_number}`,
+              `${courseData.course_id}/lessons/${courseData.lessons[i].lesson_id}/sub_lessons/${courseData.lessons[i].subLesson[j].sub_lesson_id}/sublesson${courseData.lessons[i].subLesson[j].sub_lesson_number}`,
               video,
               {
                 cacheControl: "3600",
@@ -280,7 +280,9 @@ export default function AddCourse() {
               <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
                 Add Course
               </p>
-              <HamburgerMenu />
+              <div className="min-[1440px]:hidden border border-solid border-[#D6D9E4] w-[30px] h-[30px] flex justify-center items-center rounded-md">
+                <HamburgerMenu className="p-[20px]" />
+              </div>
             </div>
 
             <div className="flex gap-[10px] ">
@@ -392,10 +394,10 @@ export default function AddCourse() {
             </section>
             <section className="relative flex flex-col gap-[4px]">
               <label htmlFor="description">Course Detail *</label>
-              <input
+              <textarea
                 className={`${
                   descriptionStatus ? `border-[red]` : `border-[#D6D9E4]`
-                } outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]`}
+                } outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] h-[192px] resize-none overflow-y-auto`}
                 id="description"
                 type="text"
                 placeholder="Course Detail"
@@ -403,7 +405,7 @@ export default function AddCourse() {
                 onChange={(e) => {
                   setDescription(e.target.value);
                 }}
-              />
+              ></textarea>
               {descriptionStatus && (
                 <p className="absolute text-[red] top-[105%] text-[14px]">
                   {descriptionStatus}

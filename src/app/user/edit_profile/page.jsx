@@ -1,36 +1,72 @@
 "use client";
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import Button from "@/components/Button";
+import { useLessonContext } from "@/contexts/lessonContext";
+import uploadImage from "@/assets/images/uploadImage.svg";
+import CancelIcon from "@/assets/images/CancelIcon.svg";
+import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 
 export default function EditProfileForm() {
   const [values, setValues] = useState({
     firstname: "",
     lastname: "",
-    dateofBirth: "",
+    dateOfBirth: "",
     EducationalBackground: "",
     email: "",
+    image: undefined,
   });
 
-  const [userId, setUserId] = useState([]);
+  // const getValue = (e) => {
+  //   setValues({ ...values, [e.target.name]: e.target.value });
+  // };
 
-  const [image, setImage] = useState("");
+  const {
+    courseName,
+    setCourseName,
+    price,
+    setPrice,
+    totalLearningTime,
+    setTotalLearningTime,
+    courseSummary,
+    setCourseSummary,
+    courseDetail,
+    setCourseDetail,
+    coverImages,
+    setCoverImages,
+    videoTrailer,
+    setVideoTrailer,
+    lessons,
+    attachFile,
+    setAttachFile,
+    setLessons,
+    previewImage,
+    setPreviewImage,
+    previewVideo,
+    setPreviewVideo,
+    previewFile,
+    setPreviewFile,
+  } = useLessonContext();
 
-  const getValue = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
-  };
+  function handleCoverImage(e) {
+    setCoverImages(e.target.files[0]);
+    setPreviewImage(URL.createObjectURL(e.target.files[0]));
+  }
+
+  function handleRemoveImage(e, index) {
+    console.log(index);
+  }
 
   const [errors, setErrors] = useState({
     firstname: false,
     lastname: false,
-    dateofBirthempty: false,
-    dateofBirth: false,
+    dateOfBirthempty: false,
+    dateOfBirth: false,
     email: false,
   });
 
@@ -52,14 +88,14 @@ export default function EditProfileForm() {
     return isValid;
   };
 
-  const validateDateofBirth = (date) => {
+  const validateDateOfBirth = (date) => {
     const currentDate = new Date();
     const selectedDate = date ? new Date(date) : new Date(NaN);
     const ageDifference =
       currentDate.getFullYear() - selectedDate.getFullYear();
 
     const errors = {
-      dateofBirth: ageDifference <= 6 || isNaN(selectedDate.getTime()),
+      dateOfBirth: ageDifference <= 6 || isNaN(selectedDate.getTime()),
     };
 
     setErrors((prevErrors) => ({
@@ -67,17 +103,17 @@ export default function EditProfileForm() {
       ...errors,
     }));
 
-    return errors.dateofBirth;
+    return errors.dateOfBirth;
   };
 
-  const handleSubmit = (event) => {
+  const handleUpdateProfile = (event) => {
     event.preventDefault();
 
     setErrors({
       firstname: !checkFirstName(values.firstname),
       lastname: !checkLastName(values.lastname),
-      dateofBirthempty: !values.dateofBirth.trim(),
-      dateofBirth: validateDateofBirth(values.dateofBirth),
+      dateOfBirthempty: !values.dateOfBirth.trim(),
+      dateOfBirth: validateDateOfBirth(values.dateOfBirth),
       EducationalBackground: !values.eb.trim(),
       email: !(values.email.trim() && values.email.includes("@")),
       image: !values.image.trim(),
@@ -88,7 +124,24 @@ export default function EditProfileForm() {
   const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState({});
-  // const []
+
+  const [userId, setUserId] = useState("");
+  const [firstName, setFirstName] = useState(userProfile?.first_name);
+  const [lastName, setLastName] = useState(userProfile?.last_name);
+  const [dateOfBirth, setDateOfBirth] = useState(userProfile?.date_of_birth);
+  const [education, setEducation] = useState(
+    userProfile?.educational_background
+  );
+  const [email, setEmail] = useState(userProfile?.email);
+  const [image, setImage] = useState(session?.user?.url || "" || null);
+
+  // const [userId, setUserId] = useState("");
+  // const [firstName, setFirstName] = useState(null);
+  // const [lastName, setLastName] = useState(null);
+  // const [dateOfBirth, setDateOfBirth] = useState(null);
+  // const [education, setEducation] = useState(null);
+  // const [email, setEmail] = useState(null);
+  // const [image, setImage] = useState(null);
 
   const getUser = async () => {
     console.log(session);
@@ -100,8 +153,16 @@ export default function EditProfileForm() {
       setUserData({
         ...session.user,
       });
+
       setUserProfile(res.data.data);
       console.log(res.data.data);
+
+      setFirstName(session?.user?.firstName);
+      setLastName(session?.user?.lastName);
+      setDateOfBirth(userProfile?.date_of_birth);
+      setEducation(userProfile?.educational_background);
+      setEmail(session?.user?.email);
+      setImage(session?.user?.img_url);
     }
     setLoading(false);
   };
@@ -110,48 +171,45 @@ export default function EditProfileForm() {
     getUser();
   }, [status]);
 
-  // async function deleteImage(userId) {
-  //   const id = userId;
-  //   try {
-  //     await axios.delete({ img_url });
-  //     setUserProfile();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-  // console.log(userProfile);
-  // useEffect(() => {
-  //   getUser();
-  // });
-
-  const deleteImage = (event) => {
-    event.preventDefault();
-    delete userProfile.img_url;
-    setImage({ ...image });
-  };
-
-  // const handleRemoveImage = (event, avatarKey) => {
-  //   event.preventDefault();
-  //   delete avatars[avatarKey];
-  //   setAvatars({ ...avatars });
+  // const handleInputChange = (event) => {
+  //   setFirstName(event.target.value);
+  //   setLastName(event.target.value);
+  //   setDateOfBirth(event.target.value);
+  //   setEducation(event.target.value);
+  //   setEmail(event.target.value);
+  //   //setImage(event.target.value);
   // };
 
-  // async function fetchUserId() {
-  //   if (session?.user.userId != undefined) {
-  //     const id = session?.user.userId;
-  //     const res = await axios.get(`/api/user/${id}`);
-  //     setUserId(res.data.data);
-  //   }
-  // }
+  // const handleInputChange = (event) => {
+  //   setValues({
+  //     ...values,
+  //     firstname: event.target.value,
+  //     lastname: event.target.value,
+  //     dateOfBirth: event.target.value,
+  //     EducationalBackground: event.target.value,
+  //     email: event.target.value,
+  //   });
+  // };
 
-  // useEffect(() => fetchUserId(), [session?.user?.userId]);
-  // console.log(session?.user.userId);
-  //console.log(userId);
+  const deleteImage = (event) => {
+    if (event && event.preventDefault) {
+      event.preventDefault();
+      const updatedUserProfile = { ...userProfile, img_url: "" };
+      setUserProfile(updatedUserProfile);
+    } else {
+      console.error("Invalid event object:", event);
+    }
+  };
+
+  const handleFileChange = (event) => {
+    const uniqueId = Date.now();
+    const file = event.target.files[0];
+  };
 
   return (
     <>
       <NavBar />
-      <section className="relative flex gap-0.5 justify-between items-start px-5 w-full h-[955px] max-md:flex-wrap max-md:mt-10 max-md:max-w-full mx-[auto]">
+      <section className="flex gap-0.5 justify-between items-start px-5 w-full h-[955px] max-md:flex-wrap max-md:mt-10 max-md:max-w-full mx-[auto]">
         <Image
           className="absolute pt-[100px] pl-[43px]"
           src="/images/editProfile.png"
@@ -165,21 +223,103 @@ export default function EditProfileForm() {
             Profile
           </div>
           <div className="flex flex-row w-[930px] h-[531px] mt-[72px]">
-            <div className="bg-blue-100 w-[358px] h-[358px] rounded-[16px] flex justify-center items-center">
-              <img
-                className="absolute rounded-[16px]"
-                src={userProfile?.img_url}
-                alt="image_profile"
-                width={358}
-                height={358}
-              />
+            <div className="relative bg-blue-100 w-[358px] h-[358px] rounded-[16px] flex justify-center items-center">
+              <label htmlFor="upload">
+                Image
+                <input
+                  id="upload"
+                  name="avatar"
+                  type="file"
+                  placeholder="Choose image here"
+                  multiple
+                  hidden
+                  accept="image/*"
+                  // 1.4
+                  onChange={handleFileChange}
+                />
+              </label>
               <button
-                className="absolute left-[590px] top-[223px] w-[32px] h-[32px] rounded-3xl bg-[#9B2FAC] text-white"
+                className="absolute left-[320px] top-[10px] w-[32px] h-[32px] rounded-3xl bg-[#9B2FAC] text-white z-10"
                 onClick={() => {
-                  deleteImage(userId);
+                  alert();
+                  deleteImage("");
                 }}>
                 x
               </button>
+              {userProfile?.img_url ? (
+                <img
+                  className="absolute rounded-[16px]"
+                  src={userProfile?.img_url}
+                  alt="image_profile"
+                  width={358}
+                  height={358}
+                />
+              ) : (
+                <div>
+                  <label
+                    htmlFor="coverImage"
+                    className="w-fit cursor-pointer flex flex-col gap-[8px]">
+                    <Image
+                      className="rounded-[16px]"
+                      src={uploadImage}
+                      alt="image-with-upload"
+                      width={358}
+                      height={358}
+                    />
+                    <input
+                      className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                      id="coverImage"
+                      type="file"
+                      accept="image/jpeg image/jpg image/png"
+                      onChange={handleCoverImage}
+                    />
+                  </label>
+                </div>
+              )}
+
+              {/* <section className="flex flex-col gap-[8px]">
+                {!previewImage ? (
+                  <div>
+                    <label
+                      htmlFor="coverImage"
+                      className="w-fit cursor-pointer flex flex-col gap-[8px]">
+                      <Image
+                        className="rounded-[16px]"
+                        src={uploadImage}
+                        alt="image-with-upload-image-text"
+                        width={358}
+                        height={358}
+                      />
+                      <input
+                        className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                        id="coverImage"
+                        type="file"
+                        accept="image/jpeg image/jpg image/png"
+                        onChange={handleCoverImage}
+                      />
+                    </label>
+                  </div>
+                ) : (
+                  <div className="relative w-fit z-20">
+                    <Image
+                      src={image}
+                      // src={previewImage}
+                      alt={image}
+                      className="w-[358px] h-[358px] rounded-lg"
+                    />
+                    <p>{coverImages.name}</p>
+                    <Image
+                      src={CancelIcon}
+                      alt="cancel icon"
+                      className="absolute -top-[7px] -right-[11px]"
+                      onClick={(e) => {
+                        setCoverImages({});
+                        setPreviewImage(null);
+                      }}
+                    />
+                  </div>
+                )}
+              </section> */}
             </div>
             <form className="absolute flex flex-col pl-[477px]">
               <div className="flex flex-row">
@@ -192,8 +332,8 @@ export default function EditProfileForm() {
                   <input
                     id="userId"
                     name="firstname"
-                    onChange={getValue}
-                    value={values.firstname}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    value={firstName}
                     placeholder={userProfile?.first_name || "Enter firstName"}
                     className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
                   {errors.firstname && (
@@ -207,9 +347,9 @@ export default function EditProfileForm() {
                     Lastname
                   </label>
                   <input
-                    name="Lastname"
-                    onChange={getValue}
-                    value={values.Lastname}
+                    name="lastname"
+                    onChange={(e) => setLastName(e.target.value)}
+                    value={lastName}
                     // placeholder={session?.user?.lastName || "Enter lastname"}
                     placeholder={userProfile?.last_name || "Enter lastName"}
                     className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
@@ -223,22 +363,20 @@ export default function EditProfileForm() {
                 className="pb-[4px] text-black text-[16px] max-md:max-w-full">
                 Date of Birth
               </label>
-              console.log({userProfile?.date_of_birth}); console.log(
-              {values.dateofBirth});
               <input
-                name="dateofBirth"
-                value={values.dateofBirth}
-                onChange={getValue}
+                name="dateOfBirth"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
                 type="date"
                 // placeholder={session?.user?.dateofBirth || "Enter DD/MM/YY"}
                 placeholder={userProfile?.date_of_birth || "Enter YYYY-MM-DD"}
                 className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
-              {errors.dateofBirthempty && (
+              {errors.dateOfBirthempty && (
                 <div className="text-red-600">
                   Please enter your date of birth
                 </div>
               )}
-              {errors.dateofBirth && (
+              {errors.dateOfBirth && (
                 <div className="text-red-600">
                   You must be at least 6 years old
                 </div>
@@ -250,8 +388,8 @@ export default function EditProfileForm() {
               </label>
               <input
                 name="EducationalBackground"
-                onChange={getValue}
-                value={values.EducationalBackground}
+                onChange={(e) => setEducation(e.target.value)}
+                value={education}
                 type="text"
                 // placeholder="Enter Educational Background"
                 placeholder={
@@ -269,16 +407,17 @@ export default function EditProfileForm() {
               </label>
               <input
                 name="email"
-                value={values.email}
-                onChange={getValue}
-                // placeholder="Enter Email"
+                //value={userProfile?.email}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                //placeholder={userProfile?.email || "Enter email"}
                 placeholder={session?.user?.email || "Enter email"}
                 className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
               {errors.password && (
                 <p className=" text-red-600">กรุณากรอก email</p>
               )}
               <Button
-                onClick={handleSubmit}
+                onClick={handleUpdateProfile}
                 className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] bg-[#2F5FAC] rounded-xl shadow justify-center items-center gap-2.5 inline-flex text-white">
                 Update Profile
               </Button>

@@ -30,11 +30,11 @@ export default function Learning() {
         .eq("user_id", session.user?.userId);
 
       const courseCompleteFiltered = data.filter((item) => {
-        return item.status == 2;
+        return item.status == 100;
       });
 
       const courseInProgressFiltered = data.filter((item) => {
-        return item.status == 0 || item.status == 1;
+        return item.status >= 0 && item.status <= 99;
       });
 
       setAllCourses(data);

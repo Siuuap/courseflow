@@ -114,7 +114,7 @@ export default function AddCourse() {
     }
   }
 
-  async function handleSubmmitCourse() {
+  async function handleSubmitCourse() {
     setStatusToDefault();
     const course_id = uuidv4();
 
@@ -319,7 +319,7 @@ export default function AddCourse() {
 
               <button
                 className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
-                onClick={handleSubmmitCourse}
+                onClick={handleSubmitCourse}
               >
                 Create
               </button>
@@ -328,7 +328,7 @@ export default function AddCourse() {
         </section>
 
         {/* Box2 Courselist Box*/}
-        {/* Contaner (outer gray box) */}
+        {/* Container (outer gray box) */}
         <section className="mx-auto min-[375px]:mt-[80px] min-[1440px]:mt-[120px] m-[40px] flex flex-col items-center justify-center gap-[30px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg w-full ">
           {/* Content (inner box) */}
           <section className="flex flex-col gap-[40px] min-[375px]:w-[350px] min-[768px]:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
@@ -448,7 +448,7 @@ export default function AddCourse() {
                     className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
                     id="coverImage"
                     type="file"
-                    accept="image/jpeg, imgae/jpg, image/png "
+                    accept="image/jpeg, image/jpg, image/png "
                     onChange={handleCoverImage}
                   />
                   {coverImageStatus && (

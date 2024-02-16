@@ -14,6 +14,7 @@ import NavBar from "@/components/NavBar";
 import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
+import Button from "@/components/Button.jsx";
 
 export default function Learning({ params }) {
   const { data: session, status } = useSession();
@@ -108,8 +109,6 @@ export default function Learning({ params }) {
           }
           `
         );
-        console.log("progress");
-        console.log(progress);
       }
       updateProgress();
     }
@@ -135,6 +134,14 @@ export default function Learning({ params }) {
             handleUpdateSubProgress={handleUpdateSubProgress}
           />
         )}
+      </div>
+      <div className="btn-container flex flex-row justify-between w-[1440px] h-[100px] mx-[150px] ">
+        <Button className="text-[#2F5FAC] font-bold w-[162px] h-[60px]">
+          Previous Lesson
+        </Button>
+        <Button className="bg-[#2F5FAC] text-white font-bold w-[162px] h-[60px] rounded-lg">
+          Next Lesson
+        </Button>
       </div>
       <Footer />
     </>
@@ -265,13 +272,13 @@ function CourseVideo({ courseById, currentVideo, handleUpdateSubProgress }) {
               className="w-[692px] h-[96px] rounded-md"
             ></input>
             <div className="send-assignment flex flex-row justify-between w-[710px]">
-              <button className="w-[204px] h-[60px] bg-[#2F5FAC] text-white rounded mt-[20px]">
+              <button className="w-[204px] h-[60px] bg-[#2F5FAC] text-white rounded-lg mt-[20px]">
                 Send Assignment
               </button>
               <p className="mt-[45px] text-[#646D89]">Assign within 2 days</p>
             </div>
           </div>
-          <p className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded">
+          <p className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded-lg">
             Pending
           </p>
         </div>

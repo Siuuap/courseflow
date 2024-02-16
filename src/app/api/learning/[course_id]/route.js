@@ -7,7 +7,9 @@ export async function GET(req, { params }) {
   const userId = searchParams.get("userid");
   const { data, error } = await supabase
     .from("users_courses")
-    .select("*,courses(*,lessons(*,sub_lessons(*))),users_sub_lessons(*)")
+    .select(
+      "*,courses(*,lessons(*,sub_lessons(*,assignments(*)))),users_sub_lessons(*)"
+    )
     .eq("user_id", userId)
     .eq("course_id", courseId);
 

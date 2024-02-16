@@ -9,7 +9,7 @@ import Image from "next/image";
 import SideBar from "@/components/SideBar";
 import axios from "axios";
 import { useState } from "react";
-import AdminCourseLists from "@/components/AdminCourseLists";
+
 import HamburgerMenu from "@/components/HamburgerMenu";
 export default function DashBoardPage() {
   const [courseData, setCourseData] = useState([]);

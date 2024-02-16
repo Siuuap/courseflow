@@ -10,7 +10,7 @@ import uploadImage from "@/assets/images/uploadImage.svg";
 import uploadVideo from "@/assets/images/uploadVideo.svg";
 import playTheVideoIcon from "@/assets/images/playTheVideoIcon.svg";
 import Image from "next/image";
-import LessonBox from "@/components/LessonBox";
+
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useLessonContext } from "@/contexts/lessonContext";

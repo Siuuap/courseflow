@@ -14,16 +14,17 @@ import DragIcon from "@/assets/images/DragIcon.svg";
 import { useLessonContext } from "@/contexts/lessonContext";
 import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
-export default function AddLesson() {
+
+export default function AddLesson({ params }) {
   const router = useRouter();
-  const { lessons, setLessons } = useLessonContext();
-  const [lessonName, setLessonName] = useState("");
-  const [subLesson, setSubLesson] = useState([
-    {
-      subLessonName: "",
-      video: {},
-    },
-  ]);
+
+  const index = params.lesson_index;
+  const { name, lessons, setLessons } = useLessonContext();
+  console.log(lessons[index]);
+  const titleCourseName = name;
+  const titleLessonName = lessons[index]?.lessonName;
+  const [lessonName, setLessonName] = useState(lessons[index]?.lessonName);
+  const [subLesson, setSubLesson] = useState(lessons[index]?.subLesson);
   const [lessonNameStatus, setLessonNameStatus] = useState("");
   const [subLessonNameStatus, setSubLessonNameStatus] = useState([]);
   function handleAddSubLesson() {
@@ -62,7 +63,7 @@ export default function AddLesson() {
     setSubLesson(subLessonList);
   }
 
-  function handleSubmit(e, index) {
+  function handleUpdateLesson(e, index) {
     setLessonNameStatus("");
     if (!lessonName) {
       setLessonNameStatus("Lesson Name is required");
@@ -86,7 +87,7 @@ export default function AddLesson() {
       lessonName: lessonName,
       subLesson: subLesson,
     };
-    newLesson.push(data);
+    newLesson.splice(index, 1, data);
     setLessons(newLesson);
     router.push("/admin/addcourse");
   }
@@ -111,7 +112,9 @@ export default function AddLesson() {
               <div>
                 <p className="min-[375px]:text-[14px] font-medium leading-[30px]  text-[#9AA1B9]">
                   Course{" "}
-                  <span className="text-[#000]">'Coursename' 'LessonName'</span>
+                  <span className="text-[#000]">
+                    &apos;{titleCourseName}&apos; &apos;{titleLessonName}&apos;
+                  </span>
                 </p>
                 <div className="flex">
                   <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
@@ -132,10 +135,10 @@ export default function AddLesson() {
               <button
                 className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {
-                  handleSubmit();
+                  handleUpdateLesson();
                 }}
               >
-                Create
+                Edit
               </button>
             </div>
           </div>
@@ -175,7 +178,7 @@ export default function AddLesson() {
               </label>
             </div>
             <section className="flex flex-col gap-[24px]">
-              {subLesson.map(({ subLessonName, videoUrl }, index) => {
+              {subLesson?.map(({ subLessonName, videoUrl }, index) => {
                 return (
                   <section
                     key={index}
@@ -208,7 +211,7 @@ export default function AddLesson() {
                       </div>
                       <div className="flex flex-col gap-[8px]">
                         <p>Video *</p>
-                        {!subLesson[index].video.name ? (
+                        {!subLesson[index].video?.name ? (
                           <label
                             htmlFor="video"
                             className="w-fit cursor-pointer flex flex-col gap-[8px]"

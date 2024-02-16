@@ -220,6 +220,7 @@ export default function AddCourse() {
     }
 
     // Generate lesson_id and sub_lesson_id
+
     for (let i = 0; i < lessons.length; i++) {
       const lesson_id = uuidv4();
       courseData.lessons[i].lesson_id = lesson_id;
@@ -302,7 +303,7 @@ export default function AddCourse() {
                 Add Course
               </p>
               <div className="min-[1440px]:hidden border border-solid border-[#D6D9E4] w-[30px] h-[30px] flex justify-center items-center rounded-md">
-                <HamburgerMenu className="p-[20px]" />
+                <HamburgerMenu />
               </div>
             </div>
 
@@ -645,14 +646,17 @@ export default function AddCourse() {
                         />
                         <p className="min-[768px]:hidden">Delete</p>
                       </button>
-                      <button className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 min-[768px]:p-0 min-[768px]:hover:bg-transparent">
+                      <Link
+                        href={`/admin/addcourse/editlesson/${index}`}
+                        className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 min-[768px]:p-0 min-[768px]:hover:bg-transparent"
+                      >
                         <Image
                           className="w-[24px] h-[24px]"
                           src={editIcon}
                           alt="edit-icon"
                         />
                         <p className="min-[768px]:hidden">Edit</p>
-                      </button>
+                      </Link>
                     </section>
                   </section>
                 );

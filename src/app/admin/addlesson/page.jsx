@@ -14,9 +14,11 @@ import DragIcon from "@/assets/images/DragIcon.svg";
 import { useLessonContext } from "@/contexts/lessonContext";
 import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
+import HamburgerMenu from "@/components/HamburgerMenu";
+
 export default function AddLesson() {
   const router = useRouter();
-  const { lessons, setLessons } = useLessonContext();
+  const { name, lessons, setLessons } = useLessonContext();
   const [lessonName, setLessonName] = useState("");
   const [subLesson, setSubLesson] = useState([
     {
@@ -110,14 +112,15 @@ export default function AddLesson() {
               </Link>
               <div>
                 <p className="min-[375px]:text-[14px] font-medium leading-[30px]  text-[#9AA1B9]">
-                  Course{" "}
-                  <span className="text-[#000]">'Coursename' 'LessonName'</span>
+                  Course <span className="text-[#000]">&apos;{name}&apos;</span>
                 </p>
-                <div className="flex">
+                <div className="flex gap-[8px]">
                   <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
                     Add Lesson
                   </p>
-                  <button className="min-[1440px]:hidden">💩</button>
+                  <div className="min-[1440px]:hidden border border-solid border-[#D6D9E4] w-[30px] h-[30px] flex justify-center items-center rounded-md">
+                    <HamburgerMenu />
+                  </div>
                 </div>
               </div>
             </div>

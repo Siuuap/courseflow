@@ -78,7 +78,7 @@ function NavBar() {
                 </Button>
               </Link>
             )}
-            {session?.user?.firstName &&  (
+            {session?.user?.firstName && (
               <div className="flex  flex-row  justify-start items-center gap-[10px]">
                 <img
                   src={session.user.url}
@@ -107,7 +107,11 @@ function NavBar() {
                       <Image src={HomeworkIcon} className=" mr-[10px]" />
                       My Homework
                     </MenuItem>
-                    <MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        router.push("/user/desire_course");
+                      }}
+                    >
                       <Image src={DesireCourseIcon} className=" mr-[10px]" />
                       My Desire Courses
                     </MenuItem>

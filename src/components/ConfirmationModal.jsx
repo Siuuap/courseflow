@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import { supabase } from "@/utils/db";
 import {
@@ -19,7 +19,6 @@ import {
 
 function ConfirmationModal({ course }) {
   const { data: session, status } = useSession();
-  const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(true);
 
   const [modalHeaderMessage, setModalHeaderMessage] = useState("");
@@ -29,26 +28,21 @@ function ConfirmationModal({ course }) {
   const [desiredCourseButtonMessage, setDesiredCourseButtonMessage] = useState(
     "Get in Desire Course"
   );
-  const [subscribeButtonMessage, setSubscribeButtonMessage] = useState(
-    "Subscribe This Course"
-  );
+
   const [checkSubscribe, setCheckSubscribe] = useState(false);
   const [checkDesiredCourse, setCheckDesiredCourse] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
+  const params = useParams();
 
   useEffect(() => {
     getUser();
   }, [status]);
 
   async function getUser() {
-    if (status === "authenticated") {
-      setUserData({
-        ...session.user,
-      });
-
-      try {
+    try {
+      if (status === "authenticated") {
         const { data, error } = await supabase
           .from("status_view")
           .select("*")
@@ -73,35 +67,22 @@ function ConfirmationModal({ course }) {
           throw new Error("Not subscribed");
         }
         setCheckSubscribe(true);
-        setSubscribeButtonMessage("Start learning");
-      } catch {
-        console.log("Not subscribed");
-        setSubscribeButtonMessage("Subscribe This Course");
-        setCheckSubscribe(false);
       }
-    }
-
-    setLoading(false);
-  }
-
-  function handleSubscription() {
-    if (checkSubscribe === false) {
-      openModal();
-    } else {
-      router.push("/");
+      setLoading(false);
+    } catch {
+      setCheckSubscribe(false);
+      setLoading(false);
     }
   }
 
   async function handleDesiredCourse() {
     const data = {
-      user_id: userData.userId,
+      user_id: session?.user?.userId,
       course_id: course[0].course_id,
     };
 
     try {
       if (status === "authenticated" && checkDesiredCourse === false) {
-        console.log("to add");
-
         const result = await axios.post(
           "http://localhost:3000/api/desired-courses",
           data
@@ -110,15 +91,10 @@ function ConfirmationModal({ course }) {
         setDesiredCourseButtonMessage("Remove from Desire Course");
         setCheckDesiredCourse(true);
       } else if (status === "authenticated" && checkDesiredCourse === true) {
-        console.log("to remove");
-        console.log(data);
-
         const result = await axios.put(
           "http://localhost:3000/api/desired-courses",
           data
         );
-
-        console.log("test2");
 
         setDesiredCourseButtonMessage("Get in Desire Course");
         setCheckDesiredCourse(false);
@@ -129,7 +105,7 @@ function ConfirmationModal({ course }) {
         setDenyButtonMessage(`Not now`);
         onOpen();
       }
-    } catch (error){
+    } catch (error) {
       console.log(error);
     }
   }
@@ -154,16 +130,14 @@ function ConfirmationModal({ course }) {
     if (status === "authenticated") {
       try {
         const data = {
-          user_id: userData.userId,
+          user_id: session?.user?.userId,
           course_id: course[0].course_id,
         };
         const result = await axios.post(
           "http://localhost:3000/api/subscribe",
           data
         );
-
         setCheckSubscribe(true);
-        setSubscribeButtonMessage("Start learning");
         onClose();
       } catch (error) {
         setModalHeaderMessage("Something went wrong.");
@@ -172,31 +146,44 @@ function ConfirmationModal({ course }) {
         setDenyButtonMessage(`cancel`);
       }
     } else {
-      router.push("/login");
+      router.push(`/login?previous=course/${params.course_id}`);
     }
   }
 
   return (
     <>
-      {!checkSubscribe && (
+      {!checkSubscribe && !loading && (
+        <>
+          <button
+            onClick={() => {
+              handleDesiredCourse();
+            }}
+            className=" text-base text-[#F47E20] border-2 border-[#F47E20] hover:bg-[#f1c5a1] rounded-xl mt-5 font-bold px-4 py-6 w-[310px] h-[60px] leading-3"
+          >
+            {desiredCourseButtonMessage}
+          </button>
+
+          <button
+            onClick={() => {
+              openModal();
+            }}
+            className="bg-[#2F5FAC] hover:bg-[#6897e4] rounded-xl text-white text-base font-bold  mt-6 px-4 py-5 w-[310px] h-[60px] text-center leading-4"
+          >
+            Subscribe This Course
+          </button>
+        </>
+      )}
+
+      {checkSubscribe && (
         <button
           onClick={() => {
-            handleDesiredCourse();
+            router.push(`/user/${params.course_id}/learning`);
           }}
-          className=" text-base text-[#F47E20] border-2 border-[#F47E20] hover:bg-[#f1c5a1] rounded-xl mt-5 font-bold px-4 py-6 w-[310px] h-[60px] leading-3"
+          className="bg-[#2F5FAC] hover:bg-[#6897e4] rounded-xl text-white text-base font-bold  mt-6 px-4 py-5 w-[310px] h-[60px] text-center leading-4"
         >
-          {desiredCourseButtonMessage}
+          Start Learning
         </button>
       )}
-      <button
-        onClick={() => {
-          handleSubscription();
-        }}
-        className="bg-[#2F5FAC] hover:bg-[#6897e4] rounded-xl text-white text-base font-bold  mt-6 px-4 py-5 w-[310px] h-[60px] text-center leading-4"
-      >
-        {subscribeButtonMessage}
-      </button>
-
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent my="auto" maxW="528px">

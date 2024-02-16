@@ -8,7 +8,9 @@ async function login(credentials) {
     try {
       const { data: users, error } = await supabase
         .from("users")
-        .select(`user_id, email,password, user_profiles(first_name,last_name,img_url)`)
+        .select(
+          `user_id, email,password, user_profiles(first_name,last_name,img_url)`
+        )
         .eq("email", credentials.email);
 
       if (!users[0]) {
@@ -42,11 +44,10 @@ async function login(credentials) {
         .select("*")
         .eq("email", credentials.email);
 
-      console.log(users);
       if (!users[0]) {
         throw new Error("wrong credentials");
       }
-      console.log("test3");
+
       const isValidPassword = await bcrypt.compare(
         credentials.password,
         users[0].password
@@ -96,7 +97,6 @@ export const authOptions = {
       async authorize(credentials) {
         try {
           const user = await login(credentials);
-          console.log(user);
 
           return user;
         } catch (error) {
@@ -107,7 +107,7 @@ export const authOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         if (user.role === "user") {
           token.userId = user.user_id;
@@ -121,6 +121,10 @@ export const authOptions = {
           token.adminId = user.admin_id;
           token.role = user.role;
         }
+      }
+
+      if (trigger == "update") {
+        return { ...token, ...session.user };
       }
 
       return token;

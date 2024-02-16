@@ -47,3 +47,4 @@ export async function PUT(request) {
 
   return NextResponse.json({ message: "deleted course successfully" });
 }
+

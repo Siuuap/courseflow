@@ -63,7 +63,9 @@ function NavBar() {
                 </Button>
               </Link>
             )}
+
             {status === "authenticated" && (
+
               <div className="flex  flex-row  justify-start items-center gap-[10px]">
                 <img
                   src={session.user.url}

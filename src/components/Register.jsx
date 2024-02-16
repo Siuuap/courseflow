@@ -22,20 +22,9 @@ const RegisterForm = () => {
     useState("");
 
   const handleChange = (e) => {
-    let { name, value } = e.target;
 
-    if (name === "fullName") {
-      const nameParts = value.split(" ");
+    setValues({ ...values, [e.target.name]: e.target.value });
 
-      const firstName = nameParts[0];
-      const lastName = nameParts.length > 1 ? nameParts[1] : "";
-
-      // Now you can use firstName and lastName as needed
-      // For example, you can add them to the values object:
-      value = { firstName, lastName };
-    }
-
-    setValues({ ...values, [name]: value, [e.target.name]: e.target.value });
   };
 
   const validateDateofBirth = (date) => {
@@ -64,7 +53,9 @@ const RegisterForm = () => {
     };
 
     if (dateOfBirthError) {
-      setDateError(true); // เปลี่ยน state เป็น true เมื่อมีข้อผิดพลาด
+      setDateError(
+        "Please enter your date of birth and be at least 6 years old"
+      );
     } else {
       setDateError("");
     }
@@ -96,8 +87,15 @@ const RegisterForm = () => {
     } else {
       setPasswordError("");
     }
-    const response = await register(data);
-    console.log(data);
+    if (
+      data.fullname &&
+      data.dateofBirth &&
+      data.EducationalBackground &&
+      data.email &&
+      data.password !== ""
+    ) {
+      const response = await register(data);
+    }
   };
 
   return (
@@ -132,9 +130,7 @@ const RegisterForm = () => {
               className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
             ></input>
             {dateError && (
-              <p className="absolute top-[70%] text-red-600">
-                Please enter your date of birth and be at least 6 years old
-              </p>
+              <p className="absolute top-[70%] text-red-600">{dateError}</p>
             )}
           </div>
 

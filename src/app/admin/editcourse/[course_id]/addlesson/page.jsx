@@ -105,7 +105,7 @@ export default function AddLesson() {
         <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px] z-[2]">
           <div className="flex w-full items-center justify-between ">
             <div className="flex items-center gap-[16px]">
-              <Link href="/admin/addcourse">
+              <Link href={`/admin/editcourse/${course_id}`}>
                 <button>
                   <Image src={arrowBack} alt="arrow back icon" />
                 </button>

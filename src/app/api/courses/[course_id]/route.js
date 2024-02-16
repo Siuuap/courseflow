@@ -5,7 +5,7 @@ export async function GET(request, { params }) {
   console.log(`id is:`, id);
   const { data, error } = await supabase
     .from("courses")
-    .select("*, lessons(name ,sub_lessons(name)))")
+    .select("*, lessons(* ,sub_lessons(*)))")
     .eq("course_id", id);
   console.log(`data:`, data);
   if (error) {

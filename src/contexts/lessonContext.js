@@ -5,38 +5,53 @@ import { createContext, useContext, useState } from "react";
 const LessonContext = createContext(null);
 
 export function LessonProvider({ children }) {
-  const [courseName, setCourseName] = useState("");
+  const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [totalLearningTime, setTotalLearningTime] = useState("");
-  const [courseSummary, setCourseSummary] = useState("");
-  const [courseDetail, setCourseDetail] = useState("");
-  const [coverImages, setCoverImages] = useState({});
+  const [length, setLength] = useState("");
+  const [summary, setSummary] = useState("");
+  const [description, setDescription] = useState("");
+  const [coverImage, setCoverImage] = useState({});
   const [videoTrailer, setVideoTrailer] = useState({});
-  const [attachFile, setAttachFile] = useState({});
+  const [attachedFile, setAttachedFile] = useState({});
   const [lessons, setLessons] = useState([]);
 
   const [previewImage, setPreviewImage] = useState(null);
   const [previewVideo, setPreviewVideo] = useState(null);
   const [previewFile, setPreviewFile] = useState(null);
+
+  function resetToDefault() {
+    setName("");
+    setPrice("");
+    setLength("");
+    setSummary("");
+    setDescription("");
+    setCoverImage({});
+    setVideoTrailer({});
+    setAttachedFile({});
+    setLessons([]);
+    setPreviewImage(null);
+    setPreviewVideo(null);
+    setPreviewFile(null);
+  }
   return (
     <LessonContext.Provider
       value={{
-        courseName,
-        setCourseName,
+        name,
+        setName,
         price,
         setPrice,
-        totalLearningTime,
-        setTotalLearningTime,
-        courseSummary,
-        setCourseSummary,
-        courseDetail,
-        setCourseDetail,
-        coverImages,
-        setCoverImages,
+        length,
+        setLength,
+        summary,
+        setSummary,
+        description,
+        setDescription,
+        coverImage,
+        setCoverImage,
         videoTrailer,
         setVideoTrailer,
-        attachFile,
-        setAttachFile,
+        attachedFile,
+        setAttachedFile,
         lessons,
         setLessons,
         previewImage,
@@ -45,6 +60,7 @@ export function LessonProvider({ children }) {
         setPreviewVideo,
         previewFile,
         setPreviewFile,
+        resetToDefault,
       }}
     >
       {children}

@@ -22,7 +22,9 @@ const RegisterForm = () => {
     useState("");
 
   const handleChange = (e) => {
+
     setValues({ ...values, [e.target.name]: e.target.value });
+
   };
 
   const validateDateofBirth = (date) => {

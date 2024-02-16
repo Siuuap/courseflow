@@ -52,6 +52,6 @@ export const config = {
     "/admin/editcourse/:path*",
     "/login/:path*",
     "/register/:path*",
-    "/user",
+    "/user/:path*",
   ],
 };

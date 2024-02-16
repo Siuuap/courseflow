@@ -11,7 +11,7 @@ import ConfirmationModal from "@/components/ConfirmationModal";
 
 export default function CourseDetail({ params }) {
   const [courseById, setCourseById] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const id = params?.course_id;
 
@@ -19,7 +19,7 @@ export default function CourseDetail({ params }) {
     const res = await axios.get(`/api/courses/${id}`);
     const course = res.data.data;
     setCourseById(course);
-    setIsLoading(true);
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -51,6 +51,7 @@ export default function CourseDetail({ params }) {
             </div>
           </section>
         </div>
+        {!isLoading&&
         <div className="sticky-box w-[357px] h-[450px] m-4 shadow-[0px_5px_5px_0px_rgba(100,109,137,1)] px-6 py-8 rounded-xl sticky top-10">
           <div>
             <p className="text-[#F47E20]">Course</p>
@@ -61,9 +62,10 @@ export default function CourseDetail({ params }) {
             </p>
           </div>
           <div className="sticky-box-btn-container border-t-2 border-[#d6d9e7] mt-6">
-            {isLoading == true && <ConfirmationModal course={courseById} />}
+             <ConfirmationModal course={courseById} />
           </div>
         </div>
+        }
       </div>
 
       <div className="intersting-course-section  mt-[200px] mb-[200px]">

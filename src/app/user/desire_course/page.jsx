@@ -15,6 +15,7 @@ function page() {
 
   async function getData() {
     console.log(session);
+
     if (status === "authenticated") {
       const { data, error } = await supabase
         .from("users_desired")
@@ -26,6 +27,7 @@ function page() {
       setCourse(data);
     }
   }
+
   useEffect(() => {
     getData();
   }, [status]);
@@ -34,8 +36,10 @@ function page() {
     <>
       <NavBar />
 
+
       <section className="flex justify-center ">
         <div className="text-[36px] mt-[60px] mb-[40px]">Desired Courses</div>
+
       </section>
 
       <div className="flex flex-wrap justify-start w-[1120px] gap-[24px] mx-auto">

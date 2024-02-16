@@ -38,7 +38,7 @@ export default function DashBoardPage() {
       }
     }
   }
-  console.log(courseData);
+
   useEffect(() => {
     getCourses();
   }, [search, page]);
@@ -55,7 +55,7 @@ export default function DashBoardPage() {
     });
     return `${day}/${month}/${year} ${time}`;
   }
-  console.log(courseData);
+
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">

@@ -1,64 +1,57 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import Link from "next/link";
 import { supabase } from "@/utils/db";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+import HamburgerMenu from "@/components/HamburgerMenu";
 import SideBar from "@/components/SideBar";
+
+import deleteIcon from "@/assets/images/DeleteIcon.svg";
+import editIcon from "@/assets/images/EditIcon.svg";
+import FileIcon from "@/assets/images/FileIcon.svg";
+import DragIcon from "@/assets/images/DragIcon.svg";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
 import uploadFile from "@/assets/images/uploadFile.svg";
 import uploadImage from "@/assets/images/uploadImage.svg";
 import uploadVideo from "@/assets/images/uploadVideo.svg";
 import playTheVideoIcon from "@/assets/images/playTheVideoIcon.svg";
-import Image from "next/image";
+import arrowBack from "@/assets/images/arrowBack.svg";
+import { useLessonContext } from "@/contexts/lessonContext";
 
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { useLessonContext } from "@/contexts/lessonContext";
-import { useSession, signOut } from "next-auth/react";
-import FileIcon from "@/assets/images/FileIcon.svg";
-import HamburgerMenu from "@/components/HamburgerMenu";
-import { useRouter } from "next/navigation";
-import arrowBack from "@/assets/images/arrowBack.svg";
 
-export default function AddCourse({ params }) {
-  // const [course, setCourse] = useState({
-  //   attached_file_url: "",
-  //   course_id: "",
-  //   created_at: "",
-  //   description: "",
-  //   img_url: "",
-  //   length: "",
-  //   lessons: [],
-  //   name: "",
-  //   number_of_lesson: "",
-  //   price: "",
-  //   summary: "",
-  //   updated_at: "",
-  //   video_url: "",
-  //   coverImage: {},
-  //   videoTrailer: {},
-  //   attachedFile: {},
-  // });
-  const [course, setCourse] = useState({});
-  const [coverImage, setCoverImage] = useState({});
-  const [attachedFile, setAttachedFile] = useState({});
-  const [videoTrailer, setVideoTrailer] = useState({});
-  const id = params.course_id;
-  async function getCourseById() {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/courses/${id}`
-      );
-      setCourse(response.data.data[0]);
-    } catch (error) {
-      console.log(`error when request`, error);
-    }
-  }
-  console.log(course);
-  useEffect(() => {
-    getCourseById();
-  }, []);
-
+export default function EditCourse({ params }) {
+  const {
+    name,
+    setName,
+    price,
+    setPrice,
+    length,
+    setLength,
+    summary,
+    setSummary,
+    description,
+    setDescription,
+    coverImage,
+    setCoverImage,
+    videoTrailer,
+    setVideoTrailer,
+    attachedFile,
+    setAttachedFile,
+    lessons,
+    setLessons,
+    previewImage,
+    setPreviewImage,
+    previewVideo,
+    setPreviewVideo,
+    previewFile,
+    setPreviewFile,
+    resetToDefault,
+  } = useLessonContext();
   const [nameStatus, setNameStatus] = useState("");
   const [priceStatus, setPriceStatus] = useState("");
   const [lengthStatus, setLengthStatus] = useState("");
@@ -67,6 +60,47 @@ export default function AddCourse({ params }) {
   const [coverImageStatus, setCoverImageStatus] = useState("");
   const [videoTrailerStatus, setVideoTrailerStatus] = useState("");
 
+  const course_id = params.course_id;
+
+  async function getCourseData() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/courses/${course_id}`
+      );
+      console.log(response.data.data[0]);
+      setName(response.data.data[0].name);
+      setPrice(response.data.data[0].price);
+      setLength(response.data.data[0].length);
+      setSummary(response.data.data[0].summary);
+      setDescription(response.data.data[0].description);
+      setCoverImage(response.data.data[0].img_url);
+      setVideoTrailer(response.data.data[0].video_url);
+      setLessons(response.data.data[0].lessons);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  console.log(`type of coverImage`, coverImage);
+  useEffect(() => {
+    getCourseData();
+  }, []);
+
+  const dragLesson = useRef(0);
+  const dragOverLesson = useRef(0);
+
+  function handleSortLesson() {
+    const lessonsClone = [...lessons];
+    const temp = lessonsClone[dragLesson.current];
+    lessonsClone[dragLesson.current] = lessonsClone[dragOverLesson.current];
+    lessonsClone[dragOverLesson.current] = temp;
+    setLessons(lessonsClone);
+  }
+
+  function handleDeleteLesson(index) {
+    const updatedLesson = [...lessons];
+    updatedLesson.splice(index, 1);
+    setLessons(updatedLesson);
+  }
   const router = useRouter();
   function setStatusToDefault() {
     setNameStatus("");
@@ -77,12 +111,6 @@ export default function AddCourse({ params }) {
     setCoverImageStatus("");
     setVideoTrailerStatus("");
   }
-
-  function handleUpdateField(e) {
-    const { files, name, value } = e.target;
-    setCourse({ ...course, [name]: value });
-  }
-
   function handleCoverImage(e) {
     if (e.target.files[0].size > 5000000) {
       setCoverImageStatus("File size should be less than 5MB");
@@ -217,6 +245,7 @@ export default function AddCourse({ params }) {
     }
 
     // Generate lesson_id and sub_lesson_id
+
     for (let i = 0; i < lessons.length; i++) {
       const lesson_id = uuidv4();
       courseData.lessons[i].lesson_id = lesson_id;
@@ -282,7 +311,7 @@ export default function AddCourse({ params }) {
     resetToDefault();
     router.push("/admin/courselist");
   }
-
+  console.log(lessons[0]?.lesson_id);
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -296,13 +325,15 @@ export default function AddCourse({ params }) {
           <div className="flex w-full items-center justify-between">
             <div className="flex gap-[8px] items-center">
               <Link href="/admin/courselist">
-                <Image src={arrowBack} alt="arrow back icon" />
+                <button>
+                  <Image src={arrowBack} alt="arrow back icon" />
+                </button>
               </Link>
               <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px] text-[#9AA1B9]">
-                Course <span className="text-[#000]">'{course.name}'</span>
+                Course <span className="text-[#000]">&apos;{name}&apos;</span>
               </p>
               <div className="min-[1440px]:hidden border border-solid border-[#D6D9E4] w-[30px] h-[30px] flex justify-center items-center rounded-md">
-                <HamburgerMenu className="p-[20px]" />
+                <HamburgerMenu />
               </div>
             </div>
 
@@ -320,7 +351,7 @@ export default function AddCourse({ params }) {
                 className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
                 onClick={handleSubmmitCourse}
               >
-                Create
+                Edit
               </button>
             </div>
           </div>
@@ -338,12 +369,11 @@ export default function AddCourse({ params }) {
                   nameStatus ? `border-[red]` : `border-[#D6D9E4]`
                 } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
                 id="name"
-                name="name"
                 type="text"
                 placeholder="Course Name"
-                value={course?.name}
+                value={name}
                 onChange={(e) => {
-                  handleUpdateField(e);
+                  setName(e.target.value);
                 }}
               />
               {nameStatus && (
@@ -360,12 +390,11 @@ export default function AddCourse({ params }) {
                     priceStatus ? `border-[red]` : `border-[#D6D9E4]`
                   } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
                   id="price"
-                  name="price"
                   type="number"
                   placeholder="Price"
-                  value={course?.price}
+                  value={price}
                   onChange={(e) => {
-                    handleUpdateField(e);
+                    setPrice(e.target.value);
                   }}
                 />
                 {priceStatus && (
@@ -381,12 +410,11 @@ export default function AddCourse({ params }) {
                     lengthStatus ? `border-[red]` : `border-[#D6D9E4]`
                   } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
                   id="length"
-                  name="length"
                   type="text"
                   placeholder="Total Learning Time"
-                  value={course?.length}
+                  value={length}
                   onChange={(e) => {
-                    handleUpdateField(e);
+                    setLength(e.target.value);
                   }}
                 />
                 {lengthStatus && (
@@ -403,12 +431,11 @@ export default function AddCourse({ params }) {
                   summaryStatus ? `border-[red]` : `border-[#D6D9E4]`
                 } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
                 id="summary"
-                name="summary"
                 type="text"
                 placeholder="Course Summary"
-                value={course?.summary}
+                value={summary}
                 onChange={(e) => {
-                  handleUpdateField(e);
+                  setSummary(e.target.value);
                 }}
               />
               {summaryStatus && (
@@ -426,7 +453,7 @@ export default function AddCourse({ params }) {
                 id="description"
                 type="text"
                 placeholder="Course Detail"
-                value={course?.description}
+                value={description}
                 onChange={(e) => {
                   setDescription(e.target.value);
                 }}
@@ -441,7 +468,24 @@ export default function AddCourse({ params }) {
             <section className={`relative flex flex-col gap-[8px] `}>
               <p>Course Image *</p>
 
-              {!coverImage.name ? (
+              {typeof coverImage === "string" ? (
+                <div className="relative w-fit">
+                  <img
+                    src={coverImage}
+                    alt={coverImage.name}
+                    className="w-[240px] h-[240px] rounded-lg"
+                  />
+                  <p>{coverImage.name}</p>
+                  <Image
+                    src={CancelIcon}
+                    alt="cancel icon"
+                    className="absolute -top-[7px] -right-[11px]"
+                    onClick={(e) => {
+                      setCoverImage({});
+                    }}
+                  />
+                </div>
+              ) : !coverImage.name ? (
                 <label
                   htmlFor="coverImage"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -450,12 +494,9 @@ export default function AddCourse({ params }) {
                   <input
                     className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
                     id="coverImage"
-                    name="img_url"
                     type="file"
                     accept="image/jpeg, imgae/jpg, image/png "
-                    onChange={(e) => {
-                      handleUpdateField(e);
-                    }}
+                    onChange={handleCoverImage}
                   />
                   {coverImageStatus && (
                     <p className="absolute top-[102%] text-[red] text-[14px]">
@@ -484,7 +525,32 @@ export default function AddCourse({ params }) {
             </section>
             <section className="relative flex flex-col gap-[8px]">
               <p> Video Trailer *</p>
-              {!videoTrailer.name ? (
+              {typeof videoTrailer === "string" ? (
+                <div>
+                  <div className="w-fit relative ">
+                    <video
+                      src={videoTrailer}
+                      alt={`${name}_trailer`}
+                      className="w-[240px] h-[240px] rounded-lg "
+                    ></video>
+
+                    <Image
+                      src={CancelIcon}
+                      alt="cancel icon"
+                      className="absolute -top-[7px] -right-[11px]"
+                      onClick={(e) => {
+                        setVideoTrailer({});
+                      }}
+                    />
+                    <Image
+                      src={playTheVideoIcon}
+                      alt="play the video icon"
+                      className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
+                    />
+                  </div>
+                  <p>{`${name}_trailer`}</p>
+                </div>
+              ) : !videoTrailer.name ? (
                 <label
                   htmlFor="videoTrailer"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -496,7 +562,7 @@ export default function AddCourse({ params }) {
                     type="file"
                     accept="video/mp4,video/mov,video/avi"
                     onChange={(e) => {
-                      handleUpdateField(e);
+                      handleVideoTrailer(e);
                     }}
                   />
                   {videoTrailerStatus && (
@@ -565,7 +631,110 @@ export default function AddCourse({ params }) {
               )}
             </section>
           </section>
-          <LessonBox course={course} />
+          <section className=" min-[375px]:w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]">
+            <section className="flex justify-between items-center mb-[30px] w-full p-[16px]">
+              <p className="text-[24px] ">Lesson</p>
+              <Link href={`/admin/editcourse/${course_id}/addlesson`}>
+                <button className="bg-[#2F5FAC] min-[375px]:px-[12px] min-[375px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
+                  + Add Lesson
+                </button>
+              </Link>
+            </section>
+            {/* Lesson Table */}
+            {lessons.length === 0 ? null : (
+              <section className="hidden min-[768px]:flex bg-[#E4E6ED] rounded-t-lg px-[24px] py-[10px] mx-[16px] min-[1440px]:m-[0px]">
+                <section className="hidden min-[768px]:block w-[56px] "></section>
+                <section className="hidden min-[768px]:block w-[48px] "></section>
+                <section className="hidden min-[768px]:block w-[500px] ">
+                  <p>Lesson name</p>
+                </section>
+                <section className="w-[396px] ">
+                  <p>Sub-lesson</p>
+                </section>
+                <section className="w-[120px] text-center">
+                  <p>Action</p>
+                </section>
+              </section>
+            )}
+
+            <section className="flex flex-col gap-[10px] min-[768px]:gap-[0px]">
+              {lessons.map(({ lessonName, subLesson }, index) => {
+                return (
+                  <section
+                    key={index}
+                    className="flex flex-col min-[375px]:mx-auto min-[768px]:mx-[16px] min-[768px]:flex-row min-[375px]:gap-[16px] min-[768px]:gap-[0px] bg-[#fff] min-[375px]:px-[16px] min-[375px]:py-[16px] min-[768px]:px-[28px] min-[768px]:py-[32px] min-[1440px]:m-[0px] min-[375px]:w-[350px] min-[768px]:w-[736px] min-[1200px]:w-[1168px] min-[1440px]:w-[1120px] min-[375px]:rounded-lg min-[768px]:rounded-none relative "
+                    draggable="true"
+                    onDragStart={() => {
+                      dragLesson.current = index;
+                      console.log(`Dragtart happens`);
+                    }}
+                    onDragEnter={() => {
+                      dragOverLesson.current = index;
+                      console.log(`DragEnter happens`);
+                    }}
+                    onDragEnd={() => {
+                      console.log(`DragEnd happens`);
+                      handleSortLesson();
+                    }}
+                    onDragOver={(e) => {
+                      console.log(`DragOver happens`);
+                      e.preventDefault();
+                    }}
+                  >
+                    <section className="w-[56px] min-[375px]:hidden min-[768px]:block">
+                      <Image
+                        src={DragIcon}
+                        alt="drag-icon"
+                        className="absolute top-0 left-0"
+                      />
+                    </section>
+                    <section className="min-[768px]:w-[48px] flex ">
+                      <p className="min-[768px]:hidden basis-[110px]">
+                        Lesson No.
+                      </p>
+                      <p>{index + 1}</p>
+                    </section>
+                    <section className="min-[768px]:w-[500px] flex">
+                      <p className="min-[768px]:hidden basis-[110px]">Name</p>
+                      <p>{lessons[index]?.name}</p>
+                    </section>
+                    <section className="min-[768px]:w-[396px] flex">
+                      <p className="min-[768px]:hidden basis-[110px]">
+                        Sub-Lesson
+                      </p>
+                      <p>{lessons[index]?.sub_lessons.length}</p>
+                    </section>
+                    <section className="min-[768px]:w-[120px] flex justify-center gap-[17px]">
+                      <button
+                        className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] min-[768px]:hover:bg-transparent rounded-lg min-[768px]:p-0"
+                        onClick={() => {
+                          handleDeleteLesson(index);
+                        }}
+                      >
+                        <Image
+                          className="w-[24px] h-[24px]"
+                          src={deleteIcon}
+                          alt="delete-icon"
+                        />
+                        <p className="min-[768px]:hidden">Delete</p>
+                      </button>
+                      <Link
+                        href={`/admin/editcourse/${course_id}/editlesson/${lessons[index].lesson_id}`}
+                        className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 min-[768px]:p-0 min-[768px]:hover:bg-transparent"
+                      >
+                        <Image
+                          className="w-[24px] h-[24px]"
+                          src={editIcon}
+                          alt="edit-icon"
+                        />
+                        <p className="min-[768px]:hidden">Edit</p>
+                      </Link>
+                    </section>
+                  </section>
+                );
+              })}
+            </section>
+          </section>
         </section>
       </section>
     </section>

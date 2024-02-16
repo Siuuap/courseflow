@@ -37,7 +37,6 @@ function NavBar() {
 
   const handleLogout = async () => {
     signOut();
-    router.push("/");
   };
 
   return (

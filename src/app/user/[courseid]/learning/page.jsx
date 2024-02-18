@@ -19,12 +19,10 @@ import Button from "@/components/Button.jsx";
 export default function Learning({ params }) {
   const { data: session, status } = useSession();
   const [courseById, setCourseById] = useState([]);
-  const [currentVideo, setCurrentVideo] = useState({});
+  const [currentSubLesson, setcurrentSubLesson] = useState({});
   const [isLoading, setIsloading] = useState(false);
   const [subLessonProgress, setSubLessonProgress] = useState([]);
   const [progress, setProgress] = useState(0);
-
-  console.log(currentVideo);
 
   useEffect(() => {
     function sumProgress() {
@@ -38,8 +36,9 @@ export default function Learning({ params }) {
     }
     sumProgress();
   }, [subLessonProgress]);
-  function handleVideo(url, id) {
-    setCurrentVideo({ url, id });
+
+  function handleSubLesson(subLesson, index) {
+    setcurrentSubLesson(subLesson);
   }
 
   useEffect(() => {
@@ -55,10 +54,7 @@ export default function Learning({ params }) {
         setCourseById(res.data.data);
         console.log(res);
         setSubLessonProgress(res?.data?.data[0]?.users_sub_lessons);
-        setCurrentVideo({
-          url: res.data.data[0].courses.lessons[0].sub_lessons[0].video_url,
-          id: res.data.data[0].courses.lessons[0].sub_lessons[0].sub_lesson_id,
-        });
+        setcurrentSubLesson(res.data.data[0].courses.lessons[0].sub_lessons[0]);
         setIsloading(true);
       }
     }
@@ -75,7 +71,7 @@ export default function Learning({ params }) {
 
     const newProgress = newSublessonProgress.find((object, i) => {
       if (
-        object.sub_lesson_id === currentVideo.id &&
+        object.sub_lesson_id === currentSubLesson.sub_lesson_id &&
         currentSubProgress - 20 >= object.status
       ) {
         newSublessonProgress[i] = { ...object, status: currentSubProgress };
@@ -114,23 +110,25 @@ export default function Learning({ params }) {
     }
   }, [progress]);
 
+  console.log(currentSubLesson);
+
   return (
     <>
       <NavBar />
       <div className="page-container w-[1440px] flex justify-items-center mx-auto mt-[80px] mb-[10px]">
-        {isLoading && subLessonProgress && currentVideo && (
+        {isLoading && subLessonProgress && currentSubLesson && (
           <LessonAccordion
             courseById={courseById}
-            handleVideo={handleVideo}
+            handleSubLesson={handleSubLesson}
             subLessonProgress={subLessonProgress}
             progress={progress}
-            currentVideo={currentVideo}
+            currentSubLesson={currentSubLesson}
           />
         )}
-        {isLoading == true && currentVideo && (
+        {isLoading == true && currentSubLesson && (
           <CourseVideo
             courseById={courseById}
-            currentVideo={currentVideo}
+            currentSubLesson={currentSubLesson}
             handleUpdateSubProgress={handleUpdateSubProgress}
           />
         )}
@@ -150,10 +148,10 @@ export default function Learning({ params }) {
 
 function LessonAccordion({
   courseById,
-  handleVideo,
+  handleSubLesson,
   subLessonProgress,
   progress,
-  currentVideo,
+  currentSubLesson,
 }) {
   const course = courseById[0];
 
@@ -211,7 +209,7 @@ function LessonAccordion({
                   pb={4}
                   key={i}
                   className={
-                    currentVideo.id === subLesson.sub_lesson_id
+                    currentSubLesson.sub_lesson_id === subLesson.sub_lesson_id
                       ? "bg-blue-100"
                       : null
                   }
@@ -227,9 +225,7 @@ function LessonAccordion({
 
                   <span
                     role="button"
-                    onClick={() =>
-                      handleVideo(subLesson.video_url, subLesson.sub_lesson_id)
-                    }
+                    onClick={() => handleSubLesson(subLesson)}
                   >
                     {subLesson.name}
                   </span>
@@ -242,11 +238,12 @@ function LessonAccordion({
     </div>
   );
 }
-function CourseVideo({ courseById, currentVideo, handleUpdateSubProgress }) {
-  const [playingVideo, setPlayingVideo] = useState({});
+function CourseVideo({
+  courseById,
+  currentSubLesson,
+  handleUpdateSubProgress,
+}) {
   const course = courseById[0];
-
-  useEffect(() => setPlayingVideo(currentVideo), [currentVideo]);
 
   return (
     <div className="my-[30px]">
@@ -257,11 +254,11 @@ function CourseVideo({ courseById, currentVideo, handleUpdateSubProgress }) {
         <video
           width="740"
           height="460"
-          key={playingVideo.id}
+          key={currentSubLesson.name}
           onTimeUpdate={(e) => handleUpdateSubProgress(e)}
           controls
         >
-          <source src={currentVideo.url} type="video/mp4"></source>
+          <source src={currentSubLesson.video_url} type="video/mp4"></source>
         </video>
         <div className="assignment-section mt-[50px] bg-[#E5ECF8] p-[15px] rounded-md relative">
           <div className="assignment-container flex flex-col items-start ">

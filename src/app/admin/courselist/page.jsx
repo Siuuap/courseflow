@@ -26,7 +26,7 @@ export default function DashBoardPage() {
       console.log(error);
     }
   }
-
+  console.log(`courseData`, courseData);
   async function deleteCourses(course_id) {
     const id = course_id;
     if (window.confirm("Are you sure you want to delete?")) {

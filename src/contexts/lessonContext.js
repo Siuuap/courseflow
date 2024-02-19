@@ -19,19 +19,21 @@ export function LessonProvider({ children }) {
   const [previewVideo, setPreviewVideo] = useState(null);
   const [previewFile, setPreviewFile] = useState(null);
 
+  const [lessonUpdateId, setLessonUpdateId] = useState([]);
   function resetToDefault() {
     setName("");
     setPrice("");
     setLength("");
     setSummary("");
     setDescription("");
-    setCoverImage({});
-    setVideoTrailer({});
-    setAttachedFile({});
+    setCoverImage(null);
+    setVideoTrailer(null);
+    setAttachedFile(null);
     setLessons([]);
     setPreviewImage(null);
     setPreviewVideo(null);
     setPreviewFile(null);
+    setLessonUpdateId([]);
   }
   return (
     <LessonContext.Provider
@@ -61,6 +63,8 @@ export function LessonProvider({ children }) {
         previewFile,
         setPreviewFile,
         resetToDefault,
+        lessonUpdateId,
+        setLessonUpdateId,
       }}
     >
       {children}

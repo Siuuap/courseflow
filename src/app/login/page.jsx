@@ -42,7 +42,7 @@ export default function Home() {
     <>
       <NavBar />
       <Image
-        className="absolute pt-[20px] "
+        className="absolute pt-[20px] -z-50 "
         src="/images/assets.png"
         alt="blackground"
         width={1600}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import NavBar from "@/components/NavBar";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ export default function Home() {
     event.preventDefault();
 
     let previous = searchParams.get("previous");
-    if (previous === null) previous ="";
+    if (previous === null) previous = "";
 
     try {
       const res = await signIn("credentials", {
@@ -40,11 +41,19 @@ export default function Home() {
   return (
     <>
       <NavBar />
+      <Image
+        className="absolute pt-[20px] "
+        src="/images/assets.png"
+        alt="blackground"
+        width={1600}
+        height={190}
+        priority={true}
+      />
       <form
         className="flex flex-col justify-between  items-start gap-[50px] mx-[auto] p-[14px] max-w-[453px]  bg-slate-100 mt-[150px]"
         onSubmit={handleSubmit}
       >
-        <h1 className="  bg-slate-200 text-[36px]">Welcome back!</h1>
+        <h1 className="text-[36px] text-[#22269E] w">Welcome back!</h1>
 
         <div className="w-full">
           <div>Email</div>

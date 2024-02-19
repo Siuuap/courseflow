@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/authentication";
+import Image from "next/image";
 
 const RegisterForm = () => {
   const [values, setValues] = useState({
@@ -22,9 +23,7 @@ const RegisterForm = () => {
     useState("");
 
   const handleChange = (e) => {
-
     setValues({ ...values, [e.target.name]: e.target.value });
-
   };
 
   const validateDateofBirth = (date) => {
@@ -99,7 +98,15 @@ const RegisterForm = () => {
   };
 
   return (
-    <section className="flex gap-0.5 justify-between items-start px-5  w-full max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
+    <section className="flex gap-0.5 justify-between pb-20 items-start  w-full max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
+      <Image
+        className="absolute pt-[20px] "
+        src="/images/assets.png"
+        alt="blackground"
+        width={1600}
+        height={190}
+        priority={true}
+      />
       <section className="flex flex-col flex-1 items-center mt-16 max-md:mt-10 max-md:max-w-full">
         <div className="text-4xl font-medium tracking-tighter text-indigo-800 max-md:max-w-full">
           Register to start learning!
@@ -183,14 +190,14 @@ const RegisterForm = () => {
 
           <button
             onClick={handleSubmit}
-            className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] text-white bg-blue-800 rounded-xl shadow justify-center items-center gap-2.5 inline-flex"
+            className="mb-[40px] w-[453px] h-[60px] px-16 py-[18px] text-white font-bold bg-blue-800 rounded-xl shadow-lg justify-center items-center gap-2.5 inline-flex whitespace-nowrap max-md:px-5 max-md:max-w-full"
           >
             Register
           </button>
           <section className="flex flex-row gap-[4px]">
-            <div>Already have an account?</div>
+            <div className="">Already have an account?</div>
             <Link href="/login">
-              <button className="text-[16px] text-[#2F5FAC] not-italic px-[8px]">
+              <button className="flex-auto whitespace-nowrap font-bold text-[16px] text-[#2F5FAC] not-italic px-[8px]">
                 Log in
               </button>
             </Link>

@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 
 export default function EditProfileForm() {
+  const router = useRouter();
   const [values, setValues] = useState({
     firstname: "",
     lastname: "",
@@ -26,36 +27,42 @@ export default function EditProfileForm() {
   //   setValues({ ...values, [e.target.name]: e.target.value });
   // };
 
+  const { data: session, status } = useSession();
+  const [userData, setUserData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState({});
+  console.log(session);
+  const [userId, setUserId] = useState(session?.user?.userId);
+  const [firstName, setFirstName] = useState(userProfile?.first_name);
+  const [lastName, setLastName] = useState(userProfile?.last_name);
+  const [dateOfBirth, setDateOfBirth] = useState(userProfile?.date_of_birth);
+  const [education, setEducation] = useState(
+    userProfile?.educational_background
+  );
+  const [email, setEmail] = useState(userProfile?.email);
+  const [image, setImage] = useState(session?.user?.url || "" || null);
+
   const {
-    courseName,
-    setCourseName,
-    price,
-    setPrice,
-    totalLearningTime,
-    setTotalLearningTime,
-    courseSummary,
-    setCourseSummary,
-    courseDetail,
-    setCourseDetail,
     coverImages,
     setCoverImages,
-    videoTrailer,
-    setVideoTrailer,
-    lessons,
     attachFile,
     setAttachFile,
-    setLessons,
     previewImage,
     setPreviewImage,
-    previewVideo,
-    setPreviewVideo,
-    previewFile,
-    setPreviewFile,
   } = useLessonContext();
 
+  const [coverImageStatus, setCoverImageStatus] = useState("");
+
+  function setStatusToDefault() {
+    setCoverImageStatus("");
+  }
+
   function handleCoverImage(e) {
-    setCoverImages(e.target.files[0]);
-    setPreviewImage(URL.createObjectURL(e.target.files[0]));
+    if (e.target.files[0].size > 5000000) {
+      setCoverImageStatus("File size should be less than 5MB");
+      return;
+    }
+    setCoverImage(e.target.files[0]);
   }
 
   function handleRemoveImage(e, index) {
@@ -106,34 +113,54 @@ export default function EditProfileForm() {
     return errors.dateOfBirth;
   };
 
-  const handleUpdateProfile = (event) => {
-    event.preventDefault();
+  const handleUpdateProfile = async (event) => {
+    // event.preventDefault();
 
-    setErrors({
-      firstname: !checkFirstName(values.firstname),
-      lastname: !checkLastName(values.lastname),
-      dateOfBirthempty: !values.dateOfBirth.trim(),
-      dateOfBirth: validateDateOfBirth(values.dateOfBirth),
-      EducationalBackground: !values.eb.trim(),
-      email: !(values.email.trim() && values.email.includes("@")),
-      image: !values.image.trim(),
-    });
+    // setErrors({
+    //   firstname: !checkFirstName(values.firstname),
+    //   lastname: !checkLastName(values.lastname),
+    //   dateOfBirthempty: !values.dateOfBirth.trim(),
+    //   dateOfBirth: validateDateOfBirth(values.dateOfBirth),
+    //   EducationalBackground: !values.eb.trim(),
+    //   email: !(values.email.trim() && values.email.includes("@")),
+    //   image: !values.image.trim(),
+    // });
+
+    const userData = {
+      user_id: session.user.userId,
+      firstName: session.user.first_name,
+      lastName: data.last_name,
+      dateOfBirth: data.date_of_birth,
+      education: data.educational_background,
+      email: session.user.email,
+      image: data.img_url,
+    };
+    console.log(`Data before post`, data);
+    try {
+      const res = await axios.put(`/api/user/${id}`, data);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+    resetToDefault();
+    router.push("/admin/courselist");
+
+    //upload cover image
+    // try {
+    //   const { data, error } = await supabase.storage
+    //     .from("user_profiles")
+    //     .upload(`${userId}/image/${image}`, image, {
+    //       cacheControl: "3600",
+    //       upsert: false,
+    //     });
+
+    //   userProfile.img_url = supabase.storage
+    //     .from("user_profiles")
+    //     .getPublicUrl(data.path, image).data.publicUrl;
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
-
-  const { data: session, status } = useSession();
-  const [userData, setUserData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [userProfile, setUserProfile] = useState({});
-
-  const [userId, setUserId] = useState("");
-  const [firstName, setFirstName] = useState(userProfile?.first_name);
-  const [lastName, setLastName] = useState(userProfile?.last_name);
-  const [dateOfBirth, setDateOfBirth] = useState(userProfile?.date_of_birth);
-  const [education, setEducation] = useState(
-    userProfile?.educational_background
-  );
-  const [email, setEmail] = useState(userProfile?.email);
-  const [image, setImage] = useState(session?.user?.url || "" || null);
 
   // const [userId, setUserId] = useState("");
   // const [firstName, setFirstName] = useState(null);
@@ -157,10 +184,12 @@ export default function EditProfileForm() {
       setUserProfile(res.data.data);
       console.log(res.data.data);
 
+      const data = res.data.data;
+
       setFirstName(session?.user?.firstName);
       setLastName(session?.user?.lastName);
-      setDateOfBirth(userProfile?.date_of_birth);
-      setEducation(userProfile?.educational_background);
+      setDateOfBirth(data?.date_of_birth);
+      setEducation(data?.educational_background);
       setEmail(session?.user?.email);
       setImage(session?.user?.img_url);
     }
@@ -191,24 +220,85 @@ export default function EditProfileForm() {
   //   });
   // };
 
-  const deleteImage = (event) => {
-    if (event && event.preventDefault) {
-      event.preventDefault();
-      const updatedUserProfile = { ...userProfile, img_url: "" };
-      setUserProfile(updatedUserProfile);
-    } else {
-      console.error("Invalid event object:", event);
-    }
-  };
+  // const deleteImage = (event) => {
+  //   if (event && event.preventDefault) {
+  //     event.preventDefault();
+  //     const updatedUserProfile = { ...userProfile, img_url: { uploadImage } };
+  //     setUserProfile(updatedUserProfile);
+  //   } else {
+  //     console.error("Invalid event object:", event);
+  //   }
+  // };
 
-  const handleFileChange = (event) => {
-    const uniqueId = Date.now();
-    const file = event.target.files[0];
-  };
+  // const handleFileChange = (event) => {
+  //   const uniqueId = Date.now();
+  //   const file = event.target.files[0];
+  // };
+
+  // async function handleUpdateProfile() {
+  //   setStatusToDefault();
+  //   const user_id = uuidv4();
+
+  //   if (
+  //     !firstName ||
+  //     !lastName ||
+  //     !dateOfBirth ||
+  //     !education ||
+  //     !email ||
+  //     !image
+  //   ) {
+  //     if (!firstName) {
+  //       setNameStatus("Please enter firstname");
+  //     }
+  //     if (!lastName) {
+  //       setPriceStatus("Please enter lastname");
+  //     }
+  //     if (!dateOfBirth) {
+  //       setLengthStatus("Please enter date of birth");
+  //     }
+  //     if (!education) {
+  //       setSummaryStatus("Please enter education");
+  //     }
+
+  //     if (!email) {
+  //       setDescriptionStatus("Please enter email");
+  //     }
+  //     if (!image) {
+  //       setCoverImageStatus("Please upload image");
+  //     }
+  //     return;
+  //   }
+
+  //   const userProfile = {
+  //     user_id: user_id,
+  //     firstName,
+  //     lastName,
+  //     dateOfBirth,
+  //     education,
+  //     email,
+  //     image,
+  //   };
+
+  //   //upload cover image
+  //   try {
+  //     const { data, error } = await supabase.storage
+  //       .from("user_profiles")
+  //       .upload(`${user_id}/image/${image}`, image, {
+  //         cacheControl: "3600",
+  //         upsert: false,
+  //       });
+
+  //     userProfile.img_url = supabase.storage
+  //       .from("user_profiles")
+  //       .getPublicUrl(data.path, image).data.publicUrl;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
 
   return (
     <>
       <NavBar />
+
       <section className="flex gap-0.5 justify-between items-start px-5 w-full h-[955px] max-md:flex-wrap max-md:mt-10 max-md:max-w-full mx-[auto]">
         <Image
           className="absolute pt-[100px] pl-[43px]"
@@ -224,18 +314,17 @@ export default function EditProfileForm() {
           </div>
           <div className="flex flex-row w-[930px] h-[531px] mt-[72px]">
             <div className="relative bg-blue-100 w-[358px] h-[358px] rounded-[16px] flex justify-center items-center">
-              <label htmlFor="upload">
+              {/* <label htmlFor="upload">
                 Image
                 <input
                   id="upload"
-                  name="avatar"
+                  name="image"
                   type="file"
                   placeholder="Choose image here"
                   multiple
                   hidden
                   accept="image/*"
-                  // 1.4
-                  onChange={handleFileChange}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
               </label>
               <button
@@ -274,6 +363,49 @@ export default function EditProfileForm() {
                       onChange={handleCoverImage}
                     />
                   </label>
+                </div>
+              )} */}
+              {/* {session?.user?.image} */}
+
+              {!coverImages?.name ? (
+                <label
+                  htmlFor="coverImage"
+                  className="w-fit cursor-pointer flex flex-col gap-[8px]">
+                  <Image
+                    src={uploadImage}
+                    alt="image-with-upload-image-text"
+                    width={358}
+                    height={358}
+                  />
+                  <input
+                    className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                    id="coverImage"
+                    type="file"
+                    accept="image/jpeg, image/jpg, image/png "
+                    onChange={handleCoverImage}
+                  />
+                  {coverImageStatus && (
+                    <p className="absolute top-[102%] text-[red] text-[14px]">
+                      {coverImageStatus}
+                    </p>
+                  )}
+                </label>
+              ) : (
+                <div className="relative w-fit">
+                  <img
+                    src={session?.user?.image(coverImage)}
+                    alt={session?.user?.image}
+                    className="w-[240px] h-[240px] rounded-lg"
+                  />
+                  <p>{session?.user?.image}</p>
+                  <Image
+                    src={CancelIcon}
+                    alt="cancel icon"
+                    className="absolute -top-[7px] -right-[11px]"
+                    onClick={(e) => {
+                      setCoverImage({});
+                    }}
+                  />
                 </div>
               )}
 
@@ -416,11 +548,14 @@ export default function EditProfileForm() {
               {errors.password && (
                 <p className=" text-red-600">กรุณากรอก email</p>
               )}
-              <Button
+              <button
                 onClick={handleUpdateProfile}
+                // onClick={() => {
+                //   alert();
+                // }}
                 className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] bg-[#2F5FAC] rounded-xl shadow justify-center items-center gap-2.5 inline-flex text-white">
                 Update Profile
-              </Button>
+              </button>
             </form>
           </div>
         </section>

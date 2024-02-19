@@ -35,11 +35,8 @@ function page() {
   return (
     <>
       <NavBar />
-
-
       <section className="flex justify-center ">
         <div className="text-[36px] mt-[60px] mb-[40px]">Desired Courses</div>
-
       </section>
 
       <div className="flex flex-wrap justify-start w-[1120px] gap-[24px] mx-auto">

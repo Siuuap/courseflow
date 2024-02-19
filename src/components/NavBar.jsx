@@ -40,7 +40,7 @@ function NavBar() {
   };
 
   return (
-    <div className=" shadow-md">
+    <div className=" shadow-md ">
       <nav className="min-[768px]:flex justify-between items-center mx-[auto] p-[14px] max-w-[1120px] min-[1200px]:px-[0px] h-[88px]">
         <Link href="/">
           <Image

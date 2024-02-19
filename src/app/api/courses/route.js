@@ -8,7 +8,7 @@ export async function GET(request) {
 
   const page = searchParams.get("page") || 1;
 
-  const limit = 20;
+  const limit = 30;
   const start = (page - 1) * limit;
   const end = start + limit - 1;
 
@@ -33,7 +33,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   const reqData = await request.json();
-  console.log(`reqData.lessons`, reqData.lessons);
+  // console.log(`reqData.lessons`, reqData.lessons);
 
   const newCourse = {
     course_id: reqData.course_id,
@@ -44,9 +44,12 @@ export async function POST(request) {
     summary: reqData.summary,
     img_url: reqData.img_url,
     video_url: reqData.video_url,
-    attached_file_url: reqData.attached_file_url,
+    attached_file_url: reqData.attached_file_url
+      ? reqData.attached_file_url
+      : null,
     number_of_lesson: reqData.lessons.length,
   };
+
   try {
     const { data, error } = await supabase.from("courses").insert(newCourse);
     if (error) {
@@ -87,6 +90,7 @@ export async function POST(request) {
     console.log(`sublesson na`, subLesson);
     for (let j = 0; j < subLesson.length; j++) {
       const newSubLesson = {
+        course_id: reqData.course_id,
         lesson_id: lessons[i].lesson_id,
         sub_lesson_id: subLesson[j].sub_lesson_id,
         name: subLesson[j].subLessonName,
@@ -94,6 +98,7 @@ export async function POST(request) {
         sub_lesson_number: subLesson[j].sub_lesson_number,
       };
       console.log(`newSubLesson`, newSubLesson);
+
       try {
         const { data, error } = await supabase
           .from("sub_lessons")

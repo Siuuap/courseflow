@@ -144,10 +144,10 @@ export default function AddCourse() {
       if (!description) {
         setDescriptionStatus("Please enter description");
       }
-      if (!coverImage.name) {
+      if (!coverImage) {
         setCoverImageStatus("Please upload cover image");
       }
-      if (!videoTrailer.name) {
+      if (!videoTrailer) {
         setVideoTrailerStatus("Please upload video trailer");
       }
       if (lessons.length === 0) {
@@ -201,7 +201,7 @@ export default function AddCourse() {
     }
 
     //upload file
-    if (attachedFile.name) {
+    if (attachedFile) {
       try {
         const { data, error } = await supabase.storage
           .from("courses")
@@ -278,8 +278,8 @@ export default function AddCourse() {
     };
     console.log(`courseData before post`, courseData);
     try {
-      const res = await axios.post("/api/courses", courseData);
-      console.log(res);
+      const response = await axios.post("/api/courses", courseData);
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -438,7 +438,7 @@ export default function AddCourse() {
             <section className={`relative flex flex-col gap-[8px] `}>
               <p>Course Image *</p>
 
-              {!coverImage.name ? (
+              {!coverImage?.name ? (
                 <label
                   htmlFor="coverImage"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -470,7 +470,7 @@ export default function AddCourse() {
                     alt="cancel icon"
                     className="absolute -top-[7px] -right-[11px]"
                     onClick={(e) => {
-                      setCoverImage({});
+                      setCoverImage(null);
                     }}
                   />
                 </div>
@@ -478,7 +478,7 @@ export default function AddCourse() {
             </section>
             <section className="relative flex flex-col gap-[8px]">
               <p> Video Trailer *</p>
-              {!videoTrailer.name ? (
+              {!videoTrailer?.name ? (
                 <label
                   htmlFor="videoTrailer"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -513,7 +513,7 @@ export default function AddCourse() {
                       alt="cancel icon"
                       className="absolute -top-[7px] -right-[11px]"
                       onClick={(e) => {
-                        setVideoTrailer({});
+                        setVideoTrailer(null);
                       }}
                     />
                     <Image
@@ -528,7 +528,7 @@ export default function AddCourse() {
             </section>
             <section className="flex flex-col gap-[8px]">
               <p>Attach File (Optional)</p>
-              {!attachedFile.name ? (
+              {!attachedFile?.name ? (
                 <label
                   htmlFor="attachFile"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -540,6 +540,7 @@ export default function AddCourse() {
                     onChange={(e) => {
                       handleAttachedFile(e);
                     }}
+                    accept="application/pdf"
                   />
                   <Image src={uploadFile} alt="image-with-upload-file-text" />
                 </label>
@@ -551,7 +552,7 @@ export default function AddCourse() {
                     alt="cancel icon"
                     className="absolute -top-[7px] -right-[11px]"
                     onClick={(e) => {
-                      setAttachedFile({});
+                      setAttachedFile(null);
                     }}
                   />
                   <p>{attachedFile.name}</p>

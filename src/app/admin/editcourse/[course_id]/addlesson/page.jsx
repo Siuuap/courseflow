@@ -1,12 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { supabaseAdmin } from "@/utils/db";
+import { supabase } from "@/utils/db";
 
 import SideBar from "@/components/SideBar";
-import uploadFile from "@/assets/images/uploadFile.svg";
-import uploadImage from "@/assets/images/uploadImage.svg";
-import uploadVideo from "@/assets/images/uploadVideo.svg";
 import Image from "next/image";
 import arrowBack from "@/assets/images/arrowBack.svg";
 import uploadVideoSubLesson from "@/assets/images/uploadVideoSubLesson.svg";
@@ -15,10 +12,14 @@ import { useLessonContext } from "@/contexts/lessonContext";
 import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
 import HamburgerMenu from "@/components/HamburgerMenu";
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
-export default function AddLesson() {
+export default function AddLesson({ params }) {
+  const course_id = params.course_id;
   const router = useRouter();
-  const { name, lessons, setLessons } = useLessonContext();
+  const { name, lessons, setLessons, lessonUpdateId, setLessonUpdateId } =
+    useLessonContext();
   const [lessonName, setLessonName] = useState("");
   const [subLesson, setSubLesson] = useState([
     {
@@ -28,28 +29,25 @@ export default function AddLesson() {
   ]);
   const [lessonNameStatus, setLessonNameStatus] = useState("");
   const [subLessonNameStatus, setSubLessonNameStatus] = useState([]);
-  function handleAddSubLesson() {
-    setSubLesson([...subLesson, { subLessonName: "", video: {} }]);
-  }
 
   function handleDeleteSubLesson(e, index) {
     if (subLesson.length === 1) {
       return;
     }
-
     const newSubLesson = [...subLesson];
     newSubLesson.splice(index, 1);
     setSubLesson(newSubLesson);
   }
+
   function handleDeleteSubLessonVideo(e, index) {
     const newSubLesson = [...subLesson];
     newSubLesson[index].video = {};
     setSubLesson(newSubLesson);
   }
+
   function handleUpdateSubLessonName(e, index) {
     const { name, value } = e.target;
     const subLessonList = [...subLesson];
-
     subLessonList[index][name] = value;
     setSubLesson(subLessonList);
   }
@@ -64,12 +62,14 @@ export default function AddLesson() {
     setSubLesson(subLessonList);
   }
 
-  function handleSubmit(e, index) {
+  async function handleUpdateNewLesson(e, index) {
     setLessonNameStatus("");
+
     if (!lessonName) {
       setLessonNameStatus("Lesson Name is required");
       return;
     }
+
     for (let i = 0; i < subLesson.length; i++) {
       if (!subLesson[i].subLessonName || !subLesson[i].video.name) {
         return;
@@ -83,16 +83,76 @@ export default function AddLesson() {
     //     return;
     //   }
     // }
-    const newLesson = [...lessons];
-    const data = {
-      lessonName: lessonName,
-      subLesson: subLesson,
-    };
-    newLesson.push(data);
-    setLessons(newLesson);
-    router.push("/admin/addcourse");
-  }
 
+    const newLesson = {
+      lesson_id: uuidv4(),
+      name: lessonName,
+      course_id: course_id,
+      lesson_number: lessons.length + 1,
+      sub_lessons: subLesson,
+    };
+    console.log(newLesson);
+    setLessons([...lessons, newLesson]);
+
+    // for (let i = 0; i < subLesson.length; i++) {
+    //   subLesson[i].sub_lesson_id = uuidv4();
+    //   subLesson[i].sub_lesson_number = i + 1;
+    // try {
+    //   const video = subLesson[i].video;
+    //   const { data, error } = await supabase.storage
+    //     .from(`courses`)
+    //     .upload(
+    //       `${course_id}/lessons/${lesson_id}/sub_lessons/${subLesson[i].sub_lesson_id}/sublesson${subLesson[i].sub_lesson_number}`,
+    //       video,
+    //       {
+    //         cacheControl: "3600",
+    //         upsert: false,
+    //       }
+    //     );
+    //   subLesson[i].video_url = supabase.storage
+    //     .from("courses")
+    //     .getPublicUrl(data.path, video).data.publicUrl;
+    //   if (error) {
+    //     console.log(`error from supabase response`, error);
+    //   }
+    // } catch (err) {
+    //   console.log(`error before sending data to supabase`, err);
+    // }
+    // }
+
+    //Create new lesson
+    // const newLesson = {
+    //   course_id: course_id,
+    //   lesson_id: lesson_id,
+    //   lessonName: lessonName,
+    //   lesson_number: lessons.length + 1,
+    // };
+
+    // try {
+    //   const response = await axios.post("/api/lessons", newLesson);
+    //   console.log(response);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
+    //create new sublesson
+    // const newSubLesson = { lesson_id: lesson_id, subLesson: subLesson };
+    // try {
+    //   const response = await axios.post("/api/sub_lessons", newSubLesson);
+    //   console.log(response);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    // console.log(`newSubLesson`, newSubLesson);
+    // const newLesson = [...lessons];
+    // const data = {
+    //   lessonName: lessonName,
+    //   subLesson: subLesson,
+    // };
+    // newLesson.push(data);
+    // setLessons(newLesson);
+    router.push(`/admin/editcourse/${course_id}`);
+  }
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -126,7 +186,7 @@ export default function AddLesson() {
             </div>
 
             <div className="flex gap-[10px] ">
-              <Link href="/admin/addcourse">
+              <Link href={`/admin/editcourse/${course_id}`}>
                 <button className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]">
                   Cancel
                 </button>
@@ -135,7 +195,7 @@ export default function AddLesson() {
               <button
                 className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {
-                  handleSubmit();
+                  handleUpdateNewLesson();
                 }}
               >
                 Create
@@ -271,7 +331,10 @@ export default function AddLesson() {
               <button
                 className="font-[700] leading-[24px] rounded-lg w-[208px] px-[32px] py-[18px] border border-solid border-[#F47E20] text-[#F47E20]"
                 onClick={() => {
-                  handleAddSubLesson();
+                  setSubLesson([
+                    ...subLesson,
+                    { subLessonName: "", video: {} },
+                  ]);
                 }}
               >
                 + Add Sub-lesson

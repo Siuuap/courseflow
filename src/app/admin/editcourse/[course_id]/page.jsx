@@ -51,6 +51,8 @@ export default function EditCourse({ params }) {
     previewFile,
     setPreviewFile,
     resetToDefault,
+    lessonFromUpdate,
+    setLessonFromUpdate,
   } = useLessonContext();
   const [nameStatus, setNameStatus] = useState("");
   const [priceStatus, setPriceStatus] = useState("");
@@ -59,15 +61,17 @@ export default function EditCourse({ params }) {
   const [descriptionStatus, setDescriptionStatus] = useState("");
   const [coverImageStatus, setCoverImageStatus] = useState("");
   const [videoTrailerStatus, setVideoTrailerStatus] = useState("");
-
+  const [deletedLesson, setDeletedLesson] = useState([]);
+  const [latestCourseData, setLatestCourseData] = useState("");
   const course_id = params.course_id;
+  const router = useRouter();
 
   async function getCourseData() {
     try {
       const response = await axios.get(
         `http://localhost:3000/api/courses/${course_id}`
       );
-      console.log(response.data.data[0]);
+      // console.log(response.data.data[0]);
       setName(response.data.data[0].name);
       setPrice(response.data.data[0].price);
       setLength(response.data.data[0].length);
@@ -75,12 +79,14 @@ export default function EditCourse({ params }) {
       setDescription(response.data.data[0].description);
       setCoverImage(response.data.data[0].img_url);
       setVideoTrailer(response.data.data[0].video_url);
-      setLessons(response.data.data[0].lessons);
+      setAttachedFile(response.data.data[0].attached_file_url);
+      lessons.length === 0 ? setLessons(response.data.data[0].lessons) : null;
+      setLatestCourseData(response.data.data[0]);
     } catch (error) {
       console.log(error);
     }
   }
-  console.log(`type of coverImage`, coverImage);
+
   useEffect(() => {
     getCourseData();
   }, []);
@@ -96,12 +102,26 @@ export default function EditCourse({ params }) {
     setLessons(lessonsClone);
   }
 
-  function handleDeleteLesson(index) {
-    const updatedLesson = [...lessons];
-    updatedLesson.splice(index, 1);
-    setLessons(updatedLesson);
+  async function handleDeleteLessonFromDatabase(index, lesson_id) {
+    // const updatedLesson = [...lessons];
+    // updatedLesson.splice(index, 1);
+    // setLessons(updatedLesson);
+    // const id = lesson_id;
+    // console.log(`lesson_id`, id);
+    // try {
+    //   const res = await axios.delete(`http://localhost:3000/api/lessons/${id}`);
+    //   console.log(`res from server`, res);
+    // } catch (error) {
+    //   console.log(`error`, error);
+    // }
+
+    const updatedLessons = [...lessons];
+    updatedLessons.splice(index, 1);
+    setLessons(updatedLessons);
+
+    setDeletedLesson([...deletedLesson, lesson_id]);
   }
-  const router = useRouter();
+  console.log(`deletedLesson`, deletedLesson);
   function setStatusToDefault() {
     setNameStatus("");
     setPriceStatus("");
@@ -111,6 +131,7 @@ export default function EditCourse({ params }) {
     setCoverImageStatus("");
     setVideoTrailerStatus("");
   }
+
   function handleCoverImage(e) {
     if (e.target.files[0].size > 5000000) {
       setCoverImageStatus("File size should be less than 5MB");
@@ -126,60 +147,52 @@ export default function EditCourse({ params }) {
     }
     setVideoTrailer(e.target.files[0]);
   }
+
   function handleAttachedFile(e) {
     setAttachedFile(e.target.files[0]);
   }
-  async function createNewCourse(formData) {
-    const data = formData;
-    try {
-      const response = await axios.post("/api/courses", data);
-      console.log(response);
-    } catch (error) {
-      console.log(`error from add new course request`, error);
-    }
-  }
 
   async function handleSubmmitCourse() {
-    setStatusToDefault();
     const course_id = uuidv4();
+    // setStatusToDefault();
 
-    if (
-      !name ||
-      !price ||
-      !length ||
-      !summary ||
-      !description ||
-      !coverImage.name ||
-      !videoTrailer.name ||
-      lessons.length === 0
-    ) {
-      if (!name) {
-        setNameStatus("Please enter course name");
-      }
-      if (!price) {
-        setPriceStatus("Please enter price");
-      }
-      if (!length) {
-        setLengthStatus("Please enter total learning time");
-      }
-      if (!summary) {
-        setSummaryStatus("Please enter summary");
-      }
+    // if (
+    //   !name ||
+    //   !price ||
+    //   !length ||
+    //   !summary ||
+    //   !description ||
+    //   !coverImage ||
+    //   !videoTrailer ||
+    //   lessons.length === 0
+    // ) {
+    //   if (!name) {
+    //     setNameStatus("Please enter course name");
+    //   }
+    //   if (!price) {
+    //     setPriceStatus("Please enter price");
+    //   }
+    //   if (!length) {
+    //     setLengthStatus("Please enter total learning time");
+    //   }
+    //   if (!summary) {
+    //     setSummaryStatus("Please enter summary");
+    //   }
 
-      if (!description) {
-        setDescriptionStatus("Please enter description");
-      }
-      if (!coverImage.name) {
-        setCoverImageStatus("Please upload cover image");
-      }
-      if (!videoTrailer.name) {
-        setVideoTrailerStatus("Please upload video trailer");
-      }
-      if (lessons.length === 0) {
-        alert("Please add at least one lesson");
-      }
-      return;
-    }
+    //   if (!description) {
+    //     setDescriptionStatus("Please enter description");
+    //   }
+    //   if (!coverImage.name) {
+    //     setCoverImageStatus("Please upload cover image");
+    //   }
+    //   if (!videoTrailer.name) {
+    //     setVideoTrailerStatus("Please upload video trailer");
+    //   }
+    //   if (lessons.length === 0) {
+    //     alert("Please add at least one lesson");
+    //   }
+    //   return;
+    // }
 
     const courseData = {
       course_id: course_id,
@@ -303,15 +316,222 @@ export default function EditCourse({ params }) {
     };
     console.log(`courseData before post`, courseData);
     try {
-      const res = await axios.post("/api/courses", courseData);
-      console.log(res);
+      const response = await axios.post("/api/courses", courseData);
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
     resetToDefault();
     router.push("/admin/courselist");
   }
-  console.log(lessons[0]?.lesson_id);
+
+  function findFilePathNames(i) {
+    const item = i + "";
+    const publicIndex = item.split("/").findIndex((el) => el === "public");
+    const data = item
+      .split("/")
+      .filter((el, i) => {
+        if (i > publicIndex + 1) {
+          return el;
+        }
+      })
+      .join("/");
+
+    return data;
+  }
+
+  async function handleSubmit() {
+    setStatusToDefault();
+    if (
+      !name ||
+      !price ||
+      !length ||
+      !summary ||
+      !description ||
+      !coverImage ||
+      !videoTrailer ||
+      lessons.length === 0
+    ) {
+      if (!name) {
+        setNameStatus("Please enter course name");
+      }
+      if (!price) {
+        setPriceStatus("Please enter price");
+      }
+      if (!length) {
+        setLengthStatus("Please enter total learning time");
+      }
+      if (!summary) {
+        setSummaryStatus("Please enter summary");
+      }
+      if (!description) {
+        setDescriptionStatus("Please enter description");
+      }
+      if (!coverImage) {
+        setCoverImageStatus("Please upload cover image");
+      }
+      if (!videoTrailer) {
+        setVideoTrailerStatus("Please upload video trailer");
+      }
+      if (lessons.length === 0) {
+        alert("Please add at least one lesson");
+      }
+      console.log(`check status`);
+      return;
+    }
+    const courseData = {
+      course_id: course_id,
+      description: description,
+      length: length,
+      lessons: lessons,
+      name: name,
+      number_of_lesson: lessons.length,
+      price: price,
+      summary: summary,
+      coverImage: coverImage,
+      videoTrailer: videoTrailer,
+      attachedFile: attachedFile,
+    };
+    const lessonData = {
+      course_id: course_id,
+    };
+    const subLessonData = {
+      course_id: course_id,
+    };
+
+    if (typeof attachedFile === "object" && attachedFile !== null) {
+      const fileName = findFilePathNames(latestCourseData.attached_file_url);
+
+      //remove attach file from storage
+      try {
+        const { data, error } = await supabase.storage
+          .from(`courses`)
+          .remove(fileName);
+        if (error) {
+          console.log(`error from supabase`, error);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      //upload new file to storage
+      try {
+        const { data, error } = await supabase.storage
+          .from(`courses`)
+          .upload(
+            `${course_id}/videoTrailer/${coverImage.name}`,
+            attachedFile,
+            {
+              cacheControl: "3600",
+              upsert: true,
+            }
+          );
+        if (error) {
+          console.log(`error from supabase`, error);
+        }
+        courseData.attached_file_url = supabase.storage
+          .from("courses")
+          .getPublicUrl(data.path).data.publicUrl;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    console.log(`attached file`, attachedFile);
+    if (typeof coverImage === "object") {
+      const fileName = findFilePathNames(latestCourseData.img_url);
+
+      //remove old cover image from storage
+      try {
+        const { data, error } = await supabase.storage
+          .from(`courses`)
+          .remove(fileName);
+        if (error) {
+          console.log(`error from supabase`, error);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      // upload new cover image to storage
+      try {
+        const { data, error } = await supabase.storage
+          .from(`courses`)
+          .upload(`${course_id}/coverImage/${coverImage.name}`, coverImage, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+        if (error) {
+          console.log(`error from supabase`, error);
+        }
+        courseData.img_url = supabase.storage
+          .from("courses")
+          .getPublicUrl(data.path, coverImage).data.publicUrl;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    if (typeof videoTrailer === "object") {
+      const fileName = findFilePathNames(latestCourseData.videoTrailer);
+
+      // remove old video trailer from storage
+      try {
+        const { data, error } = await supabase.storage
+          .from(`courses`)
+          .remove(fileName);
+        if (error) {
+          console.log(`error from supabase`, error);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      //upload new video trailer from storage
+      try {
+        const { data, error } = await supabase.storage
+          .from(`courses`)
+          .upload(
+            `${course_id}/videoTrailer/${coverImage.name}`,
+            videoTrailer,
+            {
+              cacheControl: "3600",
+              upsert: true,
+            }
+          );
+        if (error) {
+          console.log(`error`, error);
+        }
+        console.log(`data`, data);
+        courseData.video_url = supabase.storage
+          .from("courses")
+          .getPublicUrl(data.path).data.publicUrl;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    console.log(`courseData before sent to data base`, courseData);
+
+    //send necessary data to the server
+    try {
+      const response = await axios.put(
+        `/api/courses/${courseData.course_id}`,
+        courseData
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(`error`, error);
+    }
+
+    try {
+      const response = await axios.delete("/api/lessons", deletedLesson);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+    router.push(`/admin/courselist`);
+  }
+
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -324,7 +544,12 @@ export default function EditCourse({ params }) {
         <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px] z-10">
           <div className="flex w-full items-center justify-between">
             <div className="flex gap-[8px] items-center">
-              <Link href="/admin/courselist">
+              <Link
+                href="/admin/courselist"
+                onClick={() => {
+                  resetToDefault();
+                }}
+              >
                 <button>
                   <Image src={arrowBack} alt="arrow back icon" />
                 </button>
@@ -349,7 +574,9 @@ export default function EditCourse({ params }) {
 
               <button
                 className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
-                onClick={handleSubmmitCourse}
+                onClick={() => {
+                  handleSubmit();
+                }}
               >
                 Edit
               </button>
@@ -475,17 +702,17 @@ export default function EditCourse({ params }) {
                     alt={coverImage.name}
                     className="w-[240px] h-[240px] rounded-lg"
                   />
-                  <p>{coverImage.name}</p>
+                  <p>{`${name}_cover image`}</p>
                   <Image
                     src={CancelIcon}
                     alt="cancel icon"
                     className="absolute -top-[7px] -right-[11px]"
                     onClick={(e) => {
-                      setCoverImage({});
+                      setCoverImage(null);
                     }}
                   />
                 </div>
-              ) : !coverImage.name ? (
+              ) : !coverImage?.name ? (
                 <label
                   htmlFor="coverImage"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -517,7 +744,7 @@ export default function EditCourse({ params }) {
                     alt="cancel icon"
                     className="absolute -top-[7px] -right-[11px]"
                     onClick={(e) => {
-                      setCoverImage({});
+                      setCoverImage(null);
                     }}
                   />
                 </div>
@@ -539,7 +766,7 @@ export default function EditCourse({ params }) {
                       alt="cancel icon"
                       className="absolute -top-[7px] -right-[11px]"
                       onClick={(e) => {
-                        setVideoTrailer({});
+                        setVideoTrailer(null);
                       }}
                     />
                     <Image
@@ -550,7 +777,7 @@ export default function EditCourse({ params }) {
                   </div>
                   <p>{`${name}_trailer`}</p>
                 </div>
-              ) : !videoTrailer.name ? (
+              ) : !videoTrailer?.name ? (
                 <label
                   htmlFor="videoTrailer"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -585,7 +812,7 @@ export default function EditCourse({ params }) {
                       alt="cancel icon"
                       className="absolute -top-[7px] -right-[11px]"
                       onClick={(e) => {
-                        setVideoTrailer({});
+                        setVideoTrailer(null);
                       }}
                     />
                     <Image
@@ -600,7 +827,20 @@ export default function EditCourse({ params }) {
             </section>
             <section className="flex flex-col gap-[8px]">
               <p>Attach File (Optional)</p>
-              {!attachedFile.name ? (
+              {typeof attachedFile === "string" ? (
+                <div className="relative flex bg-[#E5ECF8] w-[200px] h-[90px] items-center justify-start p-[16px] rounded-lg gap-[30px]">
+                  <Image src={FileIcon} alt={attachedFile.name} />
+                  <Image
+                    src={CancelIcon}
+                    alt="cancel icon"
+                    className="absolute -top-[7px] -right-[11px]"
+                    onClick={(e) => {
+                      setAttachedFile(null);
+                    }}
+                  />
+                  <p>file.pdf</p>
+                </div>
+              ) : !attachedFile?.name ? (
                 <label
                   htmlFor="attachFile"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -612,6 +852,7 @@ export default function EditCourse({ params }) {
                     onChange={(e) => {
                       handleAttachedFile(e);
                     }}
+                    accept="application/pdf"
                   />
                   <Image src={uploadFile} alt="image-with-upload-file-text" />
                 </label>
@@ -623,7 +864,7 @@ export default function EditCourse({ params }) {
                     alt="cancel icon"
                     className="absolute -top-[7px] -right-[11px]"
                     onClick={(e) => {
-                      setAttachedFile({});
+                      setAttachedFile(null);
                     }}
                   />
                   <p>{attachedFile.name}</p>
@@ -658,7 +899,7 @@ export default function EditCourse({ params }) {
             )}
 
             <section className="flex flex-col gap-[10px] min-[768px]:gap-[0px]">
-              {lessons.map(({ lessonName, subLesson }, index) => {
+              {lessons.map(({ name, sub_lessons, lesson_id }, index) => {
                 return (
                   <section
                     key={index}
@@ -696,19 +937,19 @@ export default function EditCourse({ params }) {
                     </section>
                     <section className="min-[768px]:w-[500px] flex">
                       <p className="min-[768px]:hidden basis-[110px]">Name</p>
-                      <p>{lessons[index]?.name}</p>
+                      <p>{name}</p>
                     </section>
                     <section className="min-[768px]:w-[396px] flex">
                       <p className="min-[768px]:hidden basis-[110px]">
                         Sub-Lesson
                       </p>
-                      <p>{lessons[index]?.sub_lessons.length}</p>
+                      <p>{sub_lessons.length}</p>
                     </section>
                     <section className="min-[768px]:w-[120px] flex justify-center gap-[17px]">
                       <button
                         className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] min-[768px]:hover:bg-transparent rounded-lg min-[768px]:p-0"
                         onClick={() => {
-                          handleDeleteLesson(index);
+                          handleDeleteLessonFromDatabase(index, lesson_id);
                         }}
                       >
                         <Image

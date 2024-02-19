@@ -120,7 +120,6 @@ export default function Learning({ params }) {
       allSub.forEach((id, i) => {
         if (id.sub_lesson_id == currentSubLesson.sub_lesson_id) {
           index = i;
-          console.log(index);
         }
       });
       const result = index + current;
@@ -130,8 +129,6 @@ export default function Learning({ params }) {
         : null;
     }
   }
-
-  console.log(courseById[0]);
 
   return (
     <>
@@ -151,6 +148,7 @@ export default function Learning({ params }) {
             courseById={courseById}
             currentSubLesson={currentSubLesson}
             handleUpdateSubProgress={handleUpdateSubProgress}
+            session={session}
           />
         )}
       </div>
@@ -269,8 +267,36 @@ function CourseVideo({
   courseById,
   currentSubLesson,
   handleUpdateSubProgress,
+  session,
 }) {
+  const [assignment, setAssignment] = useState({});
+
   const course = courseById[0];
+  console.log(currentSubLesson);
+  console.log(course.users_sub_lessons);
+
+  useEffect(() => {
+    function assignmentStatus() {
+      const assignment = course.users_sub_lessons.find((sub) => {
+        if (sub.sub_lesson_id === currentSubLesson.sub_lesson_id) {
+          setAssignment(sub);
+        }
+      });
+    }
+    assignmentStatus();
+  }, [currentSubLesson]);
+  console.log(assignment);
+
+  async function onSubmit(e) {
+    e.preventDefault();
+
+    const courseId = params.courseid;
+    const formData = new FormData(e.target);
+    const res = await axios.post(
+      `/api/learning/${courseId}/sendassignment/user=${session?.user?.userId}&sublessonid=${currentSubLesson.sub_lesson_id}`,
+      formData
+    );
+  }
 
   return (
     <div className="my-[30px]">
@@ -288,23 +314,31 @@ function CourseVideo({
           <source src={currentSubLesson.video_url} type="video/mp4"></source>
         </video>
         <div className="assignment-section mt-[50px] bg-[#E5ECF8] p-[15px] rounded-md relative">
-          <div className="assignment-container flex flex-col items-start ">
-            <h2>Assignment</h2>
-            <p>What are the 4 elements of service design?</p>
-            <input
-              placeholder="Answer..."
-              className="w-[692px] h-[96px] rounded-md"
-            ></input>
-            <div className="send-assignment flex flex-row justify-between w-[710px]">
-              <button className="w-[204px] h-[60px] bg-[#2F5FAC] text-white rounded-lg mt-[20px]">
-                Send Assignment
-              </button>
-              <p className="mt-[45px] text-[#646D89]">Assign within 2 days</p>
+          <form onSubmit={onSubmit}>
+            <div className="assignment-container flex flex-col items-start ">
+              <h2>Assignment</h2>
+              <p>{currentSubLesson.assignments.question}</p>
+              <input
+                placeholder="Answer..."
+                className="w-[692px] h-[96px] rounded-md"
+              ></input>
+              <div className="send-assignment flex flex-row justify-between w-[710px]">
+                <button
+                  className="w-[204px] h-[60px] bg-[#2F5FAC] text-white rounded-lg mt-[20px]"
+                  type="submit"
+                >
+                  Send Assignment
+                </button>
+                <p className="mt-[45px] text-[#646D89]">Assign within 2 days</p>
+              </div>
             </div>
-          </div>
-          <p className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded-lg">
-            Pending
-          </p>
+            <p className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded-lg">
+              {(assignment.status_assignment == 0 && "pending") ||
+                (assignment.status_assignment == 1 && "in progress") ||
+                (assignment.status_assignment == 2 && "submitted") ||
+                (assignment.status_assignment == 4 && "overdue")}
+            </p>
+          </form>
         </div>
       </div>
     </div>

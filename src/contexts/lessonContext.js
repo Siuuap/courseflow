@@ -10,15 +10,11 @@ export function LessonProvider({ children }) {
   const [length, setLength] = useState("");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
-  const [coverImage, setCoverImage] = useState({});
-  const [videoTrailer, setVideoTrailer] = useState({});
-  const [attachedFile, setAttachedFile] = useState({});
+  const [coverImage, setCoverImage] = useState(null);
+  const [videoTrailer, setVideoTrailer] = useState(null);
+  const [attachedFile, setAttachedFile] = useState(null);
   const [lessons, setLessons] = useState([]);
-
-  const [previewImage, setPreviewImage] = useState(null);
-  const [previewVideo, setPreviewVideo] = useState(null);
-  const [previewFile, setPreviewFile] = useState(null);
-
+  const [backupLessons, setBackupLessons] = useState([]);
   const [lessonUpdateId, setLessonUpdateId] = useState([]);
   function resetToDefault() {
     setName("");
@@ -30,9 +26,7 @@ export function LessonProvider({ children }) {
     setVideoTrailer(null);
     setAttachedFile(null);
     setLessons([]);
-    setPreviewImage(null);
-    setPreviewVideo(null);
-    setPreviewFile(null);
+    setBackupLessons([]);
     setLessonUpdateId([]);
   }
   return (
@@ -56,15 +50,11 @@ export function LessonProvider({ children }) {
         setAttachedFile,
         lessons,
         setLessons,
-        previewImage,
-        setPreviewImage,
-        previewVideo,
-        setPreviewVideo,
-        previewFile,
-        setPreviewFile,
         resetToDefault,
         lessonUpdateId,
         setLessonUpdateId,
+        backupLessons,
+        setBackupLessons,
       }}
     >
       {children}

@@ -15,35 +15,40 @@ import { useLessonContext } from "@/contexts/lessonContext";
 import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
 import HamburgerMenu from "@/components/HamburgerMenu";
-
+import { v4 as uuidv4 } from "uuid";
 export default function AddLesson() {
   const router = useRouter();
-  const { name, lessons, setLessons } = useLessonContext();
+  const { name, lessons, setLessons, backupLessons, setBackupLessons } =
+    useLessonContext();
   const [lessonName, setLessonName] = useState("");
   const [subLesson, setSubLesson] = useState([
     {
+      sub_lesson_id: uuidv4(),
       subLessonName: "",
-      video: {},
+      video: null,
     },
   ]);
+
   const [lessonNameStatus, setLessonNameStatus] = useState("");
   const [subLessonNameStatus, setSubLessonNameStatus] = useState([]);
   function handleAddSubLesson() {
-    setSubLesson([...subLesson, { subLessonName: "", video: {} }]);
+    setSubLesson([
+      ...subLesson,
+      { sub_lesson_id: uuidv4(), subLessonName: "", video: null },
+    ]);
   }
 
   function handleDeleteSubLesson(e, index) {
     if (subLesson.length === 1) {
       return;
     }
-
     const newSubLesson = [...subLesson];
     newSubLesson.splice(index, 1);
     setSubLesson(newSubLesson);
   }
   function handleDeleteSubLessonVideo(e, index) {
     const newSubLesson = [...subLesson];
-    newSubLesson[index].video = {};
+    newSubLesson[index].video = null;
     setSubLesson(newSubLesson);
   }
   function handleUpdateSubLessonName(e, index) {
@@ -67,29 +72,23 @@ export default function AddLesson() {
   function handleSubmit(e, index) {
     setLessonNameStatus("");
     if (!lessonName) {
-      setLessonNameStatus("Lesson Name is required");
       return;
     }
+
     for (let i = 0; i < subLesson.length; i++) {
-      if (!subLesson[i].subLessonName || !subLesson[i].video.name) {
+      if (!subLesson[i].subLessonName || !subLesson[i].video) {
         return;
       }
     }
-
-    // for (let i = 0; i < subLesson.length; i++) {
-    //   setSubLessonNameStatus("");
-    //   if (!subLesson[i].subLessonName || !subLesson[i].video.name) {
-    //     setSubLessonNameStatus("Sub-lesson Name is required");
-    //     return;
-    //   }
-    // }
     const newLesson = [...lessons];
     const data = {
+      lesson_id: uuidv4(),
       lessonName: lessonName,
       subLesson: subLesson,
     };
     newLesson.push(data);
-    setLessons(newLesson);
+    setLessons([...newLesson]);
+    setBackupLessons([...newLesson]);
     router.push("/admin/addcourse");
   }
 
@@ -154,7 +153,7 @@ export default function AddLesson() {
               <input
                 id="lessonName"
                 className={`${
-                  lessonNameStatus ? `border-[red]` : `border-[#D6D9E4]`
+                  !lessonName ? `border-[red] ` : `border-[#D6D9E4]`
                 } outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]`}
                 type="text"
                 placeholder="Lesson Name"
@@ -162,9 +161,9 @@ export default function AddLesson() {
                 onChange={(e) => setLessonName(e.target.value)}
               />
 
-              {lessonNameStatus && (
-                <p className="absolute text-[red] top-[105%] text-[14px]">
-                  {lessonNameStatus}
+              {!lessonName && (
+                <p className="absolute text-[red] top-[105%] text-[12px]">
+                  Lesson name is required.
                 </p>
               )}
             </div>
@@ -178,7 +177,7 @@ export default function AddLesson() {
               </label>
             </div>
             <section className="flex flex-col gap-[24px]">
-              {subLesson.map(({ subLessonName, videoUrl }, index) => {
+              {subLesson.map(({ subLessonName, video }, index) => {
                 return (
                   <section
                     key={index}
@@ -189,13 +188,13 @@ export default function AddLesson() {
                     </div>
                     <div className=" flex flex-col gap-[24px] basis-full">
                       <div className="relative flex flex-col gap-[4px]">
-                        <label htmlFor={subLesson[index].subLessonName}>
-                          Sub-lesson Name *
-                        </label>
+                        <label htmlFor={subLessonName}>Sub-lesson Name *</label>
                         <input
                           name="subLessonName"
-                          id={subLesson[index].subLessonName}
-                          className={`${`border-[#D6D9E4]`} min-[375px]:w-full min-[1200px]:w-[80%] outline-none border border-solid  px-[12px] py-[16px] rounded-[8px]`}
+                          id={subLessonName}
+                          className={`${
+                            subLessonName ? `border-[#D6D9E4]` : `border-[red]`
+                          } min-[375px]:w-full min-[1200px]:w-[80%] outline-none border border-solid  px-[12px] py-[16px] rounded-[8px]`}
                           type="text"
                           placeholder="Lesson Name"
                           value={subLessonName}
@@ -203,26 +202,26 @@ export default function AddLesson() {
                             handleUpdateSubLessonName(e, index);
                           }}
                         />
-                        {subLessonNameStatus && (
-                          <p className="absolute text-[red] text-[14px] top-[100%]">
-                            {subLessonNameStatus}
+                        {subLessonName ? null : (
+                          <p className="absolute text-[red] text-[12px] top-[100%]">
+                            Sub-lesson name is required.
                           </p>
                         )}
                       </div>
                       <div className="flex flex-col gap-[8px]">
                         <p>Video *</p>
-                        {!subLesson[index].video.name ? (
+                        {!video ? (
                           <label
-                            htmlFor="video"
-                            className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                            htmlFor={`video${index}`}
+                            className="w-fit cursor-pointer flex flex-col gap-[8px] relative"
                           >
                             <input
                               name="video"
-                              id="video"
+                              id={`video${index}`}
                               className="min-[375px]:w-[200px] outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
                               type="file"
                               placeholder="Lesson Name"
-                              value={videoUrl}
+                              value={video ? video : ""}
                               onChange={(e) => {
                                 handleUpdateSubLessonVideo(e, index);
                               }}
@@ -232,11 +231,16 @@ export default function AddLesson() {
                               src={uploadVideoSubLesson}
                               alt="upload sub lesson video inage"
                             />
+                            {video ? null : (
+                              <p className="absolute text-[12px] text-[red] top-[100%]">
+                                Press enter the video
+                              </p>
+                            )}
                           </label>
                         ) : (
                           <div className="relative w-fit">
                             <video
-                              src={URL.createObjectURL(subLesson[index].video)}
+                              src={URL.createObjectURL(video)}
                               className="relative w-[400px]"
                               accept="video/mov, video/mp4, video/avi"
                             ></video>

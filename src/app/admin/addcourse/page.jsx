@@ -44,14 +44,11 @@ export default function AddCourse() {
     setAttachedFile,
     lessons,
     setLessons,
-    previewImage,
-    setPreviewImage,
-    previewVideo,
-    setPreviewVideo,
-    previewFile,
-    setPreviewFile,
+    backupLessons,
+    setBackupLessons,
     resetToDefault,
   } = useLessonContext();
+
   const [nameStatus, setNameStatus] = useState("");
   const [priceStatus, setPriceStatus] = useState("");
   const [lengthStatus, setLengthStatus] = useState("");
@@ -104,15 +101,6 @@ export default function AddCourse() {
   function handleAttachedFile(e) {
     setAttachedFile(e.target.files[0]);
   }
-  async function createNewCourse(formData) {
-    const data = formData;
-    try {
-      const response = await axios.post("/api/courses", data);
-      console.log(response);
-    } catch (error) {
-      console.log(`error from add new course request`, error);
-    }
-  }
 
   async function handleSubmitCourse() {
     setStatusToDefault();
@@ -124,8 +112,8 @@ export default function AddCourse() {
       !length ||
       !summary ||
       !description ||
-      !coverImage.name ||
-      !videoTrailer.name ||
+      !coverImage ||
+      !videoTrailer ||
       lessons.length === 0
     ) {
       if (!name) {
@@ -222,15 +210,15 @@ export default function AddCourse() {
     // Generate lesson_id and sub_lesson_id
 
     for (let i = 0; i < lessons.length; i++) {
-      const lesson_id = uuidv4();
-      courseData.lessons[i].lesson_id = lesson_id;
+      // const lesson_id = uuidv4();
+      // courseData.lessons[i].lesson_id = lesson_id;
       courseData.lessons[i].lesson_number = i + 1;
     }
 
     for (let i = 0; i < courseData.lessons.length; i++) {
       for (let j = 0; j < courseData.lessons[i].subLesson.length; j++) {
-        const sub_lesson_id = uuidv4();
-        courseData.lessons[i].subLesson[j].sub_lesson_id = sub_lesson_id;
+        // const sub_lesson_id = uuidv4();
+        // courseData.lessons[i].subLesson[j].sub_lesson_id = sub_lesson_id;
         courseData.lessons[i].subLesson[j].sub_lesson_number = j + 1;
       }
     }
@@ -438,7 +426,7 @@ export default function AddCourse() {
             <section className={`relative flex flex-col gap-[8px] `}>
               <p>Course Image *</p>
 
-              {!coverImage?.name ? (
+              {!coverImage ? (
                 <label
                   htmlFor="coverImage"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -478,7 +466,7 @@ export default function AddCourse() {
             </section>
             <section className="relative flex flex-col gap-[8px]">
               <p> Video Trailer *</p>
-              {!videoTrailer?.name ? (
+              {!videoTrailer ? (
                 <label
                   htmlFor="videoTrailer"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -528,7 +516,7 @@ export default function AddCourse() {
             </section>
             <section className="flex flex-col gap-[8px]">
               <p>Attach File (Optional)</p>
-              {!attachedFile?.name ? (
+              {!attachedFile ? (
                 <label
                   htmlFor="attachFile"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -587,7 +575,7 @@ export default function AddCourse() {
             )}
 
             <section className="flex flex-col gap-[10px] min-[768px]:gap-[0px]">
-              {lessons.map(({ lessonName, subLesson }, index) => {
+              {lessons.map(({ lesson_id, lessonName, subLesson }, index) => {
                 return (
                   <section
                     key={index}

@@ -59,7 +59,7 @@ export default function EditCourse({ params }) {
   const [latestCourseData, setLatestCourseData] = useState("");
   const course_id = params.course_id;
   const router = useRouter();
-  console.log(lessons);
+  console.log(`lessons`, lessons);
   async function getCourseData() {
     try {
       const response = await axios.get(
@@ -730,7 +730,7 @@ export default function EditCourse({ params }) {
                   <img
                     src={URL.createObjectURL(coverImage)}
                     alt={coverImage.name}
-                    className="w-[240px] h-[240px] rounded-lg"
+                    className="h-[240px] rounded-lg"
                   />
                   <p>{coverImage.name}</p>
                   <Image

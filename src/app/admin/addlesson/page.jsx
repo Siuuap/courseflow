@@ -18,12 +18,11 @@ import HamburgerMenu from "@/components/HamburgerMenu";
 import { v4 as uuidv4 } from "uuid";
 export default function AddLesson() {
   const router = useRouter();
-  const { name, lessons, setLessons, backupLessons, setBackupLessons } =
-    useLessonContext();
+
+  const { name, lessons, setLessons } = useLessonContext();
   const [lessonName, setLessonName] = useState("");
   const [subLesson, setSubLesson] = useState([
     {
-      sub_lesson_id: uuidv4(),
       subLessonName: "",
       video: null,
     },
@@ -34,7 +33,10 @@ export default function AddLesson() {
   function handleAddSubLesson() {
     setSubLesson([
       ...subLesson,
-      { sub_lesson_id: uuidv4(), subLessonName: "", video: null },
+      {
+        subLessonName: "",
+        video: null,
+      },
     ]);
   }
 
@@ -82,7 +84,6 @@ export default function AddLesson() {
     }
     const newLesson = [...lessons];
     const data = {
-      lesson_id: uuidv4(),
       lessonName: lessonName,
       subLesson: subLesson,
     };

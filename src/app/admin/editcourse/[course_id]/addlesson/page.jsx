@@ -19,24 +19,26 @@ import { v4 as uuidv4 } from "uuid";
 
 export default function AddLessonWhenEditCourse({ params }) {
   const course_id = params.course_id;
-
   const router = useRouter();
-  const { name, lessons, setLessons, backupLessons, setBackupLessons } =
-    useLessonContext();
+  const lesson_id = uuidv4();
+  const { name, lessons, setLessons } = useLessonContext();
   const [lessonName, setLessonName] = useState("");
   const [subLesson, setSubLesson] = useState([
     {
-      course_id: course_id,
-      sub_lesson_id: uuidv4(),
       name: "",
-      video: null,
+      sub_lesson_id: uuidv4(),
+      video_url: null,
     },
   ]);
 
   function handleAddSubLesson() {
     setSubLesson([
       ...subLesson,
-      { course_id: course_id, sub_lesson_id: uuidv4(), name: "", video: null },
+      {
+        name: "",
+        sub_lesson_id: uuidv4(),
+        video_url: null,
+      },
     ]);
   }
 
@@ -85,12 +87,11 @@ export default function AddLessonWhenEditCourse({ params }) {
     const data = {
       course_id: course_id,
       created_at: Date.now(),
-      updated_at: Date.now(),
+      lesson_id: lesson_id,
       lesson_number: lessons.length + 1,
-      lesson_id: uuidv4(),
       name: lessonName,
       sub_lessons: subLesson,
-      name: lessonName,
+      updated_at: Date.now(),
     };
     newLesson.push(data);
     setLessons([...newLesson]);

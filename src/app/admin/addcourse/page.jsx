@@ -67,7 +67,7 @@ export default function AddCourse() {
     lessonsClone[dragOverLesson.current] = temp;
     setLessons(lessonsClone);
   }
-
+  console.log(`lessons`, lessons);
   function handleDeleteLesson(index) {
     const updatedLesson = [...lessons];
     updatedLesson.splice(index, 1);
@@ -210,15 +210,15 @@ export default function AddCourse() {
     // Generate lesson_id and sub_lesson_id
 
     for (let i = 0; i < lessons.length; i++) {
-      // const lesson_id = uuidv4();
-      // courseData.lessons[i].lesson_id = lesson_id;
+      const lesson_id = uuidv4();
+      courseData.lessons[i].lesson_id = lesson_id;
       courseData.lessons[i].lesson_number = i + 1;
     }
 
     for (let i = 0; i < courseData.lessons.length; i++) {
       for (let j = 0; j < courseData.lessons[i].subLesson.length; j++) {
-        // const sub_lesson_id = uuidv4();
-        // courseData.lessons[i].subLesson[j].sub_lesson_id = sub_lesson_id;
+        const sub_lesson_id = uuidv4();
+        courseData.lessons[i].subLesson[j].sub_lesson_id = sub_lesson_id;
         courseData.lessons[i].subLesson[j].sub_lesson_number = j + 1;
       }
     }

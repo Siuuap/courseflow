@@ -59,7 +59,7 @@ export default function EditCourse({ params }) {
   const [latestCourseData, setLatestCourseData] = useState("");
   const course_id = params.course_id;
   const router = useRouter();
-
+  console.log(lessons);
   async function getCourseData() {
     try {
       const response = await axios.get(
@@ -115,7 +115,7 @@ export default function EditCourse({ params }) {
 
     setDeletedLesson([...deletedLesson, lesson_id]);
   }
-  console.log(`deletedLesson`, deletedLesson);
+
   function setStatusToDefault() {
     setNameStatus("");
     setPriceStatus("");
@@ -694,7 +694,7 @@ export default function EditCourse({ params }) {
                   <img
                     src={coverImage}
                     alt={coverImage.name}
-                    className="w-[240px] h-[240px] rounded-lg"
+                    className="h-[240px] rounded-lg"
                   />
                   <p>{`${name}_cover image`}</p>
                   <Image
@@ -798,7 +798,7 @@ export default function EditCourse({ params }) {
                     <video
                       src={URL.createObjectURL(videoTrailer)}
                       alt={videoTrailer.name}
-                      className="w-[240px] h-[240px] rounded-lg "
+                      className="h-[240px] rounded-lg "
                     ></video>
 
                     <Image
@@ -937,7 +937,7 @@ export default function EditCourse({ params }) {
                       <p className="min-[768px]:hidden basis-[110px]">
                         Sub-Lesson
                       </p>
-                      <p>{sub_lessons.length}</p>
+                      <p>{sub_lessons?.length}</p>
                     </section>
                     <section className="min-[768px]:w-[120px] flex justify-center gap-[17px]">
                       <button
@@ -955,6 +955,7 @@ export default function EditCourse({ params }) {
                       </button>
                       <Link
                         href={`/admin/editcourse/${course_id}/editlesson/${lessons[index].lesson_id}`}
+                        onClick={() => console.log(index)}
                         className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 min-[768px]:p-0 min-[768px]:hover:bg-transparent"
                       >
                         <Image

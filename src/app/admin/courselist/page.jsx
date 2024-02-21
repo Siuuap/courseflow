@@ -124,7 +124,7 @@ export default function DashBoardPage() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col min-[0px]:gap-[30px] min-[1200px]:gap-0 min-[0px]:w-[343px] min-[0px]:m-[16px] min-[768px]:w-[736px] min-[1200px]:w-[1168px] justify-center min-[1200px]:mx-[0px] min-[1440px]:w-[1120px]">
+            <div className="flex flex-col min-[0px]:gap-[30px] min-[1200px]:gap-0 min-[0px]:w-[343px] min-[0px]:m-[16px] min-[768px]:w-[736px] min-[1200px]:w-[1168px] justify-center min-[1200px]:m-[0px] min-[1440px]:w-[1120px]">
               {courseData.map(
                 (
                   {
@@ -150,11 +150,11 @@ export default function DashBoardPage() {
                         <img
                           src={img_url}
                           alt="cover-image-course"
-                          className="rounded-md"
+                          className="rounded-md min-[375px]:h-[230px] min-[1200px]:h-[47px] object-cover"
                         />
                       </div>
                       <div className="flex min-[0px]:gap-[16px] min-[1200px]:gap-[0px] min-[0px]:flex-col min-[0px]:items-start min-[768px]:w-[50%] min-[1200px]:flex-row min-[1200px]:justify-start min-[1200px]:w-fit">
-                        <div className="min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[375px]:w-full min-[375px]:text-[16px] text-center min-[768px]:text-start min-[375px]:font-bold min-[1200px]:font-normal min-[1200px]:w-[268px]">
+                        <div className="min-[1200px]:px-[10px] min-[1200px]:py-[32px] min-[375px]:w-full min-[375px]:text-[16px] text-center min-[768px]:text-start min-[375px]:font-bold min-[1200px]:font-normal min-[1200px]:w-[268px]">
                           {name}
                         </div>
 

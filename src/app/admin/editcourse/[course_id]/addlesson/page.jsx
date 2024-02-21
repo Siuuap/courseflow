@@ -1,9 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/utils/db";
+import { supabaseAdmin } from "@/utils/db";
 
 import SideBar from "@/components/SideBar";
+import uploadFile from "@/assets/images/uploadFile.svg";
+import uploadImage from "@/assets/images/uploadImage.svg";
+import uploadVideo from "@/assets/images/uploadVideo.svg";
 import Image from "next/image";
 import arrowBack from "@/assets/images/arrowBack.svg";
 import uploadVideoSubLesson from "@/assets/images/uploadVideoSubLesson.svg";
@@ -13,22 +16,29 @@ import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
 
-export default function AddLesson({ params }) {
+export default function AddLessonWhenEditCourse({ params }) {
   const course_id = params.course_id;
+
   const router = useRouter();
-  const { name, lessons, setLessons, lessonUpdateId, setLessonUpdateId } =
+  const { name, lessons, setLessons, backupLessons, setBackupLessons } =
     useLessonContext();
   const [lessonName, setLessonName] = useState("");
   const [subLesson, setSubLesson] = useState([
     {
-      subLessonName: "",
-      video: {},
+      course_id: course_id,
+      sub_lesson_id: uuidv4(),
+      name: "",
+      video: null,
     },
   ]);
-  const [lessonNameStatus, setLessonNameStatus] = useState("");
-  const [subLessonNameStatus, setSubLessonNameStatus] = useState([]);
+
+  function handleAddSubLesson() {
+    setSubLesson([
+      ...subLesson,
+      { course_id: course_id, sub_lesson_id: uuidv4(), name: "", video: null },
+    ]);
+  }
 
   function handleDeleteSubLesson(e, index) {
     if (subLesson.length === 1) {
@@ -38,16 +48,15 @@ export default function AddLesson({ params }) {
     newSubLesson.splice(index, 1);
     setSubLesson(newSubLesson);
   }
-
   function handleDeleteSubLessonVideo(e, index) {
     const newSubLesson = [...subLesson];
-    newSubLesson[index].video = {};
+    newSubLesson[index].video = null;
     setSubLesson(newSubLesson);
   }
-
   function handleUpdateSubLessonName(e, index) {
     const { name, value } = e.target;
     const subLessonList = [...subLesson];
+
     subLessonList[index][name] = value;
     setSubLesson(subLessonList);
   }
@@ -57,102 +66,37 @@ export default function AddLesson({ params }) {
     if (files.size > 20000000) {
       return;
     }
-    const subLessonList = [...subLesson];
-    subLessonList[index][name] = files[0];
-    setSubLesson(subLessonList);
+    const newSubLesson = [...subLesson];
+    newSubLesson[index][name] = files[0];
+    setSubLesson(newSubLesson);
   }
 
-  async function handleUpdateNewLesson(e, index) {
-    setLessonNameStatus("");
-
+  function handleSubmit(e, index) {
     if (!lessonName) {
-      setLessonNameStatus("Lesson Name is required");
       return;
     }
 
     for (let i = 0; i < subLesson.length; i++) {
-      if (!subLesson[i].subLessonName || !subLesson[i].video.name) {
+      if (!subLesson[i].name || !subLesson[i].video) {
         return;
       }
     }
-
-    // for (let i = 0; i < subLesson.length; i++) {
-    //   setSubLessonNameStatus("");
-    //   if (!subLesson[i].subLessonName || !subLesson[i].video.name) {
-    //     setSubLessonNameStatus("Sub-lesson Name is required");
-    //     return;
-    //   }
-    // }
-
-    const newLesson = {
+    const newLesson = [...lessons];
+    const data = {
+      course_id: course_id,
+      created_at: Date.now(),
+      updated_at: Date.now(),
+      lesson_number: lessons.length + 1,
       lesson_id: uuidv4(),
       name: lessonName,
-      course_id: course_id,
-      lesson_number: lessons.length + 1,
       sub_lessons: subLesson,
+      name: lessonName,
     };
-    console.log(newLesson);
-    setLessons([...lessons, newLesson]);
-
-    // for (let i = 0; i < subLesson.length; i++) {
-    //   subLesson[i].sub_lesson_id = uuidv4();
-    //   subLesson[i].sub_lesson_number = i + 1;
-    // try {
-    //   const video = subLesson[i].video;
-    //   const { data, error } = await supabase.storage
-    //     .from(`courses`)
-    //     .upload(
-    //       `${course_id}/lessons/${lesson_id}/sub_lessons/${subLesson[i].sub_lesson_id}/sublesson${subLesson[i].sub_lesson_number}`,
-    //       video,
-    //       {
-    //         cacheControl: "3600",
-    //         upsert: false,
-    //       }
-    //     );
-    //   subLesson[i].video_url = supabase.storage
-    //     .from("courses")
-    //     .getPublicUrl(data.path, video).data.publicUrl;
-    //   if (error) {
-    //     console.log(`error from supabase response`, error);
-    //   }
-    // } catch (err) {
-    //   console.log(`error before sending data to supabase`, err);
-    // }
-    // }
-
-    //Create new lesson
-    // const newLesson = {
-    //   course_id: course_id,
-    //   lesson_id: lesson_id,
-    //   lessonName: lessonName,
-    //   lesson_number: lessons.length + 1,
-    // };
-
-    // try {
-    //   const response = await axios.post("/api/lessons", newLesson);
-    //   console.log(response);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-
-    //create new sublesson
-    // const newSubLesson = { lesson_id: lesson_id, subLesson: subLesson };
-    // try {
-    //   const response = await axios.post("/api/sub_lessons", newSubLesson);
-    //   console.log(response);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    // console.log(`newSubLesson`, newSubLesson);
-    // const newLesson = [...lessons];
-    // const data = {
-    //   lessonName: lessonName,
-    //   subLesson: subLesson,
-    // };
-    // newLesson.push(data);
-    // setLessons(newLesson);
+    newLesson.push(data);
+    setLessons([...newLesson]);
     router.push(`/admin/editcourse/${course_id}`);
   }
+
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -195,7 +139,7 @@ export default function AddLesson({ params }) {
               <button
                 className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {
-                  handleUpdateNewLesson();
+                  handleSubmit();
                 }}
               >
                 Create
@@ -214,7 +158,7 @@ export default function AddLesson({ params }) {
               <input
                 id="lessonName"
                 className={`${
-                  lessonNameStatus ? `border-[red]` : `border-[#D6D9E4]`
+                  !lessonName ? `border-[red] ` : `border-[#D6D9E4]`
                 } outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]`}
                 type="text"
                 placeholder="Lesson Name"
@@ -222,9 +166,9 @@ export default function AddLesson({ params }) {
                 onChange={(e) => setLessonName(e.target.value)}
               />
 
-              {lessonNameStatus && (
-                <p className="absolute text-[red] top-[105%] text-[14px]">
-                  {lessonNameStatus}
+              {!lessonName && (
+                <p className="absolute text-[red] top-[105%] text-[12px]">
+                  Lesson name is required.
                 </p>
               )}
             </div>
@@ -238,7 +182,7 @@ export default function AddLesson({ params }) {
               </label>
             </div>
             <section className="flex flex-col gap-[24px]">
-              {subLesson.map(({ subLessonName, videoUrl }, index) => {
+              {subLesson.map(({ name, video }, index) => {
                 return (
                   <section
                     key={index}
@@ -249,40 +193,40 @@ export default function AddLesson({ params }) {
                     </div>
                     <div className=" flex flex-col gap-[24px] basis-full">
                       <div className="relative flex flex-col gap-[4px]">
-                        <label htmlFor={subLesson[index].subLessonName}>
-                          Sub-lesson Name *
-                        </label>
+                        <label htmlFor={name}>Sub-lesson Name *</label>
                         <input
-                          name="subLessonName"
-                          id={subLesson[index].subLessonName}
-                          className={`${`border-[#D6D9E4]`} min-[375px]:w-full min-[1200px]:w-[80%] outline-none border border-solid  px-[12px] py-[16px] rounded-[8px]`}
+                          name="name"
+                          id={name}
+                          className={`${
+                            name ? `border-[#D6D9E4]` : `border-[red]`
+                          } min-[375px]:w-full min-[1200px]:w-[80%] outline-none border border-solid  px-[12px] py-[16px] rounded-[8px]`}
                           type="text"
                           placeholder="Lesson Name"
-                          value={subLessonName}
+                          value={name}
                           onChange={(e) => {
                             handleUpdateSubLessonName(e, index);
                           }}
                         />
-                        {subLessonNameStatus && (
-                          <p className="absolute text-[red] text-[14px] top-[100%]">
-                            {subLessonNameStatus}
+                        {name ? null : (
+                          <p className="absolute text-[red] text-[12px] top-[100%]">
+                            Sub-lesson name is required.
                           </p>
                         )}
                       </div>
                       <div className="flex flex-col gap-[8px]">
                         <p>Video *</p>
-                        {!subLesson[index].video.name ? (
+                        {!video ? (
                           <label
-                            htmlFor="video"
-                            className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                            htmlFor={`video${index}`}
+                            className="w-fit cursor-pointer flex flex-col gap-[8px] relative"
                           >
                             <input
                               name="video"
-                              id="video"
+                              id={`video${index}`}
                               className="min-[375px]:w-[200px] outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
                               type="file"
                               placeholder="Lesson Name"
-                              value={videoUrl}
+                              value={video ? video : ""}
                               onChange={(e) => {
                                 handleUpdateSubLessonVideo(e, index);
                               }}
@@ -292,12 +236,17 @@ export default function AddLesson({ params }) {
                               src={uploadVideoSubLesson}
                               alt="upload sub lesson video inage"
                             />
+                            {video ? null : (
+                              <p className="absolute text-[12px] text-[red] top-[100%]">
+                                Press enter the video
+                              </p>
+                            )}
                           </label>
                         ) : (
                           <div className="relative w-fit">
                             <video
-                              src={URL.createObjectURL(subLesson[index].video)}
-                              className="relative w-[400px]"
+                              src={URL.createObjectURL(video)}
+                              className="relative h-[200px]"
                               accept="video/mov, video/mp4, video/avi"
                             ></video>
                             <Image
@@ -331,10 +280,7 @@ export default function AddLesson({ params }) {
               <button
                 className="font-[700] leading-[24px] rounded-lg w-[208px] px-[32px] py-[18px] border border-solid border-[#F47E20] text-[#F47E20]"
                 onClick={() => {
-                  setSubLesson([
-                    ...subLesson,
-                    { subLessonName: "", video: {} },
-                  ]);
+                  handleAddSubLesson();
                 }}
               >
                 + Add Sub-lesson

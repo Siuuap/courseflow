@@ -14,31 +14,31 @@ import DragIcon from "@/assets/images/DragIcon.svg";
 import { useLessonContext } from "@/contexts/lessonContext";
 import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
-
+import HamburgerMenu from "@/components/HamburgerMenu";
+import cloneDeep from "lodash/cloneDeep";
 export default function EditLessonWhenAdd({ params }) {
   const router = useRouter();
-
+  const course_id = params.course_id;
   const index = params.lesson_index;
-  const { name, lessons, setLessons, backupLessons } = useLessonContext();
+  const { name, lessons, setLessons } = useLessonContext();
 
-  console.log(`lessons`, lessons);
-  console.log(`backupLessons`, backupLessons);
   const titleCourseName = name;
   const titleLessonName = lessons[index]?.lessonName;
-
-  const [lessonName, setLessonName] = useState(lessons[index]?.lessonName);
-  const [subLesson, setSubLesson] = useState([...lessons[index]?.subLesson]);
+  const [lessonsClone, setLessonsClone] = useState(cloneDeep(lessons));
+  const [lessonName, setLessonName] = useState(lessonsClone[index]?.lessonName);
+  const [subLesson, setSubLesson] = useState([
+    ...lessonsClone[index]?.subLesson,
+  ]);
   const [lessonNameStatus, setLessonNameStatus] = useState("");
 
   function handleAddSubLesson() {
     setSubLesson([...subLesson, { subLessonName: "", video: null }]);
   }
-  console.log(`sublesson`, subLesson);
+
   function handleDeleteSubLesson(e, index) {
     if (subLesson.length === 1) {
       return;
     }
-
     const newSubLesson = [...subLesson];
     newSubLesson.splice(index, 1);
     setSubLesson(newSubLesson);
@@ -78,7 +78,7 @@ export default function EditLessonWhenAdd({ params }) {
       }
     }
 
-    const newLesson = [...lessons];
+    const newLesson = [...lessonsClone];
     const data = {
       lessonName: lessonName,
       subLesson: subLesson,
@@ -87,10 +87,7 @@ export default function EditLessonWhenAdd({ params }) {
     setLessons(newLesson);
     router.push("/admin/addcourse");
   }
-  function cancleEditLesson() {
-    setLessons([...backupLessons]);
-    router.push("/admin/addcourse");
-  }
+
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -119,19 +116,19 @@ export default function EditLessonWhenAdd({ params }) {
                   <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
                     Add Lesson
                   </p>
-                  <button className="min-[1440px]:hidden">💩</button>
+                  <div className="min-[1440px]:hidden border border-solid border-[#D6D9E4] w-[30px] h-[30px] flex justify-center items-center rounded-md">
+                    <HamburgerMenu />
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="flex gap-[10px] ">
-              <button
-                className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
-                onClick={() => cancleEditLesson()}
-              >
-                Cancel
-              </button>
-
+              <Link href={`/admin/addcourse`}>
+                <button className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]">
+                  Cancel
+                </button>
+              </Link>
               <button
                 className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {

@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { supabaseAdmin } from "@/utils/db";
+import { supabase } from "@/utils/db";
 
 import SideBar from "@/components/SideBar";
 import uploadFile from "@/assets/images/uploadFile.svg";
@@ -14,37 +14,52 @@ import DragIcon from "@/assets/images/DragIcon.svg";
 import { useLessonContext } from "@/contexts/lessonContext";
 import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
+import axios from "axios";
 import HamburgerMenu from "@/components/HamburgerMenu";
-
-export default function EditLesson({ params }) {
-  const course_id = params.course_id;
+import { v4 as uuidv4 } from "uuid";
+import cloneDeep from "lodash/cloneDeep";
+export default function EditLessonWhenAdd({ params }) {
   const router = useRouter();
-  const { name, lessons, setLessons } = useLessonContext();
-  const [lessonName, setLessonName] = useState("");
-  const [subLesson, setSubLesson] = useState([
-    {
-      subLessonName: "",
-      video: {},
-    },
-  ]);
+  const course_id = params.course_id;
+  const lesson_id = params.lesson_id;
+
+  const { name, lessons, setLessons, backupLessons } = useLessonContext();
+
+  const backupLesson = lessons.filter((lesson) => {
+    return lesson.lesson_id === lesson_id;
+  });
+
+  const lesson = cloneDeep(backupLesson);
+  const [lessonName, setLessonName] = useState(lesson[0]?.name);
+  const [subLesson, setSubLesson] = useState(lesson[0]?.sub_lessons);
   const [lessonNameStatus, setLessonNameStatus] = useState("");
-  const [subLessonNameStatus, setSubLessonNameStatus] = useState([]);
+
+  const [courseName, setCourseName] = useState("");
+
   function handleAddSubLesson() {
-    setSubLesson([...subLesson, { subLessonName: "", video: {} }]);
+    setSubLesson([
+      ...subLesson,
+      {
+        course_id: course_id,
+        sublesson_id: uuidv4(),
+        name: "",
+        video_url: null,
+      },
+    ]);
   }
 
   function handleDeleteSubLesson(e, index) {
     if (subLesson.length === 1) {
       return;
     }
-
     const newSubLesson = [...subLesson];
     newSubLesson.splice(index, 1);
     setSubLesson(newSubLesson);
   }
+
   function handleDeleteSubLessonVideo(e, index) {
     const newSubLesson = [...subLesson];
-    newSubLesson[index].video = {};
+    newSubLesson[index].video = null;
     setSubLesson(newSubLesson);
   }
   function handleUpdateSubLessonName(e, index) {
@@ -65,33 +80,30 @@ export default function EditLesson({ params }) {
     setSubLesson(subLessonList);
   }
 
-  function handleSubmit(e, index) {
+  function handleUpdateLesson(e, index) {
     setLessonNameStatus("");
     if (!lessonName) {
       setLessonNameStatus("Lesson Name is required");
       return;
     }
     for (let i = 0; i < subLesson.length; i++) {
-      if (!subLesson[i].subLessonName || !subLesson[i].video.name) {
+      if (!subLesson[i].subLessonName || !subLesson[i].video) {
         return;
       }
     }
 
-    // for (let i = 0; i < subLesson.length; i++) {
-    //   setSubLessonNameStatus("");
-    //   if (!subLesson[i].subLessonName || !subLesson[i].video.name) {
-    //     setSubLessonNameStatus("Sub-lesson Name is required");
-    //     return;
-    //   }
-    // }
     const newLesson = [...lessons];
     const data = {
-      lessonName: lessonName,
+      lesson: lesson,
       subLesson: subLesson,
     };
-    newLesson.push(data);
+    newLesson.splice(index, 0, data);
     setLessons(newLesson);
-    router.push("/admin/addcourse");
+    router.push(`/admin/editcourse/${lesson.course_id}`);
+  }
+
+  function cancleEditLesson() {
+    router.push(`/admin/editcourse/${course_id}`);
   }
 
   return (
@@ -113,11 +125,15 @@ export default function EditLesson({ params }) {
               </Link>
               <div>
                 <p className="min-[375px]:text-[14px] font-medium leading-[30px]  text-[#9AA1B9]">
-                  Course <span className="text-[#000]">&apos;{name}&apos;</span>
+                  Course{" "}
+                  <span className="text-[#000]">
+                    &apos;{courseName}&apos; &apos;{lessonName}
+                    &apos;
+                  </span>
                 </p>
-                <div className="flex gap-[8px]">
+                <div className="flex">
                   <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
-                    Add Lesson
+                    Edit Lesson
                   </p>
                   <div className="min-[1440px]:hidden border border-solid border-[#D6D9E4] w-[30px] h-[30px] flex justify-center items-center rounded-md">
                     <HamburgerMenu />
@@ -132,14 +148,13 @@ export default function EditLesson({ params }) {
                   Cancel
                 </button>
               </Link>
-
               <button
                 className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {
-                  handleSubmit();
+                  handleUpdateLesson();
                 }}
               >
-                Create
+                Edit
               </button>
             </div>
           </div>
@@ -154,8 +169,9 @@ export default function EditLesson({ params }) {
               <label htmlFor="lessonName">Lesson Name *</label>
               <input
                 id="lessonName"
+                name="name"
                 className={`${
-                  lessonNameStatus ? `border-[red]` : `border-[#D6D9E4]`
+                  !lessonName ? `border-[red]` : `border-[#D6D9E4]`
                 } outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px]`}
                 type="text"
                 placeholder="Lesson Name"
@@ -163,9 +179,9 @@ export default function EditLesson({ params }) {
                 onChange={(e) => setLessonName(e.target.value)}
               />
 
-              {lessonNameStatus && (
-                <p className="absolute text-[red] top-[105%] text-[14px]">
-                  {lessonNameStatus}
+              {!lessonName && (
+                <p className="absolute text-[red] top-[105%] text-[12px]">
+                  Lesson name is reqiured
                 </p>
               )}
             </div>
@@ -179,7 +195,7 @@ export default function EditLesson({ params }) {
               </label>
             </div>
             <section className="flex flex-col gap-[24px]">
-              {subLesson.map(({ subLessonName, videoUrl }, index) => {
+              {subLesson?.map(({ name, video, video_url }, index) => {
                 return (
                   <section
                     key={index}
@@ -190,40 +206,56 @@ export default function EditLesson({ params }) {
                     </div>
                     <div className=" flex flex-col gap-[24px] basis-full">
                       <div className="relative flex flex-col gap-[4px]">
-                        <label htmlFor={subLesson[index].subLessonName}>
-                          Sub-lesson Name *
-                        </label>
+                        <label htmlFor={name}>Sub-lesson Name *</label>
                         <input
-                          name="subLessonName"
-                          id={subLesson[index].subLessonName}
-                          className={`${`border-[#D6D9E4]`} min-[375px]:w-full min-[1200px]:w-[80%] outline-none border border-solid  px-[12px] py-[16px] rounded-[8px]`}
+                          name="name"
+                          id={name}
+                          className={`${
+                            name ? `border-[#D6D9E4]` : `border-[red]`
+                          } min-[375px]:w-full min-[1200px]:w-[80%] outline-none border border-solid  px-[12px] py-[16px] rounded-[8px]`}
                           type="text"
                           placeholder="Lesson Name"
-                          value={subLessonName}
+                          value={name}
                           onChange={(e) => {
                             handleUpdateSubLessonName(e, index);
                           }}
                         />
-                        {subLessonNameStatus && (
-                          <p className="absolute text-[red] text-[14px] top-[100%]">
-                            {subLessonNameStatus}
+                        {name ? null : (
+                          <p className="absolute text-[red] text-[12px] top-[100%]">
+                            Sub-lesson name is required.
                           </p>
                         )}
                       </div>
                       <div className="flex flex-col gap-[8px]">
                         <p>Video *</p>
-                        {!subLesson[index].video.name ? (
+                        {video_url ? (
+                          <div className="relative w-fit">
+                            <video
+                              src={video_url}
+                              className="relative w-[400px]"
+                              accept="video/mov, video/mp4, video/avi"
+                            ></video>
+                            <Image
+                              src={CancelIcon}
+                              alt="cancel icon"
+                              className="absolute top-[0%] right-[0] "
+                              onClick={(e) => {
+                                handleDeleteSubLessonVideo(e, index);
+                              }}
+                            />
+                          </div>
+                        ) : !video?.name ? (
                           <label
-                            htmlFor="video"
-                            className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                            htmlFor={`video${index}`}
+                            className="w-fit cursor-pointer flex flex-col gap-[8px] relative"
                           >
                             <input
-                              name="video"
-                              id="video"
+                              name="video_url"
+                              id={`video${index}`}
                               className="min-[375px]:w-[200px] outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
                               type="file"
                               placeholder="Lesson Name"
-                              value={videoUrl}
+                              value={video}
                               onChange={(e) => {
                                 handleUpdateSubLessonVideo(e, index);
                               }}
@@ -233,11 +265,16 @@ export default function EditLesson({ params }) {
                               src={uploadVideoSubLesson}
                               alt="upload sub lesson video inage"
                             />
+                            {video || video_url ? null : (
+                              <p className="absolute text-[12px] text-[red] top-[100%]">
+                                Press enter the video
+                              </p>
+                            )}
                           </label>
                         ) : (
                           <div className="relative w-fit">
                             <video
-                              src={URL.createObjectURL(subLesson[index].video)}
+                              src={URL.createObjectURL(video)}
                               className="relative w-[400px]"
                               accept="video/mov, video/mp4, video/avi"
                             ></video>

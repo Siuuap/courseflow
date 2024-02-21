@@ -88,7 +88,6 @@ export default function AddLesson() {
     };
     newLesson.push(data);
     setLessons([...newLesson]);
-    setBackupLessons([...newLesson]);
     router.push("/admin/addcourse");
   }
 
@@ -241,7 +240,7 @@ export default function AddLesson() {
                           <div className="relative w-fit">
                             <video
                               src={URL.createObjectURL(video)}
-                              className="relative w-[400px]"
+                              className="relative h-[200px]"
                               accept="video/mov, video/mp4, video/avi"
                             ></video>
                             <Image

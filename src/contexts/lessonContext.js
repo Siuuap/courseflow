@@ -14,7 +14,6 @@ export function LessonProvider({ children }) {
   const [videoTrailer, setVideoTrailer] = useState(null);
   const [attachedFile, setAttachedFile] = useState(null);
   const [lessons, setLessons] = useState([]);
-  const [backupLessons, setBackupLessons] = useState([]);
   const [lessonUpdateId, setLessonUpdateId] = useState([]);
   function resetToDefault() {
     setName("");
@@ -26,7 +25,6 @@ export function LessonProvider({ children }) {
     setVideoTrailer(null);
     setAttachedFile(null);
     setLessons([]);
-    setBackupLessons([]);
     setLessonUpdateId([]);
   }
   return (
@@ -53,8 +51,6 @@ export function LessonProvider({ children }) {
         resetToDefault,
         lessonUpdateId,
         setLessonUpdateId,
-        backupLessons,
-        setBackupLessons,
       }}
     >
       {children}

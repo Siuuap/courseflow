@@ -450,7 +450,7 @@ export default function AddCourse() {
                   <img
                     src={URL.createObjectURL(coverImage)}
                     alt={coverImage.name}
-                    className="w-[240px] h-[240px] rounded-lg"
+                    className="h-[240px] rounded-lg"
                   />
                   <p>{coverImage.name}</p>
                   <Image
@@ -493,7 +493,7 @@ export default function AddCourse() {
                     <video
                       src={URL.createObjectURL(videoTrailer)}
                       alt={videoTrailer.name}
-                      className="w-[240px] h-[240px] rounded-lg "
+                      className="h-[240px] rounded-lg "
                     ></video>
 
                     <Image

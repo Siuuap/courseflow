@@ -13,7 +13,7 @@ export default function Home() {
       user: {
         ...session?.user,
         firstName: "AII",
-      },ededf
+      },
     });
     router.refresh();
 

@@ -45,8 +45,8 @@ export default function Home() {
         className="absolute pt-[20px] -z-50 "
         src="/images/assets.png"
         alt="blackground"
-        width={1600}
-        height={190}
+        width={1459.64}
+        height={839}
         priority={true}
       />
       <form

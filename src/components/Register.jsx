@@ -100,11 +100,11 @@ const RegisterForm = () => {
   return (
     <section className="flex gap-0.5 justify-between pb-20 items-start  w-full max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
       <Image
-        className="absolute pt-[20px] "
+        className="absolute pt-[20px] -z-20 "
         src="/images/assets.png"
         alt="blackground"
-        width={1600}
-        height={190}
+        width={1459.64}
+        height={839}
         priority={true}
       />
       <section className="flex flex-col flex-1 items-center mt-16 max-md:mt-10 max-md:max-w-full">

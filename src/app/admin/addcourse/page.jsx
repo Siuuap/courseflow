@@ -23,7 +23,7 @@ import { useLessonContext } from "@/contexts/lessonContext";
 
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-
+import cloneDeep from "lodash/cloneDeep";
 export default function AddCourse() {
   const {
     name,
@@ -44,14 +44,9 @@ export default function AddCourse() {
     setAttachedFile,
     lessons,
     setLessons,
-    previewImage,
-    setPreviewImage,
-    previewVideo,
-    setPreviewVideo,
-    previewFile,
-    setPreviewFile,
     resetToDefault,
   } = useLessonContext();
+
   const [nameStatus, setNameStatus] = useState("");
   const [priceStatus, setPriceStatus] = useState("");
   const [lengthStatus, setLengthStatus] = useState("");
@@ -64,15 +59,15 @@ export default function AddCourse() {
   const dragOverLesson = useRef(0);
 
   function handleSortLesson() {
-    const lessonsClone = [...lessons];
+    const lessonsClone = cloneDeep(lessons);
     const temp = lessonsClone[dragLesson.current];
     lessonsClone[dragLesson.current] = lessonsClone[dragOverLesson.current];
     lessonsClone[dragOverLesson.current] = temp;
     setLessons(lessonsClone);
   }
-
+  console.log(`lessons`, lessons);
   function handleDeleteLesson(index) {
-    const updatedLesson = [...lessons];
+    const updatedLesson = cloneDeep(lessons);
     updatedLesson.splice(index, 1);
     setLessons(updatedLesson);
   }
@@ -104,15 +99,6 @@ export default function AddCourse() {
   function handleAttachedFile(e) {
     setAttachedFile(e.target.files[0]);
   }
-  async function createNewCourse(formData) {
-    const data = formData;
-    try {
-      const response = await axios.post("/api/courses", data);
-      console.log(response);
-    } catch (error) {
-      console.log(`error from add new course request`, error);
-    }
-  }
 
   async function handleSubmitCourse() {
     setStatusToDefault();
@@ -124,8 +110,8 @@ export default function AddCourse() {
       !length ||
       !summary ||
       !description ||
-      !coverImage.name ||
-      !videoTrailer.name ||
+      !coverImage ||
+      !videoTrailer ||
       lessons.length === 0
     ) {
       if (!name) {
@@ -438,7 +424,7 @@ export default function AddCourse() {
             <section className={`relative flex flex-col gap-[8px] `}>
               <p>Course Image *</p>
 
-              {!coverImage?.name ? (
+              {!coverImage ? (
                 <label
                   htmlFor="coverImage"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -462,7 +448,7 @@ export default function AddCourse() {
                   <img
                     src={URL.createObjectURL(coverImage)}
                     alt={coverImage.name}
-                    className="w-[240px] h-[240px] rounded-lg"
+                    className="h-[240px] rounded-lg"
                   />
                   <p>{coverImage.name}</p>
                   <Image
@@ -478,7 +464,7 @@ export default function AddCourse() {
             </section>
             <section className="relative flex flex-col gap-[8px]">
               <p> Video Trailer *</p>
-              {!videoTrailer?.name ? (
+              {!videoTrailer ? (
                 <label
                   htmlFor="videoTrailer"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -505,7 +491,7 @@ export default function AddCourse() {
                     <video
                       src={URL.createObjectURL(videoTrailer)}
                       alt={videoTrailer.name}
-                      className="w-[240px] h-[240px] rounded-lg "
+                      className="h-[240px] rounded-lg "
                     ></video>
 
                     <Image
@@ -528,7 +514,7 @@ export default function AddCourse() {
             </section>
             <section className="flex flex-col gap-[8px]">
               <p>Attach File (Optional)</p>
-              {!attachedFile?.name ? (
+              {!attachedFile ? (
                 <label
                   htmlFor="attachFile"
                   className="w-fit cursor-pointer flex flex-col gap-[8px]"
@@ -587,7 +573,7 @@ export default function AddCourse() {
             )}
 
             <section className="flex flex-col gap-[10px] min-[768px]:gap-[0px]">
-              {lessons.map(({ lessonName, subLesson }, index) => {
+              {lessons.map(({ lesson_id, lessonName, subLesson }, index) => {
                 return (
                   <section
                     key={index}

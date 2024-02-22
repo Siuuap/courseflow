@@ -19,7 +19,12 @@ export async function GET(request) {
         .select("* , lessons(*)")
         .ilike("name", `%${search}%`)
         .limit(limit)
-    : await supabase.from("courses").select("* , lessons(*)").range(start, end);
+        .order("updated_at", { ascending: true })
+    : await supabase
+        .from("courses")
+        .select("* , lessons(*)")
+        .range(start, end)
+        .order("updated_at", { ascending: false });
 
   if (error) {
     console.error(error);
@@ -90,7 +95,6 @@ export async function POST(request) {
     console.log(`sublesson na`, subLesson);
     for (let j = 0; j < subLesson.length; j++) {
       const newSubLesson = {
-        course_id: reqData.course_id,
         lesson_id: lessons[i].lesson_id,
         sub_lesson_id: subLesson[j].sub_lesson_id,
         name: subLesson[j].subLessonName,

@@ -10,16 +10,14 @@ export function LessonProvider({ children }) {
   const [length, setLength] = useState("");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
-  const [coverImage, setCoverImage] = useState({});
-  const [videoTrailer, setVideoTrailer] = useState({});
-  const [attachedFile, setAttachedFile] = useState({});
+  const [coverImage, setCoverImage] = useState(null);
+  const [videoTrailer, setVideoTrailer] = useState(null);
+  const [attachedFile, setAttachedFile] = useState(null);
   const [lessons, setLessons] = useState([]);
-
-  const [previewImage, setPreviewImage] = useState(null);
-  const [previewVideo, setPreviewVideo] = useState(null);
-  const [previewFile, setPreviewFile] = useState(null);
-
   const [lessonUpdateId, setLessonUpdateId] = useState([]);
+  const [deletedLessonId, setDeletedLessonId] = useState([]);
+  const [deletedSubLessonId, setDeletedSubLessonId] = useState([]);
+  const [latestCourseData, setLatestCourseData] = useState([]);
   function resetToDefault() {
     setName("");
     setPrice("");
@@ -30,10 +28,9 @@ export function LessonProvider({ children }) {
     setVideoTrailer(null);
     setAttachedFile(null);
     setLessons([]);
-    setPreviewImage(null);
-    setPreviewVideo(null);
-    setPreviewFile(null);
     setLessonUpdateId([]);
+    setDeletedLessonId([]);
+    setDeletedSubLessonId([]);
   }
   return (
     <LessonContext.Provider
@@ -56,15 +53,15 @@ export function LessonProvider({ children }) {
         setAttachedFile,
         lessons,
         setLessons,
-        previewImage,
-        setPreviewImage,
-        previewVideo,
-        setPreviewVideo,
-        previewFile,
-        setPreviewFile,
         resetToDefault,
         lessonUpdateId,
         setLessonUpdateId,
+        latestCourseData,
+        setLatestCourseData,
+        deletedLessonId,
+        setDeletedLessonId,
+        deletedSubLessonId,
+        setDeletedSubLessonId,
       }}
     >
       {children}

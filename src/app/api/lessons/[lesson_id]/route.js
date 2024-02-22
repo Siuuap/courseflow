@@ -1,5 +1,23 @@
 import { supabase } from "@/utils/db";
 
+export async function GET(req, { params }) {
+  const id = params.lesson_id;
+  console.log(`id`, id);
+  const { data, error } = await supabase
+    .from("lessons")
+    .select("* ,sub_lessons(*),courses(name)")
+    .eq("lesson_id", id);
+  if (error) {
+    console.log(`error from supabase`, error);
+    return Response.json({
+      message: `Cannot get lesson`,
+      error: error,
+    });
+  }
+  console.log(`data`, data);
+  return Response.json({ message: "Get lesson successfully", data: data });
+}
+
 export async function DELETE(req, { params }) {
   const id = params.lesson_id;
   console.log(`params`, id);

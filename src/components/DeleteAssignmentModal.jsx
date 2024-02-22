@@ -1,4 +1,6 @@
 "use client";
+import { useParams, useRouter } from "next/navigation";
+import { supabase } from "@/utils/db";
 
 import {
   useDisclosure,
@@ -14,6 +16,24 @@ import {
 
 function DeleteAssignmentModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
+  const params = useParams();
+
+  async function handleDelete() {
+    try {
+      const { error } = await supabase
+        .from("assignments")
+        .delete()
+        .eq("sub_lesson_id", params.sub_lesson_id);
+
+      if (error) throw new Error("Cannot delete this assignment");
+
+      router.push("/admin/assignment");
+    } catch {
+      console.log("error");
+    }
+  }
+
   return (
     <>
       <section
@@ -33,7 +53,12 @@ function DeleteAssignmentModal() {
           </ModalBody>
 
           <ModalFooter>
-            <button className="py-[18px] px-[32px] border-[1px] rounded-xl border-[#F47E20] text-[#F47E20] font-bold hover:underline">
+            <button
+              className="py-[18px] px-[32px] border-[1px] rounded-xl border-[#F47E20] text-[#F47E20] font-bold hover:underline"
+              onClick={() => {
+                handleDelete();
+              }}
+            >
               Yes, I want to delete the assignment
             </button>
             <button

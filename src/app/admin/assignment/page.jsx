@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import deleteIcon from "@/assets/images/DeleteIcon.svg";
 import EditIcon from "@/assets/images/EditIcon.svg";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import SideBar from "@/components/SideBar";
@@ -12,22 +13,35 @@ import { supabase } from "@/utils/db";
 
 import HamburgerMenu from "@/components/HamburgerMenu";
 export default function AssignmentPage() {
+  const router = useRouter();
+
   const [assignmentData, setAssignmentData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setpage] = useState(1);
 
   async function getAssignment() {
+    console.log("test2");
+
     const { data, error } = await supabase
       .from("assignments")
-      .select("*, sub_lessons(*, lessons(*, courses(*)))")
-  
+      .select("*, sub_lessons(*, lessons(*, courses(*)))");
 
     setAssignmentData(data);
-
-    console.log(data);
   }
 
-  async function deleteCourses(course_id) {}
+  async function deleteAssignment(sub_lesson_id) {
+    try {
+      const { error } = await supabase
+        .from("assignments")
+        .delete()
+        .eq("sub_lesson_id", sub_lesson_id);
+
+      router.refresh();
+      console.log("test");
+    } catch {
+      console.log("error");
+    }
+  }
 
   function handleLength(text) {
     const limit = 16;
@@ -174,7 +188,7 @@ export default function AssignmentPage() {
                           <button
                             className="flex justify-center items-center min-[0px]:bg-[#D6D9E4] min-[1200px]:bg-transparent min-[0px]:p-[10px] min-[1200px]:p-[0px] min-[0px]:w-[50%] gap-[10px] rounded-md"
                             onClick={() => {
-                              deleteCourses();
+                              deleteAssignment(item.sub_lessons.sub_lesson_id);
                             }}
                           >
                             <Image

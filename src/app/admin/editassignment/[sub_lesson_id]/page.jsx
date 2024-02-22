@@ -175,7 +175,6 @@ export default function AddAssignmentPage() {
               </select>
             </section>
           </section>
-
           <DeleteAssignmentModal />
         </section>
       </section>

@@ -3,19 +3,23 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req, { params }) {
   const searchParams = req.nextUrl.searchParams;
-  const answer = await req.body;
-  const statusAnwer = await req.body;
+  const body = await req.json();
   const userId = searchParams.get("userid");
-  console.log(answer);
   const subLessonId = searchParams.get("sublessonid");
-  const { data, error } = await supabase
-    .from("users_sub_lessons")
-    .update({ answer: answer, status_assignment: statusAnwer })
-    .eq("user_id", userId)
-    .eq("sub_lesson_id", subLessonId)
-    .select();
-  return NextResponse.json(
-    { message: "Update Successfully", data: data },
-    { status: 200 }
-  );
+
+  {
+    const { data, error } = await supabase
+      .from("users_sub_lessons")
+      .update({
+        answer: body.answer ? body.answer : null,
+        status_assignment: body.status,
+      })
+      .eq("user_id", userId)
+      .eq("sub_lesson_id", subLessonId)
+      .select();
+    return NextResponse.json(
+      { message: "Update Successfully", data: data },
+      { status: 200 }
+    );
+  }
 }

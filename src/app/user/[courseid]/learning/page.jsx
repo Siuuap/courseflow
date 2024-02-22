@@ -14,6 +14,7 @@ import NavBar from "@/components/NavBar";
 import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
+import cloneDeep from "lodash/cloneDeep";
 
 export default function Learning({ params }) {
   const { data: session, status } = useSession();
@@ -23,6 +24,10 @@ export default function Learning({ params }) {
   const [subLessonProgress, setSubLessonProgress] = useState([]);
   const [progress, setProgress] = useState(0);
   const [allSubLesson, setAllSubLesson] = useState({});
+  const [assignmentStatus, setAssignmentStatus] = useState([]);
+
+  console.log("subProgress", subLessonProgress);
+
   useEffect(() => {
     function sumProgress() {
       const progressPercentage = subLessonProgress.map((sub) => sub.status);
@@ -58,6 +63,7 @@ export default function Learning({ params }) {
         setAllSubLesson(
           res.data.data[0].courses.lessons.map((lesson) => lesson.sub_lessons)
         );
+        setAssignmentStatus(res.data.data[0].users_sub_lessons);
       }
     }
     fetchCourseById();
@@ -67,6 +73,24 @@ export default function Learning({ params }) {
     let currentSubProgress = (e.target.currentTime / e.target.duration) * 100;
     if (currentSubProgress >= 80) {
       currentSubProgress = 100;
+      async function updateAssignmentStatus() {
+        const data = { status: 1 };
+        const courseId = params.courseid;
+        const res = await axios.post(
+          `/api/learning/${courseId}/sendassignment/?userid=${session?.user?.userId}&sublessonid=${currentSubLesson.sub_lesson_id}`,
+          data
+        );
+
+        const newAssignmentStatus = cloneDeep(assignmentStatus);
+
+        newAssignmentStatus.find((assignment, i) => {
+          if (assignment.sub_lesson_id === currentSubLesson.sub_lesson_id) {
+            newAssignmentStatus[i] = { ...assignment, status_assignment: 1 };
+          }
+        });
+        setAssignmentStatus(newAssignmentStatus);
+      }
+      updateAssignmentStatus();
     }
 
     let newSublessonProgress = subLessonProgress.map((arr) => arr);
@@ -149,6 +173,11 @@ export default function Learning({ params }) {
             currentSubLesson={currentSubLesson}
             handleUpdateSubProgress={handleUpdateSubProgress}
             session={session}
+            params={params}
+            subLessonProgress={setSubLessonProgress}
+            assignmentStatus={assignmentStatus}
+            setAssignmentStatus={setAssignmentStatus}
+            key={currentSubLesson.sub_lesson_id}
           />
         )}
       </div>
@@ -235,7 +264,7 @@ function LessonAccordion({
                   key={i}
                   className={
                     currentSubLesson.sub_lesson_id === subLesson.sub_lesson_id
-                      ? "bg-blue-100"
+                      ? "bg-blue-100 rounded-md"
                       : null
                   }
                 >
@@ -268,34 +297,55 @@ function CourseVideo({
   currentSubLesson,
   handleUpdateSubProgress,
   session,
+  params,
+  assignmentStatus,
+  setAssignmentStatus,
 }) {
-  const [assignment, setAssignment] = useState({});
-
   const course = courseById[0];
-  console.log(currentSubLesson);
-  console.log(course.users_sub_lessons);
+  const [assignment, setAssignment] = useState({});
+  const [answer, setAnswer] = useState("");
+
+  console.log("currentsub", currentSubLesson);
+  console.log("assignment", assignment);
+  console.log("assStatus", assignmentStatus);
 
   useEffect(() => {
-    function assignmentStatus() {
-      const assignment = course.users_sub_lessons.find((sub) => {
+    function status() {
+      assignmentStatus.find((sub) => {
         if (sub.sub_lesson_id === currentSubLesson.sub_lesson_id) {
           setAssignment(sub);
         }
       });
     }
-    assignmentStatus();
-  }, [currentSubLesson]);
-  console.log(assignment);
+
+    if (assignmentStatus) status();
+  }, [currentSubLesson, assignmentStatus]);
 
   async function onSubmit(e) {
     e.preventDefault();
-
+    if (answer == "") {
+      return alert("Please answer the question before clicking send...");
+    }
     const courseId = params.courseid;
-    const formData = new FormData(e.target);
+    const data = { answer: answer, status: 2 };
+
     const res = await axios.post(
-      `/api/learning/${courseId}/sendassignment/user=${session?.user?.userId}&sublessonid=${currentSubLesson.sub_lesson_id}`,
-      formData
+      `/api/learning/${courseId}/sendassignment/?userid=${session?.user?.userId}&sublessonid=${currentSubLesson.sub_lesson_id}`,
+      data
     );
+
+    let newAssignmentStatus = assignmentStatus.map((assignment) => assignment);
+
+    const newStatus = newAssignmentStatus.find((sub, i) => {
+      if (sub.sub_lesson_id === currentSubLesson.sub_lesson_id) {
+        newAssignmentStatus[i] = {
+          ...sub,
+          status_assignment: 2,
+          answer: answer,
+        };
+      }
+    });
+    setAssignmentStatus(newAssignmentStatus);
   }
 
   return (
@@ -314,30 +364,51 @@ function CourseVideo({
           <source src={currentSubLesson.video_url} type="video/mp4"></source>
         </video>
         <div className="assignment-section mt-[50px] bg-[#E5ECF8] p-[15px] rounded-md relative">
-          <form onSubmit={onSubmit}>
-            <div className="assignment-container flex flex-col items-start ">
-              <h2>Assignment</h2>
-              <p>{currentSubLesson.assignments.question}</p>
-              <input
-                placeholder="Answer..."
-                className="w-[692px] h-[96px] rounded-md"
-              ></input>
-              <div className="send-assignment flex flex-row justify-between w-[710px]">
-                <button
-                  className="w-[204px] h-[60px] bg-[#2F5FAC] text-white rounded-lg mt-[20px]"
-                  type="submit"
+          <form onSubmit={onSubmit} key={currentSubLesson.name}>
+            {currentSubLesson.assignments.question ? (
+              <>
+                <div className="assignment-container flex flex-col items-start ">
+                  <h2>Assignment</h2>
+                  <p>{currentSubLesson.assignments.question}</p>
+                  {assignment.answer ? (
+                    <div className="mt-[20px]">
+                      <p>your Answer :</p>
+                      <p>{assignment.answer}</p>
+                    </div>
+                  ) : (
+                    <input
+                      placeholder="Answer..."
+                      className="w-[692px] h-[96px] rounded-md mt-[20px]"
+                      value={answer}
+                      onChange={(e) => setAnswer(e.target.value)}
+                    ></input>
+                  )}
+                  {assignment.status_assignment === 2 ? null : (
+                    <div className="send-assignment flex flex-row justify-between w-[710px]">
+                      <button
+                        className="w-[204px] h-[60px] bg-[#2F5FAC] text-white rounded-lg mt-[20px]"
+                        type="submit"
+                      >
+                        Send Assignment
+                      </button>
+
+                      <p className="mt-[45px] text-[#646D89]">
+                        Assign within 2 days
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <p
+                  className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded-lg"
+                  key={assignment.sub_lesson_id}
                 >
-                  Send Assignment
-                </button>
-                <p className="mt-[45px] text-[#646D89]">Assign within 2 days</p>
-              </div>
-            </div>
-            <p className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded-lg">
-              {(assignment.status_assignment == 0 && "pending") ||
-                (assignment.status_assignment == 1 && "in progress") ||
-                (assignment.status_assignment == 2 && "submitted") ||
-                (assignment.status_assignment == 4 && "overdue")}
-            </p>
+                  {(assignment.status_assignment == 0 && "pending") ||
+                    (assignment.status_assignment == 1 && "in progress") ||
+                    (assignment.status_assignment == 2 && "submitted") ||
+                    (assignment.status_assignment == 3 && "overdue")}
+                </p>
+              </>
+            ) : null}
           </form>
         </div>
       </div>

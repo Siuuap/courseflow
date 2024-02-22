@@ -56,7 +56,7 @@ export default function CourseDetail({ params }) {
           <div>
             <p className="text-[#F47E20]">Course</p>
             <h1 className="text-2xl font-bold mt-2">{courseById[0]?.name}</h1>
-            <p className="text-[#646D89] mt-2">{courseById[0]?.description}</p>
+            <p className="text-[#646D89] mt-2">{courseById[0]?.summary}</p>
             <p className="text-2xl font-bold text-[#646D89] mt-3">
               THB {courseById[0]?.price + ".00"}
             </p>

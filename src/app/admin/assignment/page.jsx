@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import SideBar from "@/components/SideBar";
+
 import axios from "axios";
 import { useState } from "react";
 import { supabase } from "@/utils/db";

@@ -22,7 +22,7 @@ function CourseCard({ course }) {
             </span>
 
             <p className="course-description text-[16px] leading-[24px] pb-3 text-[#646D89]">
-              Description {course.summary}
+              {course.summary}
             </p>
           </div>
           <div className="course-detail-container  p-[16px] border-t-[1px]  absolute bottom-0 w-[320px]">

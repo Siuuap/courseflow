@@ -11,15 +11,16 @@ import { useState } from "react";
 import { supabase } from "@/utils/db";
 
 import HamburgerMenu from "@/components/HamburgerMenu";
-export default function DashBoardPage() {
+export default function AssignmentPage() {
   const [assignmentData, setAssignmentData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setpage] = useState(1);
 
-  async function getCourses() {
+  async function getAssignment() {
     const { data, error } = await supabase
       .from("assignments")
-      .select("*, sub_lessons(*, lessons(*, courses(*)))");
+      .select("*, sub_lessons(*, lessons(*, courses(*)))")
+  
 
     setAssignmentData(data);
 
@@ -29,17 +30,17 @@ export default function DashBoardPage() {
   async function deleteCourses(course_id) {}
 
   function handleLength(text) {
-    const limit1 = 16;
+    const limit = 16;
 
-    if (text.length > limit1) {
-      return text.slice(0, limit1) + "...";
+    if (text.length > limit) {
+      return text.slice(0, limit) + "...";
     }
 
     return text;
   }
 
   useEffect(() => {
-    getCourses();
+    getAssignment();
   }, [search, page]);
 
   function formatDate(d) {
@@ -85,7 +86,7 @@ export default function DashBoardPage() {
                   setSearch(e.target.value);
                 }}
               />
-              <Link href="/admin/addcourse">
+              <Link href="/admin/addassignment">
                 <button className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
                   + Add Assignment
                 </button>
@@ -120,9 +121,12 @@ export default function DashBoardPage() {
               </div>
             </div>
             <div className="flex flex-col min-[0px]:gap-[30px] min-[1200px]:gap-0 min-[0px]:w-[343px] min-[0px]:m-[16px] min-[768px]:w-[736px] min-[1200px]:w-[1168px] justify-center min-[1200px]:mx-[0px] min-[1440px]:w-[1120px]">
-              {assignmentData.map((item) => {
+              {assignmentData.map((item, index) => {
                 return (
-                  <div className="flex flex-col   min-[768px]:flex-row min-[768px]:justify-center min-[1200px]:justify-center gap-[14px] min-[768px]:gap-[20px] min-[1200px]:gap-[0px] ">
+                  <div
+                    className="flex flex-col   min-[768px]:flex-row min-[768px]:justify-center min-[1200px]:justify-center gap-[14px] min-[768px]:gap-[20px] min-[1200px]:gap-[0px] "
+                    key={index}
+                  >
                     <div className="flex  min-[0px]:gap-[16px] min-[1200px]:gap-[0px] min-[0px]:flex-col min-[0px]:items-start min-[768px]:w-[50%] min-[1200px]:flex-row min-[1200px]:justify-start min-[1200px]:w-full">
                       <div className="min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[375px]:w-full min-[375px]:text-[16px]  min-[768px]:text-start min-[375px]:font-bold min-[1200px]:font-normal min-[1200px]:w-[200px]">
                         {handleLength(item.question)}
@@ -182,7 +186,7 @@ export default function DashBoardPage() {
                           </button>
 
                           <Link
-                            href={`/admin/editcourse/`}
+                            href={`/admin/editassignment/${item.sub_lessons.sub_lesson_id}`}
                             className="flex justify-center items-center min-[0px]:bg-[#D6D9E4] min-[1200px]:bg-transparent min-[0px]:p-[10px] min-[1200px]:p-[0px] min-[0px]:w-[50%] rounded-md"
                           >
                             <button className="flex gap-[10px]">

@@ -9,13 +9,13 @@ import Image from "next/image";
 import SideBar from "@/components/SideBar";
 import axios from "axios";
 import { useState } from "react";
-
+import { useLessonContext } from "@/contexts/lessonContext";
 import HamburgerMenu from "@/components/HamburgerMenu";
 export default function DashBoardPage() {
   const [courseData, setCourseData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setpage] = useState(1);
-
+  const { resetToDefault } = useLessonContext();
   async function getCourses() {
     try {
       const response = await axios.get(
@@ -40,6 +40,7 @@ export default function DashBoardPage() {
   }
 
   useEffect(() => {
+    resetToDefault();
     getCourses();
   }, [search, page]);
 

@@ -23,7 +23,7 @@ import { useLessonContext } from "@/contexts/lessonContext";
 
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-
+import cloneDeep from "lodash/cloneDeep";
 export default function EditCourse({ params }) {
   const {
     name,
@@ -47,6 +47,10 @@ export default function EditCourse({ params }) {
     resetToDefault,
     lessonFromUpdate,
     setLessonFromUpdate,
+    latestCourseData,
+    setLatestCourseData,
+    deletedLessonId,
+    setDeletedLessonId,
   } = useLessonContext();
   const [nameStatus, setNameStatus] = useState("");
   const [priceStatus, setPriceStatus] = useState("");
@@ -56,10 +60,11 @@ export default function EditCourse({ params }) {
   const [coverImageStatus, setCoverImageStatus] = useState("");
   const [videoTrailerStatus, setVideoTrailerStatus] = useState("");
   const [deletedLesson, setDeletedLesson] = useState([]);
-  const [latestCourseData, setLatestCourseData] = useState("");
+
   const course_id = params.course_id;
   const router = useRouter();
   console.log(`lessons`, lessons);
+
   async function getCourseData() {
     try {
       const response = await axios.get(
@@ -75,11 +80,12 @@ export default function EditCourse({ params }) {
       setVideoTrailer(response.data.data[0].video_url);
       setAttachedFile(response.data.data[0].attached_file_url);
       lessons.length === 0 ? setLessons(response.data.data[0].lessons) : null;
-      setLatestCourseData(response.data.data[0]);
+      setLatestCourseData(cloneDeep(response.data.data[0]));
     } catch (error) {
       console.log(error);
     }
   }
+  console.log(`latestCourseData`, latestCourseData);
 
   useEffect(() => {
     getCourseData();
@@ -89,14 +95,14 @@ export default function EditCourse({ params }) {
   const dragOverLesson = useRef(0);
 
   function handleSortLesson() {
-    const lessonsClone = [...lessons];
+    const lessonsClone = cloneDeep(lessons);
     const temp = lessonsClone[dragLesson.current];
     lessonsClone[dragLesson.current] = lessonsClone[dragOverLesson.current];
     lessonsClone[dragOverLesson.current] = temp;
     setLessons(lessonsClone);
   }
 
-  async function handleDeleteLessonFromDatabase(index, lesson_id) {
+  async function handleDeleteLesson(index, lesson_id) {
     // const updatedLesson = [...lessons];
     // updatedLesson.splice(index, 1);
     // setLessons(updatedLesson);
@@ -108,14 +114,24 @@ export default function EditCourse({ params }) {
     // } catch (error) {
     //   console.log(`error`, error);
     // }
+    const arrayofLessonId = latestCourseData.lessons.map(
+      (lesson) => lesson.lesson_id
+    );
+    console.log(`arrayofLessonId`, arrayofLessonId);
 
-    const updatedLessons = [...lessons];
+    if (
+      arrayofLessonId.includes(lesson_id) &&
+      !deletedLessonId.includes(lesson_id)
+    ) {
+      setDeletedLessonId([...deletedLessonId, lesson_id]);
+    }
+    const updatedLessons = cloneDeep(lessons);
     updatedLessons.splice(index, 1);
     setLessons(updatedLessons);
 
     setDeletedLesson([...deletedLesson, lesson_id]);
   }
-
+  console.log(`deletedLessonId`, deletedLessonId);
   function setStatusToDefault() {
     setNameStatus("");
     setPriceStatus("");
@@ -146,179 +162,6 @@ export default function EditCourse({ params }) {
     setAttachedFile(e.target.files[0]);
   }
 
-  async function handleSubmmitCourse() {
-    const course_id = uuidv4();
-    // setStatusToDefault();
-
-    // if (
-    //   !name ||
-    //   !price ||
-    //   !length ||
-    //   !summary ||
-    //   !description ||
-    //   !coverImage ||
-    //   !videoTrailer ||
-    //   lessons.length === 0
-    // ) {
-    //   if (!name) {
-    //     setNameStatus("Please enter course name");
-    //   }
-    //   if (!price) {
-    //     setPriceStatus("Please enter price");
-    //   }
-    //   if (!length) {
-    //     setLengthStatus("Please enter total learning time");
-    //   }
-    //   if (!summary) {
-    //     setSummaryStatus("Please enter summary");
-    //   }
-
-    //   if (!description) {
-    //     setDescriptionStatus("Please enter description");
-    //   }
-    //   if (!coverImage.name) {
-    //     setCoverImageStatus("Please upload cover image");
-    //   }
-    //   if (!videoTrailer.name) {
-    //     setVideoTrailerStatus("Please upload video trailer");
-    //   }
-    //   if (lessons.length === 0) {
-    //     alert("Please add at least one lesson");
-    //   }
-    //   return;
-    // }
-
-    const courseData = {
-      course_id: course_id,
-      name,
-      price,
-      length,
-      summary,
-      description,
-      coverImage,
-      videoTrailer,
-      attachedFile,
-      lessons,
-    };
-
-    //upload cover image
-    try {
-      const { data, error } = await supabase.storage
-        .from("courses")
-        .upload(`${course_id}/coverImage/${coverImage.name}`, coverImage, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-
-      courseData.img_url = supabase.storage
-        .from("courses")
-        .getPublicUrl(data.path, coverImage).data.publicUrl;
-    } catch (error) {
-      console.log(error);
-    }
-
-    //upload video trailer
-    try {
-      const { data, error } = await supabase.storage
-        .from("courses")
-        .upload(`${course_id}/videoTrailer/videotrailer`, videoTrailer, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-      courseData.video_url = supabase.storage
-        .from("courses")
-        .getPublicUrl(data.path, videoTrailer).data.publicUrl;
-    } catch (error) {
-      console.log(`error`, error);
-    }
-
-    //upload file
-    if (attachedFile.name) {
-      try {
-        const { data, error } = await supabase.storage
-          .from("courses")
-          .upload(`${course_id}/file/file`, attachedFile, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-        courseData.attached_file_url = supabase.storage
-          .from("courses")
-          .getPublicUrl(data.path, attachedFile).data.publicUrl;
-      } catch (error) {
-        console.log(`error`, error);
-      }
-    } else {
-      courseData.attached_file_url = null;
-    }
-
-    // Generate lesson_id and sub_lesson_id
-
-    for (let i = 0; i < lessons.length; i++) {
-      const lesson_id = uuidv4();
-      courseData.lessons[i].lesson_id = lesson_id;
-      courseData.lessons[i].lesson_number = i + 1;
-    }
-
-    for (let i = 0; i < courseData.lessons.length; i++) {
-      for (let j = 0; j < courseData.lessons[i].subLesson.length; j++) {
-        const sub_lesson_id = uuidv4();
-        courseData.lessons[i].subLesson[j].sub_lesson_id = sub_lesson_id;
-        courseData.lessons[i].subLesson[j].sub_lesson_number = j + 1;
-      }
-    }
-
-    for (let i = 0; i < courseData.lessons.length; i++) {
-      for (let j = 0; j < courseData.lessons[i].subLesson.length; j++) {
-        const video = courseData.lessons[i].subLesson[j].video;
-        try {
-          const { data, error } = await supabase.storage
-            .from("courses")
-            .upload(
-              `${courseData.course_id}/lessons/${courseData.lessons[i].lesson_id}/sub_lessons/${courseData.lessons[i].subLesson[j].sub_lesson_id}/sublesson${courseData.lessons[i].subLesson[j].sub_lesson_number}`,
-              video,
-              {
-                cacheControl: "3600",
-                upsert: false,
-              }
-            );
-          courseData.lessons[i].subLesson[j].video_url = supabase.storage
-            .from("courses")
-            .getPublicUrl(data.path, video).data.publicUrl;
-          delete courseData.lessons[i].subLesson[j].video;
-        } catch (error) {
-          console.log(`error`, error);
-        }
-      }
-    }
-
-    // getUrlfromSubLesson(courseData);
-    handleCreateNewCourse(courseData);
-  }
-
-  async function handleCreateNewCourse(data) {
-    const courseData = {
-      course_id: data.course_id,
-      name: data.name,
-      description: data.description,
-      price: data.price,
-      length: data.length,
-      summary: data.summary,
-      img_url: data.img_url,
-      video_url: data.video_url,
-      attached_file_url: data.attached_file_url,
-      lessons: data.lessons,
-    };
-    console.log(`courseData before post`, courseData);
-    try {
-      const response = await axios.post("/api/courses", courseData);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-    resetToDefault();
-    router.push("/admin/courselist");
-  }
-
   function findFilePathNames(i) {
     const item = i + "";
     const publicIndex = item.split("/").findIndex((el) => el === "public");
@@ -335,6 +178,7 @@ export default function EditCourse({ params }) {
   }
 
   async function handleSubmit() {
+    ////อย่าลืมดตรวจสอบเงื่อนไขว่าเป็น lesson ใหม่หรือไม่ ถ้าเป็น lesson ใหม่ให้สร้างใหม่ ถ้าไม่ใช่ ให้ update
     setStatusToDefault();
     if (
       !name ||
@@ -943,7 +787,7 @@ export default function EditCourse({ params }) {
                       <button
                         className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] min-[768px]:hover:bg-transparent rounded-lg min-[768px]:p-0"
                         onClick={() => {
-                          handleDeleteLessonFromDatabase(index, lesson_id);
+                          handleDeleteLesson(index, lesson_id);
                         }}
                       >
                         <Image

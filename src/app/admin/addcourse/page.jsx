@@ -23,7 +23,7 @@ import { useLessonContext } from "@/contexts/lessonContext";
 
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-
+import cloneDeep from "lodash/cloneDeep";
 export default function AddCourse() {
   const {
     name,
@@ -44,8 +44,6 @@ export default function AddCourse() {
     setAttachedFile,
     lessons,
     setLessons,
-    backupLessons,
-    setBackupLessons,
     resetToDefault,
   } = useLessonContext();
 
@@ -61,7 +59,7 @@ export default function AddCourse() {
   const dragOverLesson = useRef(0);
 
   function handleSortLesson() {
-    const lessonsClone = [...lessons];
+    const lessonsClone = cloneDeep(lessons);
     const temp = lessonsClone[dragLesson.current];
     lessonsClone[dragLesson.current] = lessonsClone[dragOverLesson.current];
     lessonsClone[dragOverLesson.current] = temp;
@@ -69,7 +67,7 @@ export default function AddCourse() {
   }
   console.log(`lessons`, lessons);
   function handleDeleteLesson(index) {
-    const updatedLesson = [...lessons];
+    const updatedLesson = cloneDeep(lessons);
     updatedLesson.splice(index, 1);
     setLessons(updatedLesson);
   }

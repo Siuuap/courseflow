@@ -18,50 +18,78 @@ import axios from "axios";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import { v4 as uuidv4 } from "uuid";
 import cloneDeep from "lodash/cloneDeep";
+import { set } from "lodash";
 export default function EditLessonWhenAdd({ params }) {
+  const {
+    name,
+    lessons,
+    setLessons,
+    deletedLessonId,
+    setDeletedLessonId,
+    deletedSubLessonId,
+    setDeletedSubLessonId,
+    latestCourseData,
+  } = useLessonContext();
   const router = useRouter();
   const course_id = params.course_id;
   const lesson_id = params.lesson_id;
-
-  const { name, lessons, setLessons, backupLessons } = useLessonContext();
+  console.log(`lessons`, lessons);
 
   const backupLesson = lessons.filter((lesson) => {
     return lesson.lesson_id === lesson_id;
   });
 
-  const lesson = cloneDeep(backupLesson);
+  const [lesson, setLesson] = useState(cloneDeep(backupLesson));
   const [lessonName, setLessonName] = useState(lesson[0]?.name);
   const [subLesson, setSubLesson] = useState(lesson[0]?.sub_lessons);
-  const [lessonNameStatus, setLessonNameStatus] = useState("");
 
-  const [courseName, setCourseName] = useState("");
+  const [courseName, setCourseName] = useState(name);
 
   function handleAddSubLesson() {
     setSubLesson([
       ...subLesson,
       {
-        course_id: course_id,
-        sublesson_id: uuidv4(),
+        lesson_id: lesson_id,
+        sub_lesson_id: uuidv4(),
         name: "",
         video_url: null,
       },
     ]);
   }
 
-  function handleDeleteSubLesson(e, index) {
+  function handleDeleteSubLesson(e, index, lesson_id, sub_lesson_id) {
+    console.log(`lesson_id`, lesson_id);
+    console.log(`sublessonId`, sub_lesson_id);
     if (subLesson.length === 1) {
       return;
     }
+    const latestLessonsData = [...latestCourseData.lessons];
+    const latestSubLesson = latestLessonsData.find((lesson) => {
+      return lesson.lesson_id === lesson_id;
+    });
+    const arrayofSubLessonId = latestSubLesson.sub_lessons.map((subLesson) => {
+      return subLesson.sub_lesson_id;
+    });
+    // console.log(`arrayofSubLessonId`, arrayofSubLessonId);
+
+    if (
+      arrayofSubLessonId.includes(sub_lesson_id) &&
+      !deletedSubLessonId.includes(sub_lesson_id)
+    ) {
+      setDeletedSubLessonId([...deletedSubLessonId, sub_lesson_id]);
+    }
+
     const newSubLesson = [...subLesson];
     newSubLesson.splice(index, 1);
     setSubLesson(newSubLesson);
   }
-
+  console.log(`deletedSubLessonId`, deletedSubLessonId);
   function handleDeleteSubLessonVideo(e, index) {
     const newSubLesson = [...subLesson];
-    newSubLesson[index].video = null;
+    newSubLesson[index].video_url = null;
     setSubLesson(newSubLesson);
   }
+
   function handleUpdateSubLessonName(e, index) {
     const { name, value } = e.target;
     const subLessonList = [...subLesson];
@@ -80,32 +108,39 @@ export default function EditLessonWhenAdd({ params }) {
     setSubLesson(subLessonList);
   }
 
-  function handleUpdateLesson(e, index) {
-    setLessonNameStatus("");
+  function handleUpdateLesson() {
     if (!lessonName) {
-      setLessonNameStatus("Lesson Name is required");
       return;
     }
     for (let i = 0; i < subLesson.length; i++) {
-      if (!subLesson[i].subLessonName || !subLesson[i].video) {
+      if (!subLesson[i].name || !subLesson[i].video_url) {
         return;
       }
     }
-
-    const newLesson = [...lessons];
-    const data = {
-      lesson: lesson,
-      subLesson: subLesson,
+    for (let i = 0; i < subLesson.length; i++) {
+      subLesson[i].sub_lesson_number = i + 1;
+      subLesson[i].lesson_id = lesson_id;
+    }
+    const updatedLesson = {
+      name: lessonName,
+      lesson_number: lesson.lesson_number,
+      lesson_id: lesson_id,
+      sub_lessons: subLesson,
     };
-    newLesson.splice(index, 0, data);
-    setLessons(newLesson);
-    router.push(`/admin/editcourse/${lesson.course_id}`);
-  }
+    const lessonsClone = [...lessons];
 
-  function cancleEditLesson() {
+    lessonsClone.find((lesson, index) => {
+      if (lesson.lesson_id === lesson_id) {
+        lessonsClone[index] = updatedLesson;
+        setLessons(lessonsClone);
+      }
+    });
     router.push(`/admin/editcourse/${course_id}`);
   }
-
+  function cancleEditLesson() {
+    setDeletedSubLessonId([]);
+    router.push(`/admin/editcourse/${course_id}`);
+  }
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -118,11 +153,14 @@ export default function EditLessonWhenAdd({ params }) {
         <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px] z-[2]">
           <div className="flex w-full items-center justify-between ">
             <div className="flex items-center gap-[16px]">
-              <Link href={`/admin/editcourse/${course_id}`}>
-                <button>
-                  <Image src={arrowBack} alt="arrow back icon" />
-                </button>
-              </Link>
+              <button
+                onClick={() => {
+                  cancleEditLesson();
+                }}
+              >
+                <Image src={arrowBack} alt="arrow back icon" />
+              </button>
+
               <div>
                 <p className="min-[375px]:text-[14px] font-medium leading-[30px]  text-[#9AA1B9]">
                   Course{" "}
@@ -143,11 +181,15 @@ export default function EditLessonWhenAdd({ params }) {
             </div>
 
             <div className="flex gap-[10px] ">
-              <Link href={`/admin/editcourse/${course_id}`}>
-                <button className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]">
-                  Cancel
-                </button>
-              </Link>
+              <button
+                className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
+                onClick={() => {
+                  cancleEditLesson();
+                }}
+              >
+                Cancel
+              </button>
+
               <button
                 className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {
@@ -195,7 +237,7 @@ export default function EditLessonWhenAdd({ params }) {
               </label>
             </div>
             <section className="flex flex-col gap-[24px]">
-              {subLesson?.map(({ name, video, video_url }, index) => {
+              {subLesson?.map(({ sub_lesson_id, name, video_url }, index) => {
                 return (
                   <section
                     key={index}
@@ -228,7 +270,7 @@ export default function EditLessonWhenAdd({ params }) {
                       </div>
                       <div className="flex flex-col gap-[8px]">
                         <p>Video *</p>
-                        {video_url ? (
+                        {typeof video_url === "string" ? (
                           <div className="relative w-fit">
                             <video
                               src={video_url}
@@ -244,7 +286,7 @@ export default function EditLessonWhenAdd({ params }) {
                               }}
                             />
                           </div>
-                        ) : !video?.name ? (
+                        ) : !video_url?.name ? (
                           <label
                             htmlFor={`video${index}`}
                             className="w-fit cursor-pointer flex flex-col gap-[8px] relative"
@@ -255,7 +297,7 @@ export default function EditLessonWhenAdd({ params }) {
                               className="min-[375px]:w-[200px] outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
                               type="file"
                               placeholder="Lesson Name"
-                              value={video}
+                              value={video_url ? video_url : ""}
                               onChange={(e) => {
                                 handleUpdateSubLessonVideo(e, index);
                               }}
@@ -265,7 +307,7 @@ export default function EditLessonWhenAdd({ params }) {
                               src={uploadVideoSubLesson}
                               alt="upload sub lesson video inage"
                             />
-                            {video || video_url ? null : (
+                            {video_url ? null : (
                               <p className="absolute text-[12px] text-[red] top-[100%]">
                                 Press enter the video
                               </p>
@@ -274,7 +316,7 @@ export default function EditLessonWhenAdd({ params }) {
                         ) : (
                           <div className="relative w-fit">
                             <video
-                              src={URL.createObjectURL(video)}
+                              src={URL.createObjectURL(video_url)}
                               className="relative w-[400px]"
                               accept="video/mov, video/mp4, video/avi"
                             ></video>
@@ -297,7 +339,14 @@ export default function EditLessonWhenAdd({ params }) {
                             ? `text-[#C8CCDB] cursor-not-allowed`
                             : `text-[#2F5FAC]`
                         }`}
-                        onClick={(e) => handleDeleteSubLesson(e, index)}
+                        onClick={(e) =>
+                          handleDeleteSubLesson(
+                            e,
+                            index,
+                            lesson_id,
+                            sub_lesson_id
+                          )
+                        }
                       >
                         Delete
                       </button>

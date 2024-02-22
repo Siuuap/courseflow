@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import { v4 as uuidv4 } from "uuid";
+import cloneDeep from "lodash/cloneDeep";
 export default function AddLesson() {
   const router = useRouter();
 
@@ -44,18 +45,20 @@ export default function AddLesson() {
     if (subLesson.length === 1) {
       return;
     }
-    const newSubLesson = [...subLesson];
-    newSubLesson.splice(index, 1);
-    setSubLesson(newSubLesson);
+    const updatedSubLesson = cloneDeep(subLesson);
+    updatedSubLesson.splice(index, 1);
+    setSubLesson(updatedSubLesson);
   }
+
   function handleDeleteSubLessonVideo(e, index) {
-    const newSubLesson = [...subLesson];
+    const newSubLesson = cloneDeep(subLesson);
     newSubLesson[index].video = null;
     setSubLesson(newSubLesson);
   }
+
   function handleUpdateSubLessonName(e, index) {
     const { name, value } = e.target;
-    const subLessonList = [...subLesson];
+    const subLessonList = cloneDeep(subLesson);
 
     subLessonList[index][name] = value;
     setSubLesson(subLessonList);
@@ -66,7 +69,7 @@ export default function AddLesson() {
     if (files.size > 20000000) {
       return;
     }
-    const subLessonList = [...subLesson];
+    const subLessonList = cloneDeep(subLesson);
     subLessonList[index][name] = files[0];
     setSubLesson(subLessonList);
   }
@@ -82,13 +85,13 @@ export default function AddLesson() {
         return;
       }
     }
-    const newLesson = [...lessons];
+    const newLessons = [...lessons];
     const data = {
       lessonName: lessonName,
       subLesson: subLesson,
     };
-    newLesson.push(data);
-    setLessons([...newLesson]);
+    newLessons.push(data);
+    setLessons(newLessons);
     router.push("/admin/addcourse");
   }
 

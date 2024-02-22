@@ -16,11 +16,12 @@ import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import { v4 as uuidv4 } from "uuid";
+import cloneDeep from "lodash";
 
 export default function AddLessonWhenEditCourse({ params }) {
   const course_id = params.course_id;
   const router = useRouter();
-  const lesson_id = uuidv4();
+
   const { name, lessons, setLessons } = useLessonContext();
   const [lessonName, setLessonName] = useState("");
   const [subLesson, setSubLesson] = useState([
@@ -30,7 +31,7 @@ export default function AddLessonWhenEditCourse({ params }) {
       video_url: null,
     },
   ]);
-
+  console.log(`subLesson`, subLesson);
   function handleAddSubLesson() {
     setSubLesson([
       ...subLesson,
@@ -52,7 +53,7 @@ export default function AddLessonWhenEditCourse({ params }) {
   }
   function handleDeleteSubLessonVideo(e, index) {
     const newSubLesson = [...subLesson];
-    newSubLesson[index].video = null;
+    newSubLesson[index].video_url = null;
     setSubLesson(newSubLesson);
   }
   function handleUpdateSubLessonName(e, index) {
@@ -79,13 +80,18 @@ export default function AddLessonWhenEditCourse({ params }) {
     }
 
     for (let i = 0; i < subLesson.length; i++) {
-      if (!subLesson[i].name || !subLesson[i].video) {
+      if (!subLesson[i].name || !subLesson[i].video_url) {
         return;
       }
     }
-    const newLesson = [...lessons];
+    const lessonsClone = [...lessons];
+    const lesson_id = uuidv4();
+    for (let i = 0; i < subLesson.length; i++) {
+      subLesson[i].sub_lesson_number = i + 1;
+      subLesson[i].lesson_id = lesson_id;
+    }
+
     const data = {
-      course_id: course_id,
       created_at: Date.now(),
       lesson_id: lesson_id,
       lesson_number: lessons.length + 1,
@@ -93,8 +99,8 @@ export default function AddLessonWhenEditCourse({ params }) {
       sub_lessons: subLesson,
       updated_at: Date.now(),
     };
-    newLesson.push(data);
-    setLessons([...newLesson]);
+    lessonsClone.push(data);
+    setLessons(lessonsClone);
     router.push(`/admin/editcourse/${course_id}`);
   }
 
@@ -183,7 +189,7 @@ export default function AddLessonWhenEditCourse({ params }) {
               </label>
             </div>
             <section className="flex flex-col gap-[24px]">
-              {subLesson.map(({ name, video }, index) => {
+              {subLesson.map(({ name, video_url }, index) => {
                 return (
                   <section
                     key={index}
@@ -216,18 +222,18 @@ export default function AddLessonWhenEditCourse({ params }) {
                       </div>
                       <div className="flex flex-col gap-[8px]">
                         <p>Video *</p>
-                        {!video ? (
+                        {!video_url ? (
                           <label
                             htmlFor={`video${index}`}
                             className="w-fit cursor-pointer flex flex-col gap-[8px] relative"
                           >
                             <input
-                              name="video"
+                              name="video_url"
                               id={`video${index}`}
                               className="min-[375px]:w-[200px] outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
                               type="file"
                               placeholder="Lesson Name"
-                              value={video ? video : ""}
+                              value={video_url ? video_url : ""}
                               onChange={(e) => {
                                 handleUpdateSubLessonVideo(e, index);
                               }}
@@ -237,7 +243,7 @@ export default function AddLessonWhenEditCourse({ params }) {
                               src={uploadVideoSubLesson}
                               alt="upload sub lesson video inage"
                             />
-                            {video ? null : (
+                            {video_url ? null : (
                               <p className="absolute text-[12px] text-[red] top-[100%]">
                                 Press enter the video
                               </p>
@@ -246,7 +252,7 @@ export default function AddLessonWhenEditCourse({ params }) {
                         ) : (
                           <div className="relative w-fit">
                             <video
-                              src={URL.createObjectURL(video)}
+                              src={URL.createObjectURL(video_url)}
                               className="relative h-[200px]"
                               accept="video/mov, video/mp4, video/avi"
                             ></video>

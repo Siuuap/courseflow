@@ -15,6 +15,9 @@ export function LessonProvider({ children }) {
   const [attachedFile, setAttachedFile] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [lessonUpdateId, setLessonUpdateId] = useState([]);
+  const [deletedLessonId, setDeletedLessonId] = useState([]);
+  const [deletedSubLessonId, setDeletedSubLessonId] = useState([]);
+  const [latestCourseData, setLatestCourseData] = useState([]);
   function resetToDefault() {
     setName("");
     setPrice("");
@@ -26,6 +29,8 @@ export function LessonProvider({ children }) {
     setAttachedFile(null);
     setLessons([]);
     setLessonUpdateId([]);
+    setDeletedLessonId([]);
+    setDeletedSubLessonId([]);
   }
   return (
     <LessonContext.Provider
@@ -51,6 +56,12 @@ export function LessonProvider({ children }) {
         resetToDefault,
         lessonUpdateId,
         setLessonUpdateId,
+        latestCourseData,
+        setLatestCourseData,
+        deletedLessonId,
+        setDeletedLessonId,
+        deletedSubLessonId,
+        setDeletedSubLessonId,
       }}
     >
       {children}

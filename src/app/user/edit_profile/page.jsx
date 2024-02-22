@@ -8,9 +8,9 @@ import Button from "@/components/Button";
 import { useLessonContext } from "@/contexts/lessonContext";
 import uploadImage from "@/assets/images/uploadImage.svg";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
-import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { supabase } from "@/utils/db";
 
 export default function EditProfileForm() {
   const router = useRouter();
@@ -20,14 +20,22 @@ export default function EditProfileForm() {
     dateOfBirth: "",
     EducationalBackground: "",
     email: "",
-    image: undefined,
+    image: "",
   });
 
-  // const getValue = (e) => {
-  //   setValues({ ...values, [e.target.name]: e.target.value });
-  // };
+  const [error, setError] = useState("");
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const [dateError, setDateError] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [EducationalBackgroundError, setEducationalBackgroundError] =
+    useState("");
 
-  const { data: session, status } = useSession();
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
+  const { data: session, status, update } = useSession();
   const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState({});
@@ -40,30 +48,15 @@ export default function EditProfileForm() {
     userProfile?.educational_background
   );
   const [email, setEmail] = useState(userProfile?.email);
-  const [image, setImage] = useState(session?.user?.url || "" || null);
+  const [image, setImage] = useState("");
 
-  const {
-    coverImages,
-    setCoverImages,
-    attachFile,
-    setAttachFile,
-    previewImage,
-    setPreviewImage,
-  } = useLessonContext();
-
-  const [coverImageStatus, setCoverImageStatus] = useState("");
-
-  function setStatusToDefault() {
-    setCoverImageStatus("");
-  }
-
-  function handleCoverImage(e) {
-    if (e.target.files[0].size > 5000000) {
-      setCoverImageStatus("File size should be less than 5MB");
-      return;
-    }
-    setCoverImage(e.target.files[0]);
-  }
+  const [firstNameStatus, setFirstNameStatus] = useState("");
+  const [lastNameStatus, setLastNameStatus] = useState("");
+  const [dateOfBirthStatus, setDateOfBirthStatus] = useState("");
+  const [educationStatus, setEducationStatus] = useState("");
+  const [emailStatus, setEmailStatus] = useState("");
+  const [imageStatus, setImageStatus] = useState("");
+  const [latestUserData, setLatestUserData] = useState("");
 
   function handleRemoveImage(e, index) {
     console.log(index);
@@ -104,8 +97,9 @@ export default function EditProfileForm() {
     const errors = {
       dateOfBirth: ageDifference <= 6 || isNaN(selectedDate.getTime()),
     };
+    console.log(errors);
 
-    setErrors((prevErrors) => ({
+    setDateError((prevErrors) => ({
       ...prevErrors,
       ...errors,
     }));
@@ -113,62 +107,20 @@ export default function EditProfileForm() {
     return errors.dateOfBirth;
   };
 
-  const handleUpdateProfile = async (event) => {
-    // event.preventDefault();
+  function findFilePathNames(i) {
+    const item = i + "";
+    const publicIndex = item.split("/").findIndex((el) => el === "public");
+    const data = item
+      .split("/")
+      .filter((el, i) => {
+        if (i > publicIndex + 1) {
+          return el;
+        }
+      })
+      .join("/");
 
-    // setErrors({
-    //   firstname: !checkFirstName(values.firstname),
-    //   lastname: !checkLastName(values.lastname),
-    //   dateOfBirthempty: !values.dateOfBirth.trim(),
-    //   dateOfBirth: validateDateOfBirth(values.dateOfBirth),
-    //   EducationalBackground: !values.eb.trim(),
-    //   email: !(values.email.trim() && values.email.includes("@")),
-    //   image: !values.image.trim(),
-    // });
-
-    const userData = {
-      user_id: session.user.userId,
-      firstName: session.user.first_name,
-      lastName: data.last_name,
-      dateOfBirth: data.date_of_birth,
-      education: data.educational_background,
-      email: session.user.email,
-      image: data.img_url,
-    };
-    console.log(`Data before post`, data);
-    try {
-      const res = await axios.put(`/api/user/${id}`, data);
-      console.log(res);
-    } catch (error) {
-      console.log(error);
-    }
-    resetToDefault();
-    router.push("/admin/courselist");
-
-    //upload cover image
-    // try {
-    //   const { data, error } = await supabase.storage
-    //     .from("user_profiles")
-    //     .upload(`${userId}/image/${image}`, image, {
-    //       cacheControl: "3600",
-    //       upsert: false,
-    //     });
-
-    //   userProfile.img_url = supabase.storage
-    //     .from("user_profiles")
-    //     .getPublicUrl(data.path, image).data.publicUrl;
-    // } catch (error) {
-    //   console.log(error);
-    // }
-  };
-
-  // const [userId, setUserId] = useState("");
-  // const [firstName, setFirstName] = useState(null);
-  // const [lastName, setLastName] = useState(null);
-  // const [dateOfBirth, setDateOfBirth] = useState(null);
-  // const [education, setEducation] = useState(null);
-  // const [email, setEmail] = useState(null);
-  // const [image, setImage] = useState(null);
+    return data;
+  }
 
   const getUser = async () => {
     console.log(session);
@@ -186,12 +138,14 @@ export default function EditProfileForm() {
 
       const data = res.data.data;
 
-      setFirstName(session?.user?.firstName);
-      setLastName(session?.user?.lastName);
+      setUserId(session?.user?.userId);
+      setFirstName(data?.first_name);
+      setLastName(data?.last_name);
       setDateOfBirth(data?.date_of_birth);
       setEducation(data?.educational_background);
-      setEmail(session?.user?.email);
-      setImage(session?.user?.img_url);
+      setEmail(data?.email);
+      setImage(data?.img_url);
+      setLatestUserData(data);
     }
     setLoading(false);
   };
@@ -200,100 +154,141 @@ export default function EditProfileForm() {
     getUser();
   }, [status]);
 
-  // const handleInputChange = (event) => {
-  //   setFirstName(event.target.value);
-  //   setLastName(event.target.value);
-  //   setDateOfBirth(event.target.value);
-  //   setEducation(event.target.value);
-  //   setEmail(event.target.value);
-  //   //setImage(event.target.value);
-  // };
+  function setStatusToDefault() {
+    setFirstNameStatus("");
+    setLastNameStatus("");
+    setDateOfBirthStatus("");
+    setEducationStatus("");
+    setEmailStatus("");
+    setImageStatus("");
+  }
 
-  // const handleInputChange = (event) => {
-  //   setValues({
-  //     ...values,
-  //     firstname: event.target.value,
-  //     lastname: event.target.value,
-  //     dateOfBirth: event.target.value,
-  //     EducationalBackground: event.target.value,
-  //     email: event.target.value,
-  //   });
-  // };
+  function handleImage(e) {
+    if (e.target.files[0].size > 5000000) {
+      setImageStatus("File size should be less than 5MB");
+      return;
+    }
+    setImage(e.target.files[0]);
+    console.log(e.target.files[0]);
+  }
 
-  // const deleteImage = (event) => {
-  //   if (event && event.preventDefault) {
-  //     event.preventDefault();
-  //     const updatedUserProfile = { ...userProfile, img_url: { uploadImage } };
-  //     setUserProfile(updatedUserProfile);
-  //   } else {
-  //     console.error("Invalid event object:", event);
-  //   }
-  // };
+  const handleUpdateProfile = async (event) => {
+    setStatusToDefault;
+    event.preventDefault();
 
-  // const handleFileChange = (event) => {
-  //   const uniqueId = Date.now();
-  //   const file = event.target.files[0];
-  // };
+    // ของที่จะส่ง put ไป update ที่หลังบ้าน
+    const userData = {
+      user_id: userId,
+      firstName: firstName,
+      lastName: lastName,
+      dateOfBirth: dateOfBirth,
+      education: education,
+      email: email,
+      image: image,
+    };
+    console.log(`Data before put`, userData);
 
-  // async function handleUpdateProfile() {
-  //   setStatusToDefault();
-  //   const user_id = uuidv4();
+    const dateOfBirthError = validateDateOfBirth(dateOfBirth);
 
-  //   if (
-  //     !firstName ||
-  //     !lastName ||
-  //     !dateOfBirth ||
-  //     !education ||
-  //     !email ||
-  //     !image
-  //   ) {
-  //     if (!firstName) {
-  //       setNameStatus("Please enter firstname");
-  //     }
-  //     if (!lastName) {
-  //       setPriceStatus("Please enter lastname");
-  //     }
-  //     if (!dateOfBirth) {
-  //       setLengthStatus("Please enter date of birth");
-  //     }
-  //     if (!education) {
-  //       setSummaryStatus("Please enter education");
-  //     }
+    if (dateOfBirthError) {
+      setDateError(
+        "Please enter your date of birth and be at least 6 years old"
+      );
+    } else {
+      setDateError("");
+    }
 
-  //     if (!email) {
-  //       setDescriptionStatus("Please enter email");
-  //     }
-  //     if (!image) {
-  //       setCoverImageStatus("Please upload image");
-  //     }
-  //     return;
-  //   }
+    // ตรวจสอบข้อผิดพลาดอื่น ๆ และตั้งค่า state ตามปกติ
+    if (!/^[a-zA-Z]+(?:['-]?[a-zA-Z]+)?$/.test(firstName.trim())) {
+      setFirstNameError("Please enter firstname");
+    } else {
+      setFirstNameError("");
+    }
 
-  //   const userProfile = {
-  //     user_id: user_id,
-  //     firstName,
-  //     lastName,
-  //     dateOfBirth,
-  //     education,
-  //     email,
-  //     image,
-  //   };
+    if (!/^[a-zA-Z]+(?:['-]?[a-zA-Z]+)?$/.test(lastName.trim())) {
+      setLastNameError("Please enter lastname");
+    } else {
+      setLastNameError("");
+    }
 
-  //   //upload cover image
-  //   try {
-  //     const { data, error } = await supabase.storage
-  //       .from("user_profiles")
-  //       .upload(`${user_id}/image/${image}`, image, {
-  //         cacheControl: "3600",
-  //         upsert: false,
-  //       });
+    if (!education.trim()) {
+      setEducationalBackgroundError("Please enter EducationalBackground");
+    } else {
+      setEducationalBackgroundError("");
+    }
 
-  //     userProfile.img_url = supabase.storage
-  //       .from("user_profiles")
-  //       .getPublicUrl(data.path, image).data.publicUrl;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
+    if (!email.match(/^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[A-Za-z]+$/)) {
+      setEmailError("Email is required");
+    } else {
+      setEmailError("");
+    }
+
+    if (typeof image === "object") {
+      const fileName = findFilePathNames(latestUserData.img_url);
+
+      // remove old image from storage
+      try {
+        const { data, error } = await supabase.storage
+          .from(`users`)
+          .remove(fileName);
+        if (error) {
+          console.log(`error remove old image from supabase`, error);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      // upload image
+      try {
+        // console.log(image.name);
+        const { data, error } = await supabase.storage
+          .from("users")
+          .upload(`id${userId}/image/${image.name}`, image, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+
+        userData.img_url = supabase.storage
+          .from("users")
+          .getPublicUrl(data.path, image).data.publicUrl;
+      } catch (error) {
+        console.log(error);
+      }
+      console.log(userData);
+    }
+
+    try {
+      if (
+        userData.firstName &&
+        userData.lastName &&
+        userData.dateOfBirth &&
+        userData.education &&
+        userData.email &&
+        userData.image !== ""
+      ) {
+        const res = await axios.put(`/api/user/${userId}`, userData);
+        console.log(`test`, res);
+        console.log(res.data.result[0].img_url);
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            firstName,
+            url: res.data.result[0].img_url,
+          },
+        });
+        router.refresh();
+        console.log(image);
+
+        console.log(session);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    //console.log(req.img_url);
+
+    //router.refresh(NavBar);
+  };
 
   return (
     <>
@@ -301,7 +296,7 @@ export default function EditProfileForm() {
 
       <section className="flex gap-0.5 justify-between items-start px-5 w-full h-[955px] max-md:flex-wrap max-md:mt-10 max-md:max-w-full mx-[auto]">
         <Image
-          className="absolute pt-[100px] pl-[43px]"
+          className="absolute pt-[100px] pl-[43px] -z-50"
           src="/images/editProfile.png"
           alt="editProfile"
           width={1397}
@@ -314,146 +309,74 @@ export default function EditProfileForm() {
           </div>
           <div className="flex flex-row w-[930px] h-[531px] mt-[72px]">
             <div className="relative bg-blue-100 w-[358px] h-[358px] rounded-[16px] flex justify-center items-center">
-              {/* <label htmlFor="upload">
-                Image
-                <input
-                  id="upload"
-                  name="image"
-                  type="file"
-                  placeholder="Choose image here"
-                  multiple
-                  hidden
-                  accept="image/*"
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </label>
-              <button
-                className="absolute left-[320px] top-[10px] w-[32px] h-[32px] rounded-3xl bg-[#9B2FAC] text-white z-10"
-                onClick={() => {
-                  alert();
-                  deleteImage("");
-                }}>
-                x
-              </button>
-              {userProfile?.img_url ? (
-                <img
-                  className="absolute rounded-[16px]"
-                  src={userProfile?.img_url}
-                  alt="image_profile"
-                  width={358}
-                  height={358}
-                />
-              ) : (
-                <div>
-                  <label
-                    htmlFor="coverImage"
-                    className="w-fit cursor-pointer flex flex-col gap-[8px]">
-                    <Image
-                      className="rounded-[16px]"
-                      src={uploadImage}
-                      alt="image-with-upload"
+              <section className="relative flex flex-col gap-[8px]">
+                {typeof image === "string" ? (
+                  <div className="relative w-fit">
+                    <img
+                      src={image}
+                      alt={image.name}
+                      className="w-[358px] h-[358px] rounded-[16px] z-20"
                       width={358}
                       height={358}
                     />
-                    <input
-                      className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
-                      id="coverImage"
-                      type="file"
-                      accept="image/jpeg image/jpg image/png"
-                      onChange={handleCoverImage}
-                    />
-                  </label>
-                </div>
-              )} */}
-              {/* {session?.user?.image} */}
-
-              {!coverImages?.name ? (
-                <label
-                  htmlFor="coverImage"
-                  className="w-fit cursor-pointer flex flex-col gap-[8px]">
-                  <Image
-                    src={uploadImage}
-                    alt="image-with-upload-image-text"
-                    width={358}
-                    height={358}
-                  />
-                  <input
-                    className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
-                    id="coverImage"
-                    type="file"
-                    accept="image/jpeg, image/jpg, image/png "
-                    onChange={handleCoverImage}
-                  />
-                  {coverImageStatus && (
-                    <p className="absolute top-[102%] text-[red] text-[14px]">
-                      {coverImageStatus}
-                    </p>
-                  )}
-                </label>
-              ) : (
-                <div className="relative w-fit">
-                  <img
-                    src={session?.user?.image(coverImage)}
-                    alt={session?.user?.image}
-                    className="w-[240px] h-[240px] rounded-lg"
-                  />
-                  <p>{session?.user?.image}</p>
-                  <Image
-                    src={CancelIcon}
-                    alt="cancel icon"
-                    className="absolute -top-[7px] -right-[11px]"
-                    onClick={(e) => {
-                      setCoverImage({});
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* <section className="flex flex-col gap-[8px]">
-                {!previewImage ? (
-                  <div>
-                    <label
-                      htmlFor="coverImage"
-                      className="w-fit cursor-pointer flex flex-col gap-[8px]">
-                      <Image
-                        className="rounded-[16px]"
-                        src={uploadImage}
-                        alt="image-with-upload-image-text"
-                        width={358}
-                        height={358}
-                      />
-                      <input
-                        className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
-                        id="coverImage"
-                        type="file"
-                        accept="image/jpeg image/jpg image/png"
-                        onChange={handleCoverImage}
-                      />
-                    </label>
-                  </div>
-                ) : (
-                  <div className="relative w-fit z-20">
-                    <Image
-                      src={image}
-                      // src={previewImage}
-                      alt={image}
-                      className="w-[358px] h-[358px] rounded-lg"
-                    />
-                    <p>{coverImages.name}</p>
+                    {/* <p>{image.name}</p> */}
                     <Image
                       src={CancelIcon}
                       alt="cancel icon"
-                      className="absolute -top-[7px] -right-[11px]"
+                      className="absolute -top-[7px] -right-[15px] z-20"
                       onClick={(e) => {
-                        setCoverImages({});
-                        setPreviewImage(null);
+                        setImage(null);
                       }}
+                      width={80}
+                      height={80}
+                    />
+                  </div>
+                ) : !image ? (
+                  <label
+                    htmlFor="image"
+                    className="w-fit cursor-pointer flex flex-col gap-[8px]">
+                    <Image
+                      src={uploadImage}
+                      alt="image-with-upload-image-text"
+                      width={358}
+                      height={358}
+                      className="rounded-[16px] z-20"
+                    />
+                    <input
+                      className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                      id="image"
+                      type="file"
+                      accept="image/jpeg, image/jpg, image/png "
+                      onChange={handleImage}
+                    />
+                    {imageStatus && (
+                      <p className="absolute top-[102%] text-[red] text-[14px]">
+                        {imageStatus}
+                      </p>
+                    )}
+                  </label>
+                ) : (
+                  <div className="relative w-fit">
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt={image.name}
+                      className="w-[358px] h-[358px] rounded-[16px] z-20"
+                    />
+                    <Image
+                      src={CancelIcon}
+                      alt="cancel icon"
+                      className="absolute -top-[7px] -right-[15px] z-20"
+                      onClick={(e) => {
+                        setImage(null);
+                      }}
+                      width={80}
+                      height={80}
                     />
                   </div>
                 )}
-              </section> */}
+              </section>
             </div>
-            <form className="absolute flex flex-col pl-[477px]">
+            <div className="absolute flex flex-col pl-[477px]">
               <div className="flex flex-row">
                 <div className="flex flex-col pr-[13px]">
                   <label
@@ -468,8 +391,8 @@ export default function EditProfileForm() {
                     value={firstName}
                     placeholder={userProfile?.first_name || "Enter firstName"}
                     className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
-                  {errors.firstname && (
-                    <span className="text-red-600">กรุณากรอกชื่อ</span>
+                  {firstNameError && (
+                    <span className="text-red-600">{firstNameError}</span>
                   )}
                 </div>
                 <div className="flex flex-col">
@@ -482,11 +405,10 @@ export default function EditProfileForm() {
                     name="lastname"
                     onChange={(e) => setLastName(e.target.value)}
                     value={lastName}
-                    // placeholder={session?.user?.lastName || "Enter lastname"}
                     placeholder={userProfile?.last_name || "Enter lastName"}
                     className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
-                  {errors.Lastname && (
-                    <span className="text-red-600">กรุณากรอกนามสกุล</span>
+                  {lastNameError && (
+                    <span className="text-red-600">{lastNameError}</span>
                   )}
                 </div>
               </div>
@@ -500,19 +422,9 @@ export default function EditProfileForm() {
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
                 type="date"
-                // placeholder={session?.user?.dateofBirth || "Enter DD/MM/YY"}
                 placeholder={userProfile?.date_of_birth || "Enter YYYY-MM-DD"}
                 className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
-              {errors.dateOfBirthempty && (
-                <div className="text-red-600">
-                  Please enter your date of birth
-                </div>
-              )}
-              {errors.dateOfBirth && (
-                <div className="text-red-600">
-                  You must be at least 6 years old
-                </div>
-              )}
+              {dateError && <div className="text-red-600">{dateError}</div>}
               <label
                 htmlFor="userId"
                 className="pb-[4px] text-black text-[16px] max-md:max-w-full">
@@ -523,14 +435,15 @@ export default function EditProfileForm() {
                 onChange={(e) => setEducation(e.target.value)}
                 value={education}
                 type="text"
-                // placeholder="Enter Educational Background"
                 placeholder={
                   userProfile?.educational_background ||
                   "Enter educational background"
                 }
                 className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
-              {errors.firstname && (
-                <p className=" mt-[50px]  text-red-600">กรุณากรอกข้อมูล</p>
+              {EducationalBackgroundError && (
+                <p className=" mt-[50px]  text-red-600">
+                  {EducationalBackgroundError}
+                </p>
               )}
               <label
                 htmlFor="userId"
@@ -539,24 +452,17 @@ export default function EditProfileForm() {
               </label>
               <input
                 name="email"
-                //value={userProfile?.email}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                //placeholder={userProfile?.email || "Enter email"}
                 placeholder={session?.user?.email || "Enter email"}
                 className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
-              {errors.password && (
-                <p className=" text-red-600">กรุณากรอก email</p>
-              )}
+              {emailError && <p className=" text-red-600">{emailError}</p>}
               <button
                 onClick={handleUpdateProfile}
-                // onClick={() => {
-                //   alert();
-                // }}
                 className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] bg-[#2F5FAC] rounded-xl shadow justify-center items-center gap-2.5 inline-flex text-white">
                 Update Profile
               </button>
-            </form>
+            </div>
           </div>
         </section>
       </section>

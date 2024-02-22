@@ -14,6 +14,7 @@ import NavBar from "@/components/NavBar";
 import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
+import cloneDeep from "lodash/cloneDeep";
 
 export default function Learning({ params }) {
   const { data: session, status } = useSession();
@@ -80,11 +81,10 @@ export default function Learning({ params }) {
           data
         );
 
-        const newAssignmentStatus = assignmentStatus.map(
-          (assignment) => assignment
-        );
+        const newAssignmentStatus = cloneDeep(assignmentStatus);
+
         newAssignmentStatus.find((assignment, i) => {
-          if (assignment.sub_lesson_id === assignment.sub_lesson_id) {
+          if (assignment.sub_lesson_id === currentSubLesson.sub_lesson_id) {
             newAssignmentStatus[i] = { ...assignment, status_assignment: 1 };
           }
         });
@@ -311,7 +311,7 @@ function CourseVideo({
 
   useEffect(() => {
     function status() {
-      const assignment = assignmentStatus.find((sub) => {
+      assignmentStatus.find((sub) => {
         if (sub.sub_lesson_id === currentSubLesson.sub_lesson_id) {
           setAssignment(sub);
         }
@@ -400,7 +400,7 @@ function CourseVideo({
                 </div>
                 <p
                   className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded-lg"
-                  key={currentSubLesson.name}
+                  key={assignment.sub_lesson_id}
                 >
                   {(assignment.status_assignment == 0 && "pending") ||
                     (assignment.status_assignment == 1 && "in progress") ||

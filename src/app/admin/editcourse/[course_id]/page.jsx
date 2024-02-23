@@ -517,6 +517,9 @@ export default function EditCourse({ params }) {
             subLessonData[i]
           );
           console.log(response);
+          if (error) {
+            console.log(`error`, error);
+          }
         } catch (error) {
           console.log(`error`, error);
         }

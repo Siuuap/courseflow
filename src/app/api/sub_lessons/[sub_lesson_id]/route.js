@@ -24,6 +24,7 @@ export async function DELETE(request, { params }) {
 export async function PUT(request, { params }) {
   const id = params.sub_lesson_id;
   const reqData = await request.json();
+  console.log(`reqData from put`, reqData);
   try {
     const { data, error } = await supabase
       .from("sub_lessons")

@@ -12,7 +12,7 @@ import SideBar from "@/components/SideBar";
 import deleteIcon from "@/assets/images/DeleteIcon.svg";
 import editIcon from "@/assets/images/EditIcon.svg";
 import FileIcon from "@/assets/images/FileIcon.svg";
-import DragIcon from "@/assets/images/DragIcon.svg";
+import DragIcon from "@/assets/images/dragIcon.svg";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
 import uploadFile from "@/assets/images/uploadFile.svg";
 import uploadImage from "@/assets/images/uploadImage.svg";

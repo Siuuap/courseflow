@@ -10,7 +10,7 @@ import uploadVideo from "@/assets/images/uploadVideo.svg";
 import Image from "next/image";
 import arrowBack from "@/assets/images/arrowBack.svg";
 import uploadVideoSubLesson from "@/assets/images/uploadVideoSubLesson.svg";
-import DragIcon from "@/assets/images/DragIcon.svg";
+import DragIcon from "@/assets/images/dragIcon.svg";
 import { useLessonContext } from "@/contexts/lessonContext";
 import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";

@@ -92,6 +92,7 @@ export default function AddLessonWhenEditCourse({ params }) {
     }
 
     const data = {
+      course_id: course_id,
       created_at: Date.now(),
       lesson_id: lesson_id,
       lesson_number: lessons.length + 1,

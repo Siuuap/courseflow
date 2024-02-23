@@ -51,6 +51,8 @@ export default function EditCourse({ params }) {
     setLatestCourseData,
     deletedLessonId,
     setDeletedLessonId,
+    deletedSubLessonId,
+    setDeletedSubLessonId,
   } = useLessonContext();
   const [nameStatus, setNameStatus] = useState("");
   const [priceStatus, setPriceStatus] = useState("");
@@ -67,9 +69,7 @@ export default function EditCourse({ params }) {
 
   async function getCourseData() {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/courses/${course_id}`
-      );
+      const response = await axios.get(`/api/courses/${course_id}`);
       // console.log(response.data.data[0]);
       setName(response.data.data[0].name);
       setPrice(response.data.data[0].price);
@@ -230,12 +230,6 @@ export default function EditCourse({ params }) {
       videoTrailer: videoTrailer,
       attachedFile: attachedFile,
     };
-    const lessonData = {
-      course_id: course_id,
-    };
-    const subLessonData = {
-      course_id: course_id,
-    };
 
     if (typeof attachedFile === "object" && attachedFile !== null) {
       const fileName = findFilePathNames(latestCourseData.attached_file_url);
@@ -367,6 +361,170 @@ export default function EditCourse({ params }) {
     } catch (error) {
       console.log(error);
     }
+
+    //delete sublesson and lesson from the server
+    // ตอนลบอย่าลืมลบ bucket ด้วย
+    //delete sub-lesson
+    if (deletedSubLessonId.length > 0) {
+      const subLessonIdThatNeedToBeDeleted = [...deletedSubLessonId];
+      for (let i = 0; i < subLessonIdThatNeedToBeDeleted.length; i++) {
+        try {
+          const response = await axios.delete(
+            `/api/sub_lessons/${subLessonIdThatNeedToBeDeleted[i]}`
+          );
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    //delete lesson
+    if (deletedLessonId.length > 0) {
+      const lessonIdThatNeedToBeDeleted = [...deletedLessonId];
+      for (let i = 0; i < lessonIdThatNeedToBeDeleted.length; i++) {
+        try {
+          const response = await axios.delete(
+            `/api/lessons/${lessonIdThatNeedToBeDeleted[i]}`
+          );
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    // send lesson data to the server
+    const latestLessonIdFromServer = latestCourseData.lessons.map(
+      (lesson) => lesson.lesson_id
+    );
+    console.log(`latestLessonIdFromServer`, latestLessonIdFromServer);
+    const lessonData = [...lessons];
+    console.log(`lessonData`, lessonData);
+    for (let i = 0; i < lessonData.length; i++) {
+      if (latestLessonIdFromServer.includes(lessonData[i].lesson_id)) {
+        try {
+          const response = await axios.put(
+            `/api/lessons/${lessonData[i].lesson_id}`,
+            lessonData[i]
+          );
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        try {
+          const response = await axios.post("/api/lessons", lessonData[i]);
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    //ตรวจสอบด้วยว่า sublesson ถูกแก้ไข ใช้ url เดิม และเป็น sublesson ใหม่
+    const latestSubLessonIdFromServer = latestCourseData.lessons
+      .map((lesson) => {
+        return lesson.sub_lessons.map((subLesson) => subLesson.sub_lesson_id);
+      })
+      .flat();
+    // console.log(`latestSubLessonIdFromServer`, latestSubLessonIdFromServer);
+    //send sublesson data to the server
+    const subLessonData = lessons.map((lesson) => lesson.sub_lessons).flat();
+    console.log(`subLessonData`, subLessonData);
+
+    const latestSubLessonDataFromServer = latestCourseData.lessons
+      .map((lesson) => {
+        return lesson.sub_lessons.map((subLesson) => subLesson);
+      })
+      .flat();
+    console.log(`latestSubLessonDataFromServer`, latestSubLessonDataFromServer);
+
+    for (let i = 0; i < subLessonData.length; i++) {
+      if (
+        latestSubLessonIdFromServer.includes(subLessonData[i].sub_lesson_id)
+      ) {
+        if (typeof subLessonData[i].video_url === "object") {
+          const fileName = findFilePathNames(
+            latestSubLessonDataFromServer.filter((subLesson) => {
+              if (subLesson.sub_lesson_id === subLessonData[i].sub_lesson_id) {
+                return subLesson.video_url;
+              }
+            })
+          );
+          console.log(`fileName`, fileName);
+          // remove old video from storage
+          try {
+            const { data, error } = await supabase.storage
+              .from(`courses`)
+              .remove(fileName);
+            if (error) {
+              console.log(`error from supabase`, error);
+            }
+          } catch (error) {
+            console.log(error);
+          }
+
+          //upload new video to storage
+          try {
+            const { data, error } = await supabase.storage
+              .from(`courses`)
+              .upload(
+                `${course_id}/lessons/${subLessonData[i].lesson_id}/sub_lessons/${subLessonData[i].sub_lesson_id}/sublesson${subLessonData[i].sub_lesson_number}`,
+                subLessonData[i].video_url,
+                {
+                  cacheControl: "3600",
+                  upsert: true,
+                }
+              );
+            if (error) {
+              console.log(`error`, error);
+            }
+            console.log(`data`, data);
+            subLessonData[i].video_url = supabase.storage
+              .from("courses")
+              .getPublicUrl(data.path).data.publicUrl;
+
+            try {
+              const response = await axios.put(
+                `/api/sub_lessons/${subLessonData[i].sub_lesson_id}`,
+                subLessonData[i]
+              );
+              console.log(response);
+            } catch (error) {
+              console.log(error);
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } else {
+        try {
+          const { data, error } = await supabase.storage
+            .from("courses")
+            .upload(
+              `${course_id}/lessons/${subLessonData[i].lesson_id}/sub_lessons/${subLessonData[i].sub_lesson_id}/sublesson${subLessonData.sub_lesson_number}`,
+              subLessonData[i].video_url,
+              {
+                cacheControl: "3600",
+                upsert: false,
+              }
+            );
+          subLessonData[i].video_url = supabase.storage
+            .from("courses")
+            .getPublicUrl(data.path).data.publicUrl;
+
+          const response = await axios.post(
+            "/api/sub_lessons",
+            subLessonData[i]
+          );
+          console.log(response);
+        } catch (error) {
+          console.log(`error`, error);
+        }
+      }
+    }
+
+    console.log(`latestCourseData`, latestCourseData);
     router.push(`/admin/courselist`);
   }
 

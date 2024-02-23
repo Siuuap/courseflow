@@ -17,7 +17,7 @@ import CancelIcon from "@/assets/images/CancelIcon.svg";
 import uploadFile from "@/assets/images/uploadFile.svg";
 import uploadImage from "@/assets/images/uploadImage.svg";
 import uploadVideo from "@/assets/images/uploadVideo.svg";
-import playTheVideoIcon from "@/assets/images/playTheVideoIcon.svg";
+import playVideo from "@/assets/images/playVideo.svg";
 
 import { useLessonContext } from "@/contexts/lessonContext";
 
@@ -503,7 +503,7 @@ export default function AddCourse() {
                       }}
                     />
                     <Image
-                      src={playTheVideoIcon}
+                      src={playVideo}
                       alt="play the video icon"
                       className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                     />

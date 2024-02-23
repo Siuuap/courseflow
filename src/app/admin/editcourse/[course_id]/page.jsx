@@ -109,7 +109,7 @@ export default function EditCourse({ params }) {
     // const id = lesson_id;
     // console.log(`lesson_id`, id);
     // try {
-    //   const res = await axios.delete(`http://localhost:3000/api/lessons/${id}`);
+    //   const res = await axios.delete(`/api/lessons/${id}`);
     //   console.log(`res from server`, res);
     // } catch (error) {
     //   console.log(`error`, error);

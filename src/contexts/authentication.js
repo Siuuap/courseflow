@@ -16,10 +16,7 @@ function AuthProvider(props) {
   async function login(e) {
     try {
       setState({ ...state, error: false, loading: true });
-      const result = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        data
-      );
+      const result = await axios.post("/api/auth/login", data);
 
       const status = result.data.status;
 
@@ -46,21 +43,23 @@ function AuthProvider(props) {
 
   // register the user
   async function register(data) {
-    await axios.post("http://localhost:3000/api/auth/register", data); // 5 sec
+    await axios.post("/api/auth/register", data); // 5 sec
     router.push("/login");
     router.refresh();
   }
 
   async function logout() {
-    await axios.post("http://localhost:3000/api/auth/logout");
+    await axios.post("/api/auth/logout");
     setState({ ...state, user: null, error: false });
     router.refresh();
   }
 
-  async function adminRegister(data) { // email , password
+  async function adminRegister(data) {
+    // email , password
     try {
       const responseFromServer = await axios.post(
-        "http://localhost:3000/api/auth/admin/register", data //email , password
+        "/api/auth/admin/register",
+        data //email , password
       );
       return responseFromServer;
     } catch (error) {
@@ -71,7 +70,7 @@ function AuthProvider(props) {
   async function adminLogin(data) {
     try {
       const responseFromServer = await axios.post(
-        "http://localhost:3000/api/auth/admin/login",
+        "/api/auth/admin/login",
         data
       );
 

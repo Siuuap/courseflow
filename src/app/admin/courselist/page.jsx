@@ -19,7 +19,7 @@ export default function DashBoardPage() {
   async function getCourses() {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/courses?search=${search}&page=${page}`
+        `/api/courses?search=${search}&page=${page}`
       );
       setCourseData(response.data.data);
     } catch (error) {
@@ -31,7 +31,7 @@ export default function DashBoardPage() {
     const id = course_id;
     if (window.confirm("Are you sure you want to delete?")) {
       try {
-        await axios.delete(`http://localhost:3000/api/courses/${id}`);
+        await axios.delete(`/api/courses/${id}`);
         getCourses();
       } catch (error) {
         console.log(error);

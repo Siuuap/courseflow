@@ -7,7 +7,7 @@ export async function POST(request) {
   const newLesson = {
     lesson_id: reqData.lesson_id,
     course_id: reqData.course_id,
-    name: reqData.lessonName,
+    name: reqData.lessonName ? reqData.lessonName : reqData.name,
     lesson_number: reqData.lesson_number,
   };
 

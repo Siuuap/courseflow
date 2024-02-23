@@ -67,13 +67,13 @@ export default function EditLessonWhenAdd({ params }) {
     const latestSubLesson = latestLessonsData.find((lesson) => {
       return lesson.lesson_id === lesson_id;
     });
-    const arrayofSubLessonId = latestSubLesson.sub_lessons.map((subLesson) => {
+    const arrayofSubLessonId = latestSubLesson?.sub_lessons.map((subLesson) => {
       return subLesson.sub_lesson_id;
     });
     // console.log(`arrayofSubLessonId`, arrayofSubLessonId);
 
     if (
-      arrayofSubLessonId.includes(sub_lesson_id) &&
+      arrayofSubLessonId?.includes(sub_lesson_id) &&
       !deletedSubLessonId.includes(sub_lesson_id)
     ) {
       setDeletedSubLessonId([...deletedSubLessonId, sub_lesson_id]);

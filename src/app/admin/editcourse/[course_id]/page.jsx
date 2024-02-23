@@ -363,7 +363,6 @@ export default function EditCourse({ params }) {
     }
 
     //delete sublesson and lesson from the server
-    // ตอนลบอย่าลืมลบ bucket ด้วย
     //delete sub-lesson
     if (deletedSubLessonId.length > 0) {
       const subLessonIdThatNeedToBeDeleted = [...deletedSubLessonId];

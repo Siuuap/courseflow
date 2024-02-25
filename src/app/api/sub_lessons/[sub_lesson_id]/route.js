@@ -34,6 +34,7 @@ export async function PUT(request, { params }) {
         sub_lesson_id: reqData.sub_lesson_id,
         sub_lesson_number: reqData.sub_lesson_number,
         video_url: reqData.video_url,
+        updated_at: new Date().toISOString(),
       })
       .eq("sub_lesson_id", id);
 

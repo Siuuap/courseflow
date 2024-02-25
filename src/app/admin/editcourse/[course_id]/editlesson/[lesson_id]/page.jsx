@@ -44,7 +44,7 @@ export default function EditLessonWhenAdd({ params }) {
   const [subLesson, setSubLesson] = useState(lesson[0]?.sub_lessons);
 
   const [courseName, setCourseName] = useState(name);
-
+  console.log(`sublesson`, subLesson);
   function handleAddSubLesson() {
     setSubLesson([
       ...subLesson,
@@ -119,6 +119,7 @@ export default function EditLessonWhenAdd({ params }) {
     }
     for (let i = 0; i < subLesson.length; i++) {
       subLesson[i].sub_lesson_number = i + 1;
+
       subLesson[i].lesson_id = lesson_id;
     }
     const updatedLesson = {
@@ -237,123 +238,127 @@ export default function EditLessonWhenAdd({ params }) {
               </label>
             </div>
             <section className="flex flex-col gap-[24px]">
-              {subLesson?.map(({ sub_lesson_id, name, video_url }, index) => {
-                return (
-                  <section
-                    key={index}
-                    className="flex min-[375px]:gap-[7px] min-[768px]:gap-[24px] justify-between bg-[#F6F7FC] rounded-lg min-[0px]:p-[16px] min-[768px]:px-[16px] min-[768px]:py-[24px] "
-                  >
-                    <div className="min-[768px]:block">
-                      <Image src={DragIcon} alt="drag icon" />
-                    </div>
-                    <div className=" flex flex-col gap-[24px] basis-full">
-                      <div className="relative flex flex-col gap-[4px]">
-                        <label htmlFor={name}>Sub-lesson Name *</label>
-                        <input
-                          name="name"
-                          id={name}
-                          className={`${
-                            name ? `border-[#D6D9E4]` : `border-[red]`
-                          } min-[375px]:w-full min-[1200px]:w-[80%] outline-none border border-solid  px-[12px] py-[16px] rounded-[8px]`}
-                          type="text"
-                          placeholder="Lesson Name"
-                          value={name}
-                          onChange={(e) => {
-                            handleUpdateSubLessonName(e, index);
-                          }}
-                        />
-                        {name ? null : (
-                          <p className="absolute text-[red] text-[12px] top-[100%]">
-                            Sub-lesson name is required.
-                          </p>
-                        )}
+              {subLesson
+                ?.sort((a, b) => {
+                  return a.sub_lesson_number - b.sub_lesson_number;
+                })
+                .map(({ sub_lesson_id, name, video_url }, index) => {
+                  return (
+                    <section
+                      key={index}
+                      className="flex min-[375px]:gap-[7px] min-[768px]:gap-[24px] justify-between bg-[#F6F7FC] rounded-lg min-[0px]:p-[16px] min-[768px]:px-[16px] min-[768px]:py-[24px] "
+                    >
+                      <div className="min-[768px]:block">
+                        <Image src={DragIcon} alt="drag icon" />
                       </div>
-                      <div className="flex flex-col gap-[8px]">
-                        <p>Video *</p>
-                        {typeof video_url === "string" ? (
-                          <div className="relative w-fit">
-                            <video
-                              src={video_url}
-                              className="relative w-[400px]"
-                              accept="video/mov, video/mp4, video/avi"
-                            ></video>
-                            <Image
-                              src={CancelIcon}
-                              alt="cancel icon"
-                              className="absolute top-[0%] right-[0] "
-                              onClick={(e) => {
-                                handleDeleteSubLessonVideo(e, index);
-                              }}
-                            />
-                          </div>
-                        ) : !video_url?.name ? (
-                          <label
-                            htmlFor={`video${index}`}
-                            className="w-fit cursor-pointer flex flex-col gap-[8px] relative"
-                          >
-                            <input
-                              name="video_url"
-                              id={`video${index}`}
-                              className="min-[375px]:w-[200px] outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
-                              type="file"
-                              placeholder="Lesson Name"
-                              value={video_url ? video_url : ""}
-                              onChange={(e) => {
-                                handleUpdateSubLessonVideo(e, index);
-                              }}
-                              accept="video/mov, video/mp4, video/avi"
-                            />
-                            <Image
-                              src={uploadVideoSubLesson}
-                              alt="upload sub lesson video inage"
-                            />
-                            {video_url ? null : (
-                              <p className="absolute text-[12px] text-[red] top-[100%]">
-                                Press enter the video
-                              </p>
-                            )}
-                          </label>
-                        ) : (
-                          <div className="relative w-fit">
-                            <video
-                              src={URL.createObjectURL(video_url)}
-                              className="relative w-[400px]"
-                              accept="video/mov, video/mp4, video/avi"
-                            ></video>
-                            <Image
-                              src={CancelIcon}
-                              alt="cancel icon"
-                              className="absolute top-[0%] right-[0] "
-                              onClick={(e) => {
-                                handleDeleteSubLessonVideo(e, index);
-                              }}
-                            />
-                          </div>
-                        )}
+                      <div className=" flex flex-col gap-[24px] basis-full">
+                        <div className="relative flex flex-col gap-[4px]">
+                          <label htmlFor={name}>Sub-lesson Name *</label>
+                          <input
+                            name="name"
+                            id={name}
+                            className={`${
+                              name ? `border-[#D6D9E4]` : `border-[red]`
+                            } min-[375px]:w-full min-[1200px]:w-[80%] outline-none border border-solid  px-[12px] py-[16px] rounded-[8px]`}
+                            type="text"
+                            placeholder="Lesson Name"
+                            value={name}
+                            onChange={(e) => {
+                              handleUpdateSubLessonName(e, index);
+                            }}
+                          />
+                          {name ? null : (
+                            <p className="absolute text-[red] text-[12px] top-[100%]">
+                              Sub-lesson name is required.
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-[8px]">
+                          <p>Video *</p>
+                          {typeof video_url === "string" ? (
+                            <div className="relative w-fit">
+                              <video
+                                src={video_url}
+                                className="relative w-[400px]"
+                                accept="video/mov, video/mp4, video/avi"
+                              ></video>
+                              <Image
+                                src={CancelIcon}
+                                alt="cancel icon"
+                                className="absolute top-[0%] right-[0] "
+                                onClick={(e) => {
+                                  handleDeleteSubLessonVideo(e, index);
+                                }}
+                              />
+                            </div>
+                          ) : !video_url?.name ? (
+                            <label
+                              htmlFor={`video${index}`}
+                              className="w-fit cursor-pointer flex flex-col gap-[8px] relative"
+                            >
+                              <input
+                                name="video_url"
+                                id={`video${index}`}
+                                className="min-[375px]:w-[200px] outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                                type="file"
+                                placeholder="Lesson Name"
+                                value={""}
+                                onChange={(e) => {
+                                  handleUpdateSubLessonVideo(e, index);
+                                }}
+                                accept="video/mov, video/mp4, video/avi"
+                              />
+                              <Image
+                                src={uploadVideoSubLesson}
+                                alt="upload sub lesson video inage"
+                              />
+                              {video_url ? null : (
+                                <p className="absolute text-[12px] text-[red] top-[100%]">
+                                  Press enter the video
+                                </p>
+                              )}
+                            </label>
+                          ) : (
+                            <div className="relative w-fit">
+                              <video
+                                src={URL.createObjectURL(video_url)}
+                                className="relative w-[400px]"
+                                accept="video/mov, video/mp4, video/avi"
+                              ></video>
+                              <Image
+                                src={CancelIcon}
+                                alt="cancel icon"
+                                className="absolute top-[0%] right-[0] "
+                                onClick={(e) => {
+                                  handleDeleteSubLessonVideo(e, index);
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <button
-                        className={`font-[700] ${
-                          subLesson.length === 1
-                            ? `text-[#C8CCDB] cursor-not-allowed`
-                            : `text-[#2F5FAC]`
-                        }`}
-                        onClick={(e) =>
-                          handleDeleteSubLesson(
-                            e,
-                            index,
-                            lesson_id,
-                            sub_lesson_id
-                          )
-                        }
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </section>
-                );
-              })}
+                      <div>
+                        <button
+                          className={`font-[700] ${
+                            subLesson.length === 1
+                              ? `text-[#C8CCDB] cursor-not-allowed`
+                              : `text-[#2F5FAC]`
+                          }`}
+                          onClick={(e) =>
+                            handleDeleteSubLesson(
+                              e,
+                              index,
+                              lesson_id,
+                              sub_lesson_id
+                            )
+                          }
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </section>
+                  );
+                })}
 
               <button
                 className="font-[700] leading-[24px] rounded-lg w-[208px] px-[32px] py-[18px] border border-solid border-[#F47E20] text-[#F47E20]"

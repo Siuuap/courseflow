@@ -73,9 +73,9 @@ export default function Learning({ params }) {
     let currentSubProgress = (e.target.currentTime / e.target.duration) * 100;
     if (currentSubProgress >= 80) {
       currentSubProgress = 100;
+
       async function updateAssignmentStatus() {
-        const duration = currentSubLesson.assignments.duration;
-        console.log(duration);
+        const duration = currentSubLesson.assignments?.duration;
 
         const data = { status: 1, duration: duration };
         const courseId = params.courseid;
@@ -246,7 +246,7 @@ function LessonAccordion({
           )}
         </div>
       </div>
-      <div className="lesson-accordion mt-[20px] overflow-y  h-[600px]">
+      <div className="lesson-accordion mt-[20px] overflow-auto h-[600px]">
         <Accordion defaultIndex={[0]} allowMultiple>
           {course.courses.lessons.map((lesson, i) => (
             <AccordionItem key={i}>
@@ -267,8 +267,8 @@ function LessonAccordion({
                   key={i}
                   className={
                     currentSubLesson.sub_lesson_id === subLesson.sub_lesson_id
-                      ? "bg-blue-100 rounded-md"
-                      : null
+                      ? "bg-blue-100 rounded-md text-wrap w-[310px]"
+                      : "text-wrap w-[310px]"
                   }
                 >
                   <CircularProgress

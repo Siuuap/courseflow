@@ -11,6 +11,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useLessonContext } from "@/contexts/lessonContext";
 import HamburgerMenu from "@/components/HamburgerMenu";
+import ModalWindow from "@/components/ModalWindow";
+
 export default function DashBoardPage() {
   const [courseData, setCourseData] = useState([]);
   const [search, setSearch] = useState("");
@@ -29,13 +31,11 @@ export default function DashBoardPage() {
   console.log(`courseData`, courseData);
   async function deleteCourses(course_id) {
     const id = course_id;
-    if (window.confirm("Are you sure you want to delete?")) {
-      try {
-        await axios.delete(`/api/courses/${id}`);
-        getCourses();
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      await axios.delete(`/api/courses/${id}`);
+      getCourses();
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -142,7 +142,7 @@ export default function DashBoardPage() {
                   return (
                     <div
                       key={index}
-                      className="flex flex-col min-[768px]:flex-row min-[768px]:justify-center min-[1200px]:justify-center gap-[14px] min-[768px]:gap-[20px] min-[1200px]:gap-[0px] "
+                      className="flex min-[0px]:flex-col min-[768px]:flex-row min-[768px]:justify-center min-[1200px]:justify-center gap-[14px] min-[768px]:gap-[20px] min-[1200px]:gap-[0px] "
                     >
                       <div className="flex w-[48px] items-center justify-center min-[0px]:hidden min-[1200px]:block min-[1200px]:px-[0px] min-[1200px]:py-[32px] text-center">
                         {index + 1}
@@ -197,9 +197,13 @@ export default function DashBoardPage() {
                         </div>
 
                         <div className="min-[0px]:w-full min-[1200px]:w-[120px] min-[1200px]:px-[16px] min-[1200px]:py-[32px]">
-                          <div className="flex  min-[0px]:gap-[17px] min-[1200px]:gap-[17px] justify-center items-center">
-                            <button
-                              className="flex justify-center items-center min-[0px]:bg-[#D6D9E4] min-[1200px]:bg-transparent min-[0px]:p-[10px] min-[1200px]:p-[0px] min-[0px]:w-[50%] gap-[10px] rounded-md"
+                          <div className="flex min-[0px]:gap-[17px] min-[1200px]:gap-[17px] justify-center items-center">
+                            <ModalWindow
+                              className="flex justify-center items-center min-[0px]:bg-[#D6D9E4] min-[1200px]:bg-transparent min-[0px]:p-[10px] min-[1200px]:p-[0px] gap-[10px] rounded-md min-[0px]:w-[50%] cursor-pointer"
+                              modalHeader="Confirmation"
+                              modalBody="Are you sure you want to delete this course?"
+                              acceptText="Yes, I want to delete this course"
+                              declineText="No, keep it"
                               onClick={() => {
                                 deleteCourses(course_id);
                               }}
@@ -210,8 +214,7 @@ export default function DashBoardPage() {
                                 alt="delete-icon"
                               />
                               <p className="min-[1200px]:hidden">Delete</p>
-                            </button>
-
+                            </ModalWindow>
                             <Link
                               href={`/admin/editcourse/${course_id}`}
                               className="flex justify-center items-center min-[0px]:bg-[#D6D9E4] min-[1200px]:bg-transparent min-[0px]:p-[10px] min-[1200px]:p-[0px] min-[0px]:w-[50%] rounded-md"

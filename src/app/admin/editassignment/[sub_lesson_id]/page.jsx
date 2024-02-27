@@ -175,7 +175,7 @@ export default function AddAssignmentPage() {
               </select>
             </section>
           </section>
-          <DeleteAssignmentModal />
+          <DeleteAssignmentModal subLessonId ={params.sub_lesson_id} type = {1}/>
         </section>
       </section>
     </section>

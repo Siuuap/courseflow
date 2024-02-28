@@ -30,33 +30,38 @@ function ModalWindow({
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent my="auto" maxWidth={`528px`}>
-          <ModalHeader>{modalHeader}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody mb="20px" className="text-[#646D89]">
-            {modalBody}
-          </ModalBody>
+        <ModalContent
+          borderColor="gray.200"
+          borderRadius={`12px`}
+          my="auto"
+          maxWidth={`528px`}
+        >
+          <section className="flex">
+            <ModalHeader className="border-b">{modalHeader}</ModalHeader>
+            <ModalCloseButton />
+          </section>
+          <ModalBody className="text-[#646D89]">{modalBody}</ModalBody>
 
           <ModalFooter className="flex min-[0px]:gap-[10px] min-[768]:gap-[16px] justify-center">
             <button
-              className="min-[0px]:px-[10px] min-[0px]:py-[10px] min-[768px]:py-[18px] border-[1px] rounded-xl basis-[65%] border-[#F47E20] text-[#F47E20] font-bold hover:underline"
+              className="min-[0px]:px-[10px] min-[0px]:py-[10px] md:py-[18px] border-[1px] rounded-xl basis-[65%] border-[#F47E20] text-[#F47E20] font-bold hover:underline"
               onClick={() => {
                 onClick();
                 onClose();
               }}
             >
-              <p className="min-[768px]:hidden min-[0px]:text-[14px] min-[768px]:text-[16px] text-center">
+              <p className="md:hidden min-[0px]:text-[14px] md:text-[16px] text-center">
                 Yes, I want to delete
               </p>
-              <p className="min-[0px]:hidden min-[768px]:block min-[0px]:text-[14px] min-[768px]:text-[16px] text-center">
+              <p className="min-[0px]:hidden md:block min-[0px]:text-[14px] md:text-[16px] text-center">
                 {acceptText}
               </p>
             </button>
             <button
-              className="min-[0px]:px-[10px] min-[0px]:py-[10px] min-[768px]:py-[18px] border-[1px] rounded-xl basis-[35%]  bg-[#2F5FAC] text-white font-bold hover:underline"
+              className="min-[0px]:px-[10px] min-[0px]:py-[10px] md:py-[18px] border-[1px] rounded-xl basis-[35%]  bg-[#2F5FAC] text-white font-bold hover:underline"
               onClick={onClose}
             >
-              <p className="min-[0px]:text-[14px] min-[768px]:text-[16px] text-center">
+              <p className="min-[0px]:text-[14px] md:text-[16px] text-center">
                 {declineText}
               </p>
             </button>

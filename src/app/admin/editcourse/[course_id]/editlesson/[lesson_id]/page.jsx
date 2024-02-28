@@ -151,7 +151,7 @@ export default function EditLessonWhenAdd({ params }) {
 
       <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
         {/* Box2 upper*/}
-        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px] z-[2]">
+        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px] md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px] z-[2]">
           <div className="flex w-full items-center justify-between ">
             <div className="flex items-center gap-[16px]">
               <button
@@ -183,7 +183,7 @@ export default function EditLessonWhenAdd({ params }) {
 
             <div className="flex gap-[10px] ">
               <button
-                className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
+                className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#F47E20] md:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
                 onClick={() => {
                   cancleEditLesson();
                 }}
@@ -192,7 +192,7 @@ export default function EditLessonWhenAdd({ params }) {
               </button>
 
               <button
-                className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
+                className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {
                   handleUpdateLesson();
                 }}
@@ -205,9 +205,9 @@ export default function EditLessonWhenAdd({ params }) {
 
         {/* Box2 Courselist Box*/}
         {/* Contaner (outer gray box) */}
-        <section className="gray-box mx-auto min-[0px]:mt-[130px] min-[768px]:mt-[120px] m-[40px] flex flex-col items-center gap-[40px] min-[1440px]:w-[1200px] rounded-lg ">
+        <section className="gray-box mx-auto min-[0px]:mt-[130px] md:mt-[120px] m-[40px] flex flex-col items-center gap-[40px] min-[1440px]:w-[1200px] rounded-lg ">
           {/* Content (inner box) don't forget to check display block*/}
-          <section className="min-[375px]:flex min-[375px]:flex-col min-[375px]:w-[343px] min-[768px]:w-[736px] border border-solid border-[#F6F7FC] bg-white rounded-lg min-[0px]:hidden min-[1200px]:w-[1168px] min-[1440px]:w-[1120px] gap-[40px] min-[375px]:px-[16px] min-[375px]:py-[16px] min-[768px]:px-[100px] min-[768px]:py-[40px] min-[375px]:mx-[16px]">
+          <section className="min-[375px]:flex min-[375px]:flex-col min-[375px]:w-[343px] md:w-[736px] border border-solid border-[#F6F7FC] bg-white rounded-lg min-[0px]:hidden min-[1200px]:w-[1168px] min-[1440px]:w-[1120px] gap-[40px] min-[375px]:px-[16px] min-[375px]:py-[16px] md:px-[100px] md:py-[40px] min-[375px]:mx-[16px]">
             <div className="relative flex flex-col gap-[4px] z-[0]">
               <label htmlFor="lessonName">Lesson Name *</label>
               <input
@@ -246,9 +246,9 @@ export default function EditLessonWhenAdd({ params }) {
                   return (
                     <section
                       key={index}
-                      className="flex min-[375px]:gap-[7px] min-[768px]:gap-[24px] justify-between bg-[#F6F7FC] rounded-lg min-[0px]:p-[16px] min-[768px]:px-[16px] min-[768px]:py-[24px] "
+                      className="flex min-[375px]:gap-[7px] md:gap-[24px] justify-between bg-[#F6F7FC] rounded-lg min-[0px]:p-[16px] md:px-[16px] md:py-[24px] "
                     >
-                      <div className="min-[768px]:block">
+                      <div className="md:block">
                         <Image src={DragIcon} alt="drag icon" />
                       </div>
                       <div className=" flex flex-col gap-[24px] basis-full">

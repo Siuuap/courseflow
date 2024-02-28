@@ -20,6 +20,7 @@ import uploadVideo from "@/assets/images/uploadVideo.svg";
 import playVideo from "@/assets/images/playVideo.svg";
 import arrowBack from "@/assets/images/arrowBack.svg";
 import { useLessonContext } from "@/contexts/lessonContext";
+import ModalWindow from "@/components/ModalWindow";
 
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
@@ -94,18 +95,11 @@ export default function EditCourse({ params }) {
   const dragOverLesson = useRef(0);
 
   function handleSortLesson() {
-    const lessonsClone = cloneDeep(lessons);
-    const temp = lessonsClone[dragLesson.current];
-    lessonsClone[dragLesson.current] = lessonsClone[dragOverLesson.current];
-    lessonsClone[dragOverLesson.current] = temp;
-
-    // Sort sub-lessons within each lesson after rearranging lessons
-    lessonsClone.forEach((lesson) => {
-      lesson.sub_lessons.sort(
-        (a, b) => a.sub_lesson_number - b.sub_lesson_number
-      );
-    });
-
+    const lessonsClone = [...lessons];
+    const temp = lessonsClone[dragLesson.current].lesson_number;
+    lessonsClone[dragLesson.current].lesson_number =
+      lessonsClone[dragOverLesson.current].lesson_number;
+    lessonsClone[dragOverLesson.current].lesson_number = temp;
     setLessons(lessonsClone);
   }
 
@@ -593,7 +587,7 @@ export default function EditCourse({ params }) {
               "/api/sub_lessons",
               lessons[i].sub_lessons[j]
             );
-            // count++;
+
             console.log(response);
           } catch (error) {
             console.log(`error from created new sublesson`, error);
@@ -613,7 +607,7 @@ export default function EditCourse({ params }) {
 
       <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
         {/* Box2 upper*/}
-        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px] z-10">
+        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px] z-10">
           <div className="flex w-full items-center justify-between">
             <div className="flex gap-[8px] items-center">
               <Link
@@ -637,7 +631,7 @@ export default function EditCourse({ params }) {
             <div className="flex gap-[10px] ">
               <Link href="/admin/courselist">
                 <button
-                  className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
+                  className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#F47E20] md:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
                   onClick={() => resetToDefault()}
                 >
                   Cancel
@@ -645,7 +639,7 @@ export default function EditCourse({ params }) {
               </Link>
 
               <button
-                className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
+                className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {
                   handleSubmit();
                 }}
@@ -660,7 +654,7 @@ export default function EditCourse({ params }) {
         {/* Contaner (outer gray box) */}
         <section className="mx-auto min-[375px]:mt-[80px] min-[1440px]:mt-[120px] m-[40px] flex flex-col items-center justify-center gap-[30px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg w-full ">
           {/* Content (inner box) */}
-          <section className="flex flex-col gap-[40px] min-[375px]:w-[350px] min-[768px]:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
+          <section className="flex flex-col gap-[40px] min-[375px]:w-[350px] md:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
             <section className="relative flex flex-col gap-[4px]">
               <label htmlFor="name">Course Name *</label>
               <input
@@ -681,7 +675,7 @@ export default function EditCourse({ params }) {
                 </p>
               )}
             </section>
-            <section className="flex gap-[40px] min-[375px]:flex-col min-[768px]:flex-row">
+            <section className="flex gap-[40px] min-[375px]:flex-col md:flex-row">
               <section className="relative flex flex-col gap-[4px] basis-1/2">
                 <label htmlFor="price">Price *</label>
                 <input
@@ -944,21 +938,21 @@ export default function EditCourse({ params }) {
               )}
             </section>
           </section>
-          <section className=" min-[375px]:w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]">
+          <section className=" min-[375px]:w-[375px] md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]">
             <section className="flex justify-between items-center mb-[30px] w-full p-[16px]">
               <p className="text-[24px] ">Lesson</p>
               <Link href={`/admin/editcourse/${course_id}/addlesson`}>
-                <button className="bg-[#2F5FAC] min-[375px]:px-[12px] min-[375px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
+                <button className="bg-[#2F5FAC] min-[375px]:px-[12px] min-[375px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]">
                   + Add Lesson
                 </button>
               </Link>
             </section>
             {/* Lesson Table */}
             {lessons.length === 0 ? null : (
-              <section className="hidden min-[768px]:flex bg-[#E4E6ED] rounded-t-lg px-[24px] py-[10px] mx-[16px] min-[1440px]:m-[0px]">
-                <section className="hidden min-[768px]:block w-[56px] "></section>
-                <section className="hidden min-[768px]:block w-[48px] "></section>
-                <section className="hidden min-[768px]:block w-[500px] ">
+              <section className="hidden md:flex bg-[#E4E6ED] rounded-t-lg px-[24px] py-[10px] mx-[16px] min-[1440px]:m-[0px]">
+                <section className="hidden md:block w-[56px] "></section>
+                <section className="hidden md:block w-[48px] "></section>
+                <section className="hidden md:block w-[500px] ">
                   <p>Lesson name</p>
                 </section>
                 <section className="w-[396px] ">
@@ -970,14 +964,14 @@ export default function EditCourse({ params }) {
               </section>
             )}
 
-            <section className="flex flex-col gap-[10px] min-[768px]:gap-[0px]">
+            <section className="flex flex-col gap-[10px] md:gap-[0px]">
               {lessons
                 .sort((a, b) => a.lesson_number - b.lesson_number)
                 .map(({ name, sub_lessons, lesson_id }, index) => {
                   return (
                     <section
                       key={index}
-                      className="flex flex-col min-[375px]:mx-auto min-[768px]:mx-[16px] min-[768px]:flex-row min-[375px]:gap-[16px] min-[768px]:gap-[0px] bg-[#fff] min-[375px]:px-[16px] min-[375px]:py-[16px] min-[768px]:px-[28px] min-[768px]:py-[32px] min-[1440px]:m-[0px] min-[375px]:w-[350px] min-[768px]:w-[736px] min-[1200px]:w-[1168px] min-[1440px]:w-[1120px] min-[375px]:rounded-lg min-[768px]:rounded-none relative "
+                      className="flex flex-col min-[375px]:mx-auto md:mx-[16px] md:flex-row min-[375px]:gap-[16px] md:gap-[0px] bg-[#fff] min-[375px]:px-[16px] min-[375px]:py-[16px] md:px-[28px] md:py-[32px] min-[1440px]:m-[0px] min-[375px]:w-[350px] md:w-[736px] min-[1200px]:w-[1168px] min-[1440px]:w-[1120px] min-[375px]:rounded-lg md:rounded-none relative "
                       draggable="true"
                       onDragStart={() => {
                         dragLesson.current = index;
@@ -996,32 +990,32 @@ export default function EditCourse({ params }) {
                         e.preventDefault();
                       }}
                     >
-                      <section className="w-[56px] min-[375px]:hidden min-[768px]:block">
+                      <section className="w-[56px] min-[375px]:hidden md:block">
                         <Image
                           src={DragIcon}
                           alt="drag-icon"
                           className="absolute top-0 left-0"
                         />
                       </section>
-                      <section className="min-[768px]:w-[48px] flex ">
-                        <p className="min-[768px]:hidden basis-[110px]">
-                          Lesson No.
-                        </p>
+                      <section className="md:w-[48px] flex ">
+                        <p className="md:hidden basis-[110px]">Lesson No.</p>
                         <p>{index + 1}</p>
                       </section>
-                      <section className="min-[768px]:w-[500px] flex">
-                        <p className="min-[768px]:hidden basis-[110px]">Name</p>
+                      <section className="md:w-[500px] flex">
+                        <p className="md:hidden basis-[110px]">Name</p>
                         <p>{name}</p>
                       </section>
-                      <section className="min-[768px]:w-[396px] flex">
-                        <p className="min-[768px]:hidden basis-[110px]">
-                          Sub-Lesson
-                        </p>
+                      <section className="md:w-[396px] flex">
+                        <p className="md:hidden basis-[110px]">Sub-Lesson</p>
                         <p>{sub_lessons?.length}</p>
                       </section>
-                      <section className="min-[768px]:w-[120px] flex justify-center gap-[17px]">
-                        <button
-                          className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] min-[768px]:hover:bg-transparent rounded-lg min-[768px]:p-0"
+                      <section className="md:w-[120px] flex justify-center gap-[17px]">
+                        <ModalWindow
+                          className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] md:bg-transparent hover:bg-[#C8CCDB] md:hover:bg-transparent rounded-lg md:p-0"
+                          modalHeader="Confirmation"
+                          modalBody="Are you sure you want to delete this lesson?"
+                          acceptText="Yes, I want to delete this lesson"
+                          declineText="No, keep it"
                           onClick={() => {
                             handleDeleteLesson(index, lesson_id);
                           }}
@@ -1031,19 +1025,19 @@ export default function EditCourse({ params }) {
                             src={deleteIcon}
                             alt="delete-icon"
                           />
-                          <p className="min-[768px]:hidden">Delete</p>
-                        </button>
+                          <p className="md:hidden">Delete</p>
+                        </ModalWindow>
                         <Link
                           href={`/admin/editcourse/${course_id}/editlesson/${lessons[index].lesson_id}`}
                           onClick={() => console.log(index)}
-                          className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 min-[768px]:p-0 min-[768px]:hover:bg-transparent"
+                          className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] md:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 md:p-0 md:hover:bg-transparent"
                         >
                           <Image
                             className="w-[24px] h-[24px]"
                             src={editIcon}
                             alt="edit-icon"
                           />
-                          <p className="min-[768px]:hidden">Edit</p>
+                          <p className="md:hidden">Edit</p>
                         </Link>
                       </section>
                     </section>

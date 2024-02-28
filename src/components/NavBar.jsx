@@ -81,30 +81,50 @@ function NavBar() {
                       onClick={() => {
                         router.push("/user/edit_profile");
                       }}>
-                      <Image src={ProfileIcon} className=" mr-[10px]" />
+                      <Image
+                        src={ProfileIcon}
+                        className=" mr-[10px]"
+                        alt="ProfileIcon"
+                      />
                       Profile
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
                         router.push("/user");
                       }}>
-                      <Image src={MyCourseIcon} className=" mr-[10px]" />
+                      <Image
+                        src={MyCourseIcon}
+                        className=" mr-[10px]"
+                        alt="MyCourseIcon"
+                      />
                       My Courses
                     </MenuItem>
                     <MenuItem>
-                      <Image src={HomeworkIcon} className=" mr-[10px]" />
+                      <Image
+                        src={HomeworkIcon}
+                        className=" mr-[10px]"
+                        alt="HomeworkIcon"
+                      />
                       My Homework
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
                         router.push("/user/desire_course");
                       }}>
-                      <Image src={DesireCourseIcon} className=" mr-[10px]" />
+                      <Image
+                        src={DesireCourseIcon}
+                        className=" mr-[10px]"
+                        alt="DesireCourseIcon"
+                      />
                       My Desire Courses
                     </MenuItem>
                     <MenuDivider />
                     <MenuItem onClick={handleLogout}>
-                      <Image src={LogOutIcon} className=" mr-[10px]" />
+                      <Image
+                        src={LogOutIcon}
+                        className=" mr-[10px]"
+                        alt="LogOutIcon"
+                      />
                       Log out
                     </MenuItem>
                   </MenuList>

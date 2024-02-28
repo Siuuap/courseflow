@@ -18,7 +18,7 @@ export async function GET(request) {
         .select("* , lessons(*)")
         .ilike("name", `%${search}%`)
         .limit(limit)
-        .order("updated_at", { ascending: true })
+        .order("updated_at", { ascending: false })
     : await supabase
         .from("courses")
         .select("* , lessons(*)")

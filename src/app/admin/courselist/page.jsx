@@ -19,6 +19,17 @@ export default function DashBoardPage() {
   const [page, setpage] = useState(1);
   const { resetToDefault } = useLessonContext();
   const limit = 10;
+
+  async function getNumberOfPage() {
+    try {
+      const response = await axios.get(
+        `/api/numberOfPage?search=${search}&page=${page}&limit=${limit}`
+      );
+      setCourseData(response.data.data);
+    } catch (error) {
+      error;
+    }
+  }
   async function getCourses() {
     try {
       const response = await axios.get(
@@ -43,6 +54,7 @@ export default function DashBoardPage() {
   useEffect(() => {
     resetToDefault();
     getCourses();
+    getNumberOfPage();
   }, [search, page]);
 
   function formatDate(d) {

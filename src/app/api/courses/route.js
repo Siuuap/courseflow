@@ -5,10 +5,9 @@ export async function GET(request) {
   const searchParams = request.nextUrl.searchParams;
 
   const search = searchParams.get("search");
-
   const page = searchParams.get("page") || 1;
+  const limit = searchParams.get("limit") || 10;
 
-  const limit = 30;
   const start = (page - 1) * limit;
   const end = start + limit - 1;
 

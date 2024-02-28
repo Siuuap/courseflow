@@ -42,6 +42,7 @@ function DeleteAssignmentModal({ subLessonId, type, setCheck }) {
 
   return (
     <>
+
       {type === 1 && (
         <section
           className=" flex justify-end min-[375px]:w-[350px] min-[768px]:w-[743px]  min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] text-[#2F5FAC] font-bold hover:underline"
@@ -64,6 +65,7 @@ function DeleteAssignmentModal({ subLessonId, type, setCheck }) {
           <p className="min-[1200px]:hidden">Delete</p>
         </button>
       )}
+
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

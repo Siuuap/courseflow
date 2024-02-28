@@ -34,7 +34,7 @@ export default function SideBar() {
         </div>
       </Link>
 
-      <Link href="/admin/courselist">
+      <Link href="/admin/assignment">
         <div className="flex gap-[16px] py-[16px] px-[24px] hover:bg-[#F1F2F6] cursor-pointer mb-[284px]">
           <Image src={TaskIcon} alt="task-icon" width={24} height={24} />
           <p>Assignment</p>

@@ -62,7 +62,7 @@ export default function AddAssignmentPage() {
 
       <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
         {/* Box2 upper*/}
-        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px] z-10">
+        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px] z-10">
           <div className="flex w-full items-center justify-between">
             <div className="flex gap-[8px] items-center">
               <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px] text-[#9AA1B9]">
@@ -79,13 +79,13 @@ export default function AddAssignmentPage() {
 
             <div className="flex gap-[10px] ">
               <Link href="/admin/assignment">
-                <button className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]">
+                <button className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#F47E20] md:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]">
                   Cancel
                 </button>
               </Link>
 
               <button
-                className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
+                className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {
                   handleSubmit();
                 }}
@@ -100,7 +100,7 @@ export default function AddAssignmentPage() {
         {/* Container (outer gray box) */}
         <section className="mx-auto min-[375px]:mt-[80px] min-[1440px]:mt-[120px] m-[40px] flex flex-col items-center justify-center gap-[30px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg w-full ">
           {/* Content (inner box) */}
-          <section className="flex flex-col  gap-[40px] min-[375px]:w-[350px] min-[768px]:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
+          <section className="flex flex-col  gap-[40px] min-[375px]:w-[350px] md:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
             <section className="relative flex flex-col gap-[4px]">
               <label htmlFor="name">Course</label>
               <select
@@ -111,7 +111,7 @@ export default function AddAssignmentPage() {
                 <option value={""}>{courses}</option>
               </select>
             </section>
-            <section className="flex gap-[40px] min-[375px]:flex-col min-[768px]:flex-row">
+            <section className="flex gap-[40px] min-[375px]:flex-col md:flex-row">
               <section className="relative flex flex-col gap-[4px] basis-1/2">
                 <label htmlFor="price">Lesson</label>
                 <select

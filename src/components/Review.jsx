@@ -317,6 +317,7 @@ function Review() {
               top: "50%",
               left: "47%",
               paddingTop: "220px",
+              zIndex: "50",
             }}>
             {colors.map((_, idx) => (
               <div
@@ -330,6 +331,8 @@ function Review() {
                         cursor: "pointer",
                         margin: "15px 7px 0px",
                         backgroundColor: "#2F5FAC",
+                        //position: "absolute",
+                        zIndex: "50",
                       }
                     : {
                         display: "inline-block",
@@ -339,6 +342,8 @@ function Review() {
                         cursor: "pointer",
                         margin: "15px 7px 0px",
                         backgroundColor: "#c4c4c4",
+                        //position: "absolute",
+                        zIndex: "50",
                       }
                 }
                 key={idx}
@@ -351,7 +356,7 @@ function Review() {
         </div>
       </div>
       <Image
-        className="absolute right-[0px] top-[0px] h-[630px] w-[1356px]"
+        className="absolute left-[91px] top-[0px] h-[630px] w-[1356px]"
         src="/images/review-asset.png"
         alt="review-asset"
         width={1356}

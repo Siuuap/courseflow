@@ -17,7 +17,6 @@
     "bcrypt": "^5.1.1",
     "cookie": "^0.6.0",
     "dotenv": "^16.4.1",
-    "jose": "^5.2.1",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
@@ -25,7 +24,11 @@
     "next-auth": "^4.24.5",
     "react": "^18",
     "react-dom": "^18",
+
     "string-similarity": "^4.0.4",
+
+    "sharp": "^0.33.2",
+
     "stripe": "^14.18.0",
     "uuid": "^9.0.1"
   },

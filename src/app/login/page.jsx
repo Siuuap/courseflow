@@ -1,24 +1,27 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 
-export default function Home() {
+export default function UserLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let previous = searchParams.get("previous");
-    if (previous === null) previous = "";
+    const urlParams = window.location.search;
+    let previous = "";
+
+    if (urlParams.length !== 0) {
+      previous = urlParams.split("?")[1].split("=")[1];
+    }
 
     try {
       const res = await signIn("credentials", {

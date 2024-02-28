@@ -83,18 +83,12 @@ function ConfirmationModal({ course }) {
 
     try {
       if (status === "authenticated" && checkDesiredCourse === false) {
-        const result = await axios.post(
-          "http://localhost:3000/api/desired-courses",
-          data
-        );
+        const result = await axios.post("/api/desired-courses", data);
 
         setDesiredCourseButtonMessage("Remove from Desire Course");
         setCheckDesiredCourse(true);
       } else if (status === "authenticated" && checkDesiredCourse === true) {
-        const result = await axios.put(
-          "http://localhost:3000/api/desired-courses",
-          data
-        );
+        const result = await axios.put("/api/desired-courses", data);
 
         setDesiredCourseButtonMessage("Get in Desire Course");
         setCheckDesiredCourse(false);
@@ -133,10 +127,7 @@ function ConfirmationModal({ course }) {
           user_id: session?.user?.userId,
           course_id: course[0].course_id,
         };
-        const result = await axios.post(
-          "http://localhost:3000/api/subscribe",
-          data
-        );
+        const result = await axios.post("/api/subscribe", data);
         setCheckSubscribe(true);
         onClose();
       } catch (error) {

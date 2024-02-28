@@ -12,14 +12,15 @@ import SideBar from "@/components/SideBar";
 import deleteIcon from "@/assets/images/DeleteIcon.svg";
 import editIcon from "@/assets/images/EditIcon.svg";
 import FileIcon from "@/assets/images/FileIcon.svg";
-import DragIcon from "@/assets/images/DragIcon.svg";
+import DragIcon from "@/assets/images/dragIcon.svg";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
 import uploadFile from "@/assets/images/uploadFile.svg";
 import uploadImage from "@/assets/images/uploadImage.svg";
 import uploadVideo from "@/assets/images/uploadVideo.svg";
-import playTheVideoIcon from "@/assets/images/playTheVideoIcon.svg";
+import playVideo from "@/assets/images/playVideo.svg";
 import arrowBack from "@/assets/images/arrowBack.svg";
 import { useLessonContext } from "@/contexts/lessonContext";
+import ModalWindow from "@/components/ModalWindow";
 
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
@@ -51,6 +52,8 @@ export default function EditCourse({ params }) {
     setLatestCourseData,
     deletedLessonId,
     setDeletedLessonId,
+    deletedSubLessonId,
+    setDeletedSubLessonId,
   } = useLessonContext();
   const [nameStatus, setNameStatus] = useState("");
   const [priceStatus, setPriceStatus] = useState("");
@@ -67,9 +70,7 @@ export default function EditCourse({ params }) {
 
   async function getCourseData() {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/courses/${course_id}`
-      );
+      const response = await axios.get(`/api/courses/${course_id}`);
       // console.log(response.data.data[0]);
       setName(response.data.data[0].name);
       setPrice(response.data.data[0].price);
@@ -85,7 +86,6 @@ export default function EditCourse({ params }) {
       console.log(error);
     }
   }
-  console.log(`latestCourseData`, latestCourseData);
 
   useEffect(() => {
     getCourseData();
@@ -95,25 +95,15 @@ export default function EditCourse({ params }) {
   const dragOverLesson = useRef(0);
 
   function handleSortLesson() {
-    const lessonsClone = cloneDeep(lessons);
-    const temp = lessonsClone[dragLesson.current];
-    lessonsClone[dragLesson.current] = lessonsClone[dragOverLesson.current];
-    lessonsClone[dragOverLesson.current] = temp;
+    const lessonsClone = [...lessons];
+    const temp = lessonsClone[dragLesson.current].lesson_number;
+    lessonsClone[dragLesson.current].lesson_number =
+      lessonsClone[dragOverLesson.current].lesson_number;
+    lessonsClone[dragOverLesson.current].lesson_number = temp;
     setLessons(lessonsClone);
   }
 
   async function handleDeleteLesson(index, lesson_id) {
-    // const updatedLesson = [...lessons];
-    // updatedLesson.splice(index, 1);
-    // setLessons(updatedLesson);
-    // const id = lesson_id;
-    // console.log(`lesson_id`, id);
-    // try {
-    //   const res = await axios.delete(`http://localhost:3000/api/lessons/${id}`);
-    //   console.log(`res from server`, res);
-    // } catch (error) {
-    //   console.log(`error`, error);
-    // }
     const arrayofLessonId = latestCourseData.lessons.map(
       (lesson) => lesson.lesson_id
     );
@@ -131,7 +121,7 @@ export default function EditCourse({ params }) {
 
     setDeletedLesson([...deletedLesson, lesson_id]);
   }
-  console.log(`deletedLessonId`, deletedLessonId);
+
   function setStatusToDefault() {
     setNameStatus("");
     setPriceStatus("");
@@ -230,12 +220,6 @@ export default function EditCourse({ params }) {
       videoTrailer: videoTrailer,
       attachedFile: attachedFile,
     };
-    const lessonData = {
-      course_id: course_id,
-    };
-    const subLessonData = {
-      course_id: course_id,
-    };
 
     if (typeof attachedFile === "object" && attachedFile !== null) {
       const fileName = findFilePathNames(latestCourseData.attached_file_url);
@@ -274,7 +258,7 @@ export default function EditCourse({ params }) {
         console.log(error);
       }
     }
-    console.log(`attached file`, attachedFile);
+    // console.log(`attached file`, attachedFile);
     if (typeof coverImage === "object") {
       const fileName = findFilePathNames(latestCourseData.img_url);
 
@@ -339,7 +323,7 @@ export default function EditCourse({ params }) {
         if (error) {
           console.log(`error`, error);
         }
-        console.log(`data`, data);
+        // console.log(`data`, data);
         courseData.video_url = supabase.storage
           .from("courses")
           .getPublicUrl(data.path).data.publicUrl;
@@ -361,13 +345,257 @@ export default function EditCourse({ params }) {
       console.log(`error`, error);
     }
 
-    try {
-      const response = await axios.delete("/api/lessons", deletedLesson);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
+    //delete sublesson and lesson from the server
+    //delete sub-lesson
+    if (deletedSubLessonId.length > 0) {
+      const subLessonIdThatNeedToBeDeleted = [...deletedSubLessonId];
+      for (let i = 0; i < subLessonIdThatNeedToBeDeleted.length; i++) {
+        try {
+          const response = await axios.delete(
+            `/api/sub_lessons/${subLessonIdThatNeedToBeDeleted[i]}`
+          );
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
+    //delete lesson
+    if (deletedLessonId.length > 0) {
+      const lessonIdThatNeedToBeDeleted = [...deletedLessonId];
+      for (let i = 0; i < lessonIdThatNeedToBeDeleted.length; i++) {
+        try {
+          const response = await axios.delete(
+            `/api/lessons/${lessonIdThatNeedToBeDeleted[i]}`
+          );
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    // send lesson data to the server
+    const latestLessonIdFromServer = latestCourseData.lessons.map(
+      (lesson) => lesson.lesson_id
+    );
+    console.log(`latestLessonIdFromServer`, latestLessonIdFromServer);
+    const lessonData = lessons
+      .map((lesson) => {
+        return {
+          ...lesson,
+          sub_lessons: lesson.sub_lessons.sort((a, b) => {
+            return a.sub_lesson_number - b.sub_lesson_number;
+          }),
+        };
+      })
+      .sort((a, b) => {
+        return a.lesson_number - b.lesson_number;
+      });
+
+    console.log(`lessonData`, lessonData);
+    for (let i = 0; i < lessonData.length; i++) {
+      if (latestLessonIdFromServer.includes(lessonData[i].lesson_id)) {
+        try {
+          lessonData[i].lesson_number = i + 1;
+          console.log(`lessonData${i}`, lessonData[i]);
+          const response = await axios.put(
+            `/api/lessons/${lessonData[i].lesson_id}`,
+            lessonData[i]
+          );
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        try {
+          const response = await axios.post("/api/lessons", lessonData[i]);
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    //sublesson
+    await HandleSubLesson(lessonData);
     router.push(`/admin/courselist`);
+  }
+
+  async function HandleSubLesson(lessons) {
+    const latestSubLessonIdFromServer = latestCourseData.lessons
+      .map((lesson) => {
+        return lesson.sub_lessons.map((subLesson) => subLesson.sub_lesson_id);
+      })
+      .flat();
+    console.log(`latestSubLessonIdFromServer`, latestSubLessonIdFromServer);
+
+    //send sublesson data to the server
+    // const subLessonData = lessons.map((lesson) => lesson.sub_lessons).flat();
+    // console.log(`subLessonData`, subLessonData);
+
+    const latestSubLessonDataFromServer = latestCourseData.lessons
+      .map((lesson) => {
+        return lesson.sub_lessons.map((subLesson) => subLesson);
+      })
+      .flat();
+    console.log(`latestSubLessonDataFromServer`, latestSubLessonDataFromServer);
+
+    for (let i = 0; i < lessons.length; i++) {
+      for (let j = 0; j < lessons[i].sub_lessons.length; j++) {
+        if (
+          latestSubLessonIdFromServer.includes(
+            lessons[i].sub_lessons[j].sub_lesson_id
+          ) &&
+          typeof lessons[i].sub_lessons[j].video_url === "object" &&
+          lessons[i].sub_lessons[j].video_url !== null
+        ) {
+          console.log(
+            `lessons[${i}].sub_lessons[${j}] when update sub lesson video`,
+            lessons[i].sub_lessons[j]
+          );
+          const fileName = findFilePathNames(
+            latestSubLessonDataFromServer.filter((subLesson) => {
+              return (
+                subLesson.sub_lesson_id ===
+                lessons[i].sub_lessons[j].sub_lesson_id
+              );
+            })[0].video_url
+          );
+          console.log(`fileName`, fileName);
+          // remove old video from storage
+          try {
+            const { data, error } = await supabase.storage
+              .from(`courses`)
+              .remove(fileName);
+            if (error) {
+              console.log(`error from supabase`, error);
+            }
+            console.log(data);
+          } catch (error) {
+            console.log(error);
+          }
+
+          //upload new sublesson video to storage
+          try {
+            const video = lessons[i].sub_lessons[j].video_url;
+            const { data, error } = await supabase.storage
+              .from(`courses`)
+              .upload(
+                `courses/${course_id}/lessons/${
+                  lessons[i].sub_lessons[j].lesson_id
+                }/sub_lessons/${
+                  lessons[i].sub_lessons[j].sub_lesson_id
+                }/sublesson${
+                  lessons[i].sub_lessons[j].sub_lesson_number
+                }/${uuidv4()}`,
+                video,
+                {
+                  cacheControl: "3600",
+                  upsert: true,
+                }
+              );
+            if (error) {
+              console.log(`error`, error);
+            }
+            console.log(`data from update sublesson video`, data);
+            lessons[i].sub_lessons[j].video_url = supabase.storage
+              .from("courses")
+              .getPublicUrl(data.path).data.publicUrl;
+
+            try {
+              lessons[i].sub_lessons[j].sub_lesson_number = j + 1;
+              const response = await axios.put(
+                `/api/sub_lessons/${lessons[i].sub_lessons[j].sub_lesson_id}`,
+                lessons[i].sub_lessons[j]
+              );
+              console.log(response);
+              // count++;
+            } catch (error) {
+              console.log(error);
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        } else if (
+          latestSubLessonIdFromServer.includes(
+            lessons[i].sub_lessons[j].sub_lesson_id
+          ) &&
+          typeof lessons[i].sub_lessons[j].video_url === "string"
+        ) {
+          console.log(
+            `lessons[${i}].sub_lessons[${j}] Just update sublesson data without update video url`,
+            lessons[i].sub_lessons[j]
+          );
+          try {
+            lessons[i].sub_lessons[j].sub_lesson_number = j + 1;
+            const response = await axios.put(
+              `/api/sub_lessons/${lessons[i].sub_lessons[j].sub_lesson_id}`,
+              lessons[i].sub_lessons[j]
+            );
+            // count++;
+            console.log(`response from update sublesson`, response);
+          } catch (error) {
+            console.log(`error`, error);
+          }
+        }
+
+        // ถ้าเป็น sub-lesson ใหม่ ให้สร้างใหม่
+        if (
+          !latestSubLessonIdFromServer.includes(
+            lessons[i].sub_lessons[j].sub_lesson_id
+          ) &&
+          typeof lessons[i].sub_lessons[j].video_url === "object"
+        ) {
+          console.log(
+            `lessons[${i}].sub_lessons[${j}] when create new sub lesson`,
+            lessons[i].sub_lessons[j]
+          );
+          try {
+            const { data, error } = await supabase.storage
+              .from("courses")
+              .upload(
+                `courses/${course_id}/lessons/${
+                  lessons[i].sub_lessons[j].lesson_id
+                }/sub_lessons/${
+                  lessons[i].sub_lessons[j].sub_lesson_id
+                }/sublesson${
+                  lessons[i].sub_lessons[j].sub_lesson_number
+                }/${uuidv4()}`,
+                lessons[i].sub_lessons[j].video_url,
+                {
+                  cacheControl: "3600",
+                  upsert: false,
+                }
+              );
+            if (error) {
+              console.log(`error from upload new sublesson video to`, error);
+            }
+
+            console.log(`data from create new sublesson`, data);
+            lessons[i].sub_lessons[j].video_url = supabase.storage
+              .from("courses")
+              .getPublicUrl(data.path).data.publicUrl;
+          } catch (error) {
+            console.log(`error`, error);
+          }
+
+          try {
+            lessons[i].sub_lessons[j].sub_lesson_number = j + 1;
+
+            const response = await axios.post(
+              "/api/sub_lessons",
+              lessons[i].sub_lessons[j]
+            );
+
+            console.log(response);
+          } catch (error) {
+            console.log(`error from created new sublesson`, error);
+          }
+        }
+      }
+    }
+    // console.log(`subLessonData`, subLessonData);
   }
 
   return (
@@ -379,7 +607,7 @@ export default function EditCourse({ params }) {
 
       <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
         {/* Box2 upper*/}
-        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px] z-10">
+        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px] z-10">
           <div className="flex w-full items-center justify-between">
             <div className="flex gap-[8px] items-center">
               <Link
@@ -403,7 +631,7 @@ export default function EditCourse({ params }) {
             <div className="flex gap-[10px] ">
               <Link href="/admin/courselist">
                 <button
-                  className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#F47E20] min-[768px]:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
+                  className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#F47E20] md:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
                   onClick={() => resetToDefault()}
                 >
                   Cancel
@@ -411,7 +639,7 @@ export default function EditCourse({ params }) {
               </Link>
 
               <button
-                className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]"
+                className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]"
                 onClick={() => {
                   handleSubmit();
                 }}
@@ -426,7 +654,7 @@ export default function EditCourse({ params }) {
         {/* Contaner (outer gray box) */}
         <section className="mx-auto min-[375px]:mt-[80px] min-[1440px]:mt-[120px] m-[40px] flex flex-col items-center justify-center gap-[30px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg w-full ">
           {/* Content (inner box) */}
-          <section className="flex flex-col gap-[40px] min-[375px]:w-[350px] min-[768px]:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
+          <section className="flex flex-col gap-[40px] min-[375px]:w-[350px] md:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
             <section className="relative flex flex-col gap-[4px]">
               <label htmlFor="name">Course Name *</label>
               <input
@@ -447,7 +675,7 @@ export default function EditCourse({ params }) {
                 </p>
               )}
             </section>
-            <section className="flex gap-[40px] min-[375px]:flex-col min-[768px]:flex-row">
+            <section className="flex gap-[40px] min-[375px]:flex-col md:flex-row">
               <section className="relative flex flex-col gap-[4px] basis-1/2">
                 <label htmlFor="price">Price *</label>
                 <input
@@ -608,7 +836,7 @@ export default function EditCourse({ params }) {
                       }}
                     />
                     <Image
-                      src={playTheVideoIcon}
+                      src={playVideo}
                       alt="play the video icon"
                       className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                     />
@@ -654,7 +882,7 @@ export default function EditCourse({ params }) {
                       }}
                     />
                     <Image
-                      src={playTheVideoIcon}
+                      src={playVideo}
                       alt="play the video icon"
                       className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                     />
@@ -710,21 +938,21 @@ export default function EditCourse({ params }) {
               )}
             </section>
           </section>
-          <section className=" min-[375px]:w-[375px] min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]">
+          <section className=" min-[375px]:w-[375px] md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]">
             <section className="flex justify-between items-center mb-[30px] w-full p-[16px]">
               <p className="text-[24px] ">Lesson</p>
               <Link href={`/admin/editcourse/${course_id}/addlesson`}>
-                <button className="bg-[#2F5FAC] min-[375px]:px-[12px] min-[375px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
+                <button className="bg-[#2F5FAC] min-[375px]:px-[12px] min-[375px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]">
                   + Add Lesson
                 </button>
               </Link>
             </section>
             {/* Lesson Table */}
             {lessons.length === 0 ? null : (
-              <section className="hidden min-[768px]:flex bg-[#E4E6ED] rounded-t-lg px-[24px] py-[10px] mx-[16px] min-[1440px]:m-[0px]">
-                <section className="hidden min-[768px]:block w-[56px] "></section>
-                <section className="hidden min-[768px]:block w-[48px] "></section>
-                <section className="hidden min-[768px]:block w-[500px] ">
+              <section className="hidden md:flex bg-[#E4E6ED] rounded-t-lg px-[24px] py-[10px] mx-[16px] min-[1440px]:m-[0px]">
+                <section className="hidden md:block w-[56px] "></section>
+                <section className="hidden md:block w-[48px] "></section>
+                <section className="hidden md:block w-[500px] ">
                   <p>Lesson name</p>
                 </section>
                 <section className="w-[396px] ">
@@ -736,83 +964,85 @@ export default function EditCourse({ params }) {
               </section>
             )}
 
-            <section className="flex flex-col gap-[10px] min-[768px]:gap-[0px]">
-              {lessons.map(({ name, sub_lessons, lesson_id }, index) => {
-                return (
-                  <section
-                    key={index}
-                    className="flex flex-col min-[375px]:mx-auto min-[768px]:mx-[16px] min-[768px]:flex-row min-[375px]:gap-[16px] min-[768px]:gap-[0px] bg-[#fff] min-[375px]:px-[16px] min-[375px]:py-[16px] min-[768px]:px-[28px] min-[768px]:py-[32px] min-[1440px]:m-[0px] min-[375px]:w-[350px] min-[768px]:w-[736px] min-[1200px]:w-[1168px] min-[1440px]:w-[1120px] min-[375px]:rounded-lg min-[768px]:rounded-none relative "
-                    draggable="true"
-                    onDragStart={() => {
-                      dragLesson.current = index;
-                      console.log(`Dragtart happens`);
-                    }}
-                    onDragEnter={() => {
-                      dragOverLesson.current = index;
-                      console.log(`DragEnter happens`);
-                    }}
-                    onDragEnd={() => {
-                      console.log(`DragEnd happens`);
-                      handleSortLesson();
-                    }}
-                    onDragOver={(e) => {
-                      console.log(`DragOver happens`);
-                      e.preventDefault();
-                    }}
-                  >
-                    <section className="w-[56px] min-[375px]:hidden min-[768px]:block">
-                      <Image
-                        src={DragIcon}
-                        alt="drag-icon"
-                        className="absolute top-0 left-0"
-                      />
-                    </section>
-                    <section className="min-[768px]:w-[48px] flex ">
-                      <p className="min-[768px]:hidden basis-[110px]">
-                        Lesson No.
-                      </p>
-                      <p>{index + 1}</p>
-                    </section>
-                    <section className="min-[768px]:w-[500px] flex">
-                      <p className="min-[768px]:hidden basis-[110px]">Name</p>
-                      <p>{name}</p>
-                    </section>
-                    <section className="min-[768px]:w-[396px] flex">
-                      <p className="min-[768px]:hidden basis-[110px]">
-                        Sub-Lesson
-                      </p>
-                      <p>{sub_lessons?.length}</p>
-                    </section>
-                    <section className="min-[768px]:w-[120px] flex justify-center gap-[17px]">
-                      <button
-                        className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] min-[768px]:hover:bg-transparent rounded-lg min-[768px]:p-0"
-                        onClick={() => {
-                          handleDeleteLesson(index, lesson_id);
-                        }}
-                      >
+            <section className="flex flex-col gap-[10px] md:gap-[0px]">
+              {lessons
+                .sort((a, b) => a.lesson_number - b.lesson_number)
+                .map(({ name, sub_lessons, lesson_id }, index) => {
+                  return (
+                    <section
+                      key={index}
+                      className="flex flex-col min-[375px]:mx-auto md:mx-[16px] md:flex-row min-[375px]:gap-[16px] md:gap-[0px] bg-[#fff] min-[375px]:px-[16px] min-[375px]:py-[16px] md:px-[28px] md:py-[32px] min-[1440px]:m-[0px] min-[375px]:w-[350px] md:w-[736px] min-[1200px]:w-[1168px] min-[1440px]:w-[1120px] min-[375px]:rounded-lg md:rounded-none relative "
+                      draggable="true"
+                      onDragStart={() => {
+                        dragLesson.current = index;
+                        console.log(`Dragtart happens`);
+                      }}
+                      onDragEnter={() => {
+                        dragOverLesson.current = index;
+                        console.log(`DragEnter happens`);
+                      }}
+                      onDragEnd={() => {
+                        console.log(`DragEnd happens`);
+                        handleSortLesson();
+                      }}
+                      onDragOver={(e) => {
+                        console.log(`DragOver happens`);
+                        e.preventDefault();
+                      }}
+                    >
+                      <section className="w-[56px] min-[375px]:hidden md:block">
                         <Image
-                          className="w-[24px] h-[24px]"
-                          src={deleteIcon}
-                          alt="delete-icon"
+                          src={DragIcon}
+                          alt="drag-icon"
+                          className="absolute top-0 left-0"
                         />
-                        <p className="min-[768px]:hidden">Delete</p>
-                      </button>
-                      <Link
-                        href={`/admin/editcourse/${course_id}/editlesson/${lessons[index].lesson_id}`}
-                        onClick={() => console.log(index)}
-                        className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] min-[768px]:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 min-[768px]:p-0 min-[768px]:hover:bg-transparent"
-                      >
-                        <Image
-                          className="w-[24px] h-[24px]"
-                          src={editIcon}
-                          alt="edit-icon"
-                        />
-                        <p className="min-[768px]:hidden">Edit</p>
-                      </Link>
+                      </section>
+                      <section className="md:w-[48px] flex ">
+                        <p className="md:hidden basis-[110px]">Lesson No.</p>
+                        <p>{index + 1}</p>
+                      </section>
+                      <section className="md:w-[500px] flex">
+                        <p className="md:hidden basis-[110px]">Name</p>
+                        <p>{name}</p>
+                      </section>
+                      <section className="md:w-[396px] flex">
+                        <p className="md:hidden basis-[110px]">Sub-Lesson</p>
+                        <p>{sub_lessons?.length}</p>
+                      </section>
+                      <section className="md:w-[120px] flex justify-center gap-[17px]">
+                        <ModalWindow
+                          className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] md:bg-transparent hover:bg-[#C8CCDB] md:hover:bg-transparent rounded-lg md:p-0"
+                          modalHeader="Confirmation"
+                          modalBody="Are you sure you want to delete this lesson?"
+                          acceptText="Yes, I want to delete this lesson"
+                          declineText="No, keep it"
+                          onClick={() => {
+                            handleDeleteLesson(index, lesson_id);
+                          }}
+                        >
+                          <Image
+                            className="w-[24px] h-[24px]"
+                            src={deleteIcon}
+                            alt="delete-icon"
+                          />
+                          <p className="md:hidden">Delete</p>
+                        </ModalWindow>
+                        <Link
+                          href={`/admin/editcourse/${course_id}/editlesson/${lessons[index].lesson_id}`}
+                          onClick={() => console.log(index)}
+                          className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] md:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 md:p-0 md:hover:bg-transparent"
+                        >
+                          <Image
+                            className="w-[24px] h-[24px]"
+                            src={editIcon}
+                            alt="edit-icon"
+                          />
+                          <p className="md:hidden">Edit</p>
+                        </Link>
+                      </section>
                     </section>
-                  </section>
-                );
-              })}
+                  );
+                })}
             </section>
           </section>
         </section>

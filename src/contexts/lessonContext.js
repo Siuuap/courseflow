@@ -31,6 +31,7 @@ export function LessonProvider({ children }) {
     setLessonUpdateId([]);
     setDeletedLessonId([]);
     setDeletedSubLessonId([]);
+    setLatestCourseData([]);
   }
   return (
     <LessonContext.Provider

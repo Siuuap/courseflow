@@ -7,12 +7,12 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/authentication";
 import { useRouter } from "next/navigation";
 
-export default function adminRegisterPage() {
+export default function AdminRegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isEmailOK, setIsEmailOK] = useState(false);
   const [isPasswordOk, setIsPasswordOk] = useState(false);
-  
+
   const [emailStatus, setEmailStatus] = useState("");
   const [passwordStatus, setPasswordStatus] = useState("");
   const { adminRegister } = useAuth();
@@ -20,7 +20,7 @@ export default function adminRegisterPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const data = { email, password};
+    const data = { email, password };
     if (!email) {
       setIsEmailOK(false);
       setEmailStatus("Cannot be blanked");
@@ -38,7 +38,7 @@ export default function adminRegisterPage() {
       setPasswordStatus("");
     }
     if (email && password && password.length >= 7) {
-      const response = await adminRegister(data); 
+      const response = await adminRegister(data);
 
       if (response.data.error?.code === "23505") {
         setIsEmailOK(false);

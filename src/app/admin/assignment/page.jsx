@@ -13,35 +13,48 @@ import { useState } from "react";
 import { supabase } from "@/utils/db";
 
 import HamburgerMenu from "@/components/HamburgerMenu";
+import DeleteAssignmentModal from "@/components/DeleteAssignmentModal";
 export default function AssignmentPage() {
   const router = useRouter();
 
   const [assignmentData, setAssignmentData] = useState([]);
   const [search, setSearch] = useState("");
-  const [page, setpage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [maxPage, setMaxPage] = useState(1);
+  const [check, setCheck] = useState(0);
+
+  useEffect(() => {
+    getAssignment();
+  }, [search, check]);
+
+  useEffect(() => {
+    getFilteredAssignments();
+  }, [page, search, check]);
 
   async function getAssignment() {
-    console.log("test2");
-
-    const { data, error } = await supabase
+    const limit = 8;
+    setCheck(0);
+    setPage(1);
+    const { data: allData } = await supabase
       .from("assignments")
-      .select("*, sub_lessons(*, lessons(*, courses(*)))");
+      .select("*")
+      .ilike("question", `%${search}%`);
 
-    setAssignmentData(data);
+    setMaxPage(Math.ceil(allData.length / limit));
+
+    //get limit n data per page
   }
 
-  async function deleteAssignment(sub_lesson_id) {
-    try {
-      const { error } = await supabase
-        .from("assignments")
-        .delete()
-        .eq("sub_lesson_id", sub_lesson_id);
+  async function getFilteredAssignments() {
+    const limit = 8;
+    const { data, error } = await supabase
+      .from("assignments")
+      .select("*, sub_lessons(*, lessons(*, courses(*)))")
+      .ilike("question", `%${search}%`)
+      .order("created_at", { ascending: false })
+      .range(limit * (page - 1), limit * page - 1);
 
-      router.refresh();
-      console.log("test");
-    } catch {
-      console.log("error");
-    }
+    setAssignmentData(data);
   }
 
   function handleLength(text) {
@@ -54,9 +67,11 @@ export default function AssignmentPage() {
     return text;
   }
 
-  useEffect(() => {
-    getAssignment();
-  }, [search, page]);
+  function changePage(addPage) {
+    if (page + addPage >= 1 && page + addPage <= maxPage) {
+      setPage(page + addPage);
+    }
+  }
 
   function formatDate(d) {
     const date = new Date(d);
@@ -80,7 +95,7 @@ export default function AssignmentPage() {
 
       <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
         {/* Box2 upper*/}
-        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px]">
+        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px]">
           <div className="flex w-full items-center justify-between relative ">
             <div className="flex gap-[8px] items-center ">
               <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
@@ -93,7 +108,7 @@ export default function AssignmentPage() {
 
             <div className="flex gap-[10px] ">
               <input
-                className="outline-none min-[0px]:absolute min-[0px]:top-[60px] min-[0px]:left-0 min-[0px]:w-full min-[768px]:static min-[768px]:block min-[768px]:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] min-[1440px]:w-[320`px]"
+                className="outline-none min-[0px]:absolute min-[0px]:top-[60px] min-[0px]:left-0 min-[0px]:w-full md:static md:block md:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] min-[1440px]:w-[320`px]"
                 type="search"
                 placeholder="Search..."
                 value={search}
@@ -102,7 +117,7 @@ export default function AssignmentPage() {
                 }}
               />
               <Link href="/admin/addassignment">
-                <button className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
+                <button className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]">
                   + Add Assignment
                 </button>
               </Link>
@@ -110,7 +125,7 @@ export default function AssignmentPage() {
           </div>
         </section>
 
-        <section className="mx-auto min-[0px]:mt-[130px] min-[768px]:mt-[120px] m-[40px] flex flex-col items-center gap-[40px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg">
+        <section className="mx-auto min-[0px]:mt-[130px] md:mt-[120px] m-[40px] flex flex-col items-center gap-[40px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg">
           {/* Box2 Courselist Box*/}
           <div className="border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1168px] min-[1200px]:m-[16px] min-[1440px]:w-[1120px]">
             <div className="bg-[#E4E6ED] flex  justify-start rounded-t-lg text-[14px] min-[0px]:hidden min-[1200px]:block min-[1200px]:w-[1168px] min-[1440px]:w-[1120px]">
@@ -135,15 +150,20 @@ export default function AssignmentPage() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col min-[0px]:gap-[30px] min-[1200px]:gap-0 min-[0px]:w-[343px] min-[0px]:m-[16px] min-[768px]:w-[736px] min-[1200px]:w-[1168px] justify-center min-[1200px]:mx-[0px] min-[1440px]:w-[1120px]">
+            <div className="flex flex-col min-[0px]:gap-[30px] min-[1200px]:gap-0 min-[0px]:w-[343px] min-[0px]:m-[16px] md:w-[736px] min-[1200px]:w-[1168px] justify-center min-[1200px]:mx-[0px] min-[1440px]:w-[1120px]">
               {assignmentData.map((item, index) => {
                 return (
                   <div
-                    className="flex flex-col   min-[768px]:flex-row min-[768px]:justify-center min-[1200px]:justify-center gap-[14px] min-[768px]:gap-[20px] min-[1200px]:gap-[0px] "
+                    className="flex flex-col   md:flex-row md:justify-center min-[1200px]:justify-center gap-[14px] md:gap-[20px] min-[1200px]:gap-[0px] "
                     key={index}
                   >
+
                     <div className="flex  min-[0px]:gap-[16px] min-[1200px]:gap-[0px] min-[0px]:flex-col min-[0px]:items-start min-[768px]:w-[50%] min-[1200px]:flex-row min-[1200px]:justify-start min-[1200px]:w-full">
-                      <div className="min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[375px]:w-full min-[375px]:text-[16px]  min-[768px]:text-start min-[375px]:font-bold min-[1200px]:font-normal min-[1200px]:w-[200px]">
+                      <div
+                        className="min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[375px]:w-full min-[375px]:text-[16px]  min-[768px]:text-start min-[375px]:font-bold min-[1200px]:font-normal min-[1200px]:w-[200px]"
+                        title={item.question}
+                      >
+
                         {handleLength(item.question)}
                       </div>
 
@@ -152,7 +172,10 @@ export default function AssignmentPage() {
                           {" "}
                           Course
                         </p>
-                        <p className="min-[1200px]:w-full min-[1200px]:text-start">
+                        <p
+                          className="min-[1200px]:w-full min-[1200px]:text-start"
+                          title={item.sub_lessons.lessons.courses.name}
+                        >
                           {handleLength(item.sub_lessons.lessons.courses.name)}
                         </p>
                       </div>
@@ -161,7 +184,10 @@ export default function AssignmentPage() {
                         <p className="basis-[100px] min-[1200px]:hidden">
                           Lesson
                         </p>
-                        <p className="min-[1200px]:w-full min-[1200px]:text-start">
+                        <p
+                          className="min-[1200px]:w-full min-[1200px]:text-start"
+                          title={item.sub_lessons.lessons.name}
+                        >
                           {handleLength(item.sub_lessons.lessons.name)}
                         </p>
                       </div>
@@ -170,7 +196,10 @@ export default function AssignmentPage() {
                         <p className="basis-[100px] min-[1200px]:hidden">
                           Sub-lesson
                         </p>
-                        <p className="min-[1200px]:w-full min-[1200px]:text-start">
+                        <p
+                          className="min-[1200px]:w-full min-[1200px]:text-start"
+                          title={item.sub_lessons.name}
+                        >
                           {handleLength(item.sub_lessons.name)}
                         </p>
                       </div>
@@ -186,19 +215,11 @@ export default function AssignmentPage() {
 
                       <div className="min-[0px]:w-full min-[1200px]:w-[120px] min-[1200px]:px-[16px] min-[1200px]:py-[32px]">
                         <div className="flex  min-[0px]:gap-[17px] min-[1200px]:gap-[17px] justify-center items-center">
-                          <button
-                            className="flex justify-center items-center min-[0px]:bg-[#D6D9E4] min-[1200px]:bg-transparent min-[0px]:p-[10px] min-[1200px]:p-[0px] min-[0px]:w-[50%] gap-[10px] rounded-md"
-                            onClick={() => {
-                              deleteAssignment(item.sub_lessons.sub_lesson_id);
-                            }}
-                          >
-                            <Image
-                              className="min-[1200px]:w-[24px] min-[1200px]:h-[24px]"
-                              src={deleteIcon}
-                              alt="delete-icon"
-                            />
-                            <p className="min-[1200px]:hidden">Delete</p>
-                          </button>
+                          <DeleteAssignmentModal
+                            subLessonId={item.sub_lessons.sub_lesson_id}
+                            type={2}
+                            setCheck={setCheck}
+                          />
 
                           <Link
                             href={`/admin/editassignment/${item.sub_lessons.sub_lesson_id}`}
@@ -221,9 +242,25 @@ export default function AssignmentPage() {
               })}
             </div>
           </div>
-          {/* <section className="flex flex-col min-[375px]:block min-[1200px]:hidden min-[375px]:w-[375px] min-[768px]:w-[768px]">
+          {/* <section className="flex flex-col min-[375px]:block min-[1200px]:hidden min-[375px]:w-[375px] md:w-[768px]">
             <AdminCourseLists courseData={courseData} />
           </section> */}
+
+          <section className="flex">
+            <button
+              onClick={() => {
+                changePage(-1);
+              }}
+            >
+              {`<<<`}{" "}
+            </button>
+            <div>{page}</div>
+            <button
+              onClick={() => {
+                changePage(1);
+              }}
+            >{` >>>`}</button>
+          </section>
         </section>
       </section>
     </section>

@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import CourseCard from "@/components/CourseCard";
 import { useSession } from "next-auth/react";
 
-function page() {
+function DesiredCoursePage() {
   const [courses, setCourse] = useState([]);
   const { data: session, status } = useSession();
 
@@ -52,4 +52,4 @@ function page() {
   );
 }
 
-export default page;
+export default DesiredCoursePage;

@@ -73,11 +73,14 @@ export default function Learning({ params }) {
     let currentSubProgress = (e.target.currentTime / e.target.duration) * 100;
     if (currentSubProgress >= 80) {
       currentSubProgress = 100;
+
       async function updateAssignmentStatus() {
-        const data = { status: 1 };
+        const duration = currentSubLesson.assignments?.duration;
+
+        const data = { status: 1, duration: duration };
         const courseId = params.courseid;
         const res = await axios.post(
-          `/api/learning/${courseId}/sendassignment/?userid=${session?.user?.userId}&sublessonid=${currentSubLesson.sub_lesson_id}`,
+          `/api/learning/${courseId}/updateduedate/?userid=${session?.user?.userId}&sublessonid=${currentSubLesson.sub_lesson_id}`,
           data
         );
 
@@ -243,7 +246,7 @@ function LessonAccordion({
           )}
         </div>
       </div>
-      <div className="lesson-accordion mt-[20px] overflow-y  h-[600px]">
+      <div className="lesson-accordion mt-[20px] overflow-auto h-[600px]">
         <Accordion defaultIndex={[0]} allowMultiple>
           {course.courses.lessons.map((lesson, i) => (
             <AccordionItem key={i}>
@@ -264,8 +267,8 @@ function LessonAccordion({
                   key={i}
                   className={
                     currentSubLesson.sub_lesson_id === subLesson.sub_lesson_id
-                      ? "bg-blue-100 rounded-md"
-                      : null
+                      ? "bg-blue-100 rounded-md text-wrap w-[310px]"
+                      : "text-wrap w-[310px]"
                   }
                 >
                   <CircularProgress
@@ -323,8 +326,10 @@ function CourseVideo({
 
   async function onSubmit(e) {
     e.preventDefault();
-    if (answer == "") {
-      return alert("Please answer the question before clicking send...");
+    if (!answer || assignment.status_assignment !== 1) {
+      return alert(
+        "Please finish course video and answer the question before clicking send..."
+      );
     }
     const courseId = params.courseid;
     const data = { answer: answer, status: 2 };
@@ -365,9 +370,9 @@ function CourseVideo({
         </video>
         <div className="assignment-section mt-[50px] bg-[#E5ECF8] p-[15px] rounded-md relative">
           <form onSubmit={onSubmit} key={currentSubLesson.name}>
-            {currentSubLesson.assignments.question ? (
-              <>
-                <div className="assignment-container flex flex-col items-start ">
+            <div className="assignment-container flex flex-col items-start ">
+              {currentSubLesson.assignments ? (
+                <>
                   <h2>Assignment</h2>
                   <p>{currentSubLesson.assignments.question}</p>
                   {assignment.answer ? (
@@ -393,22 +398,32 @@ function CourseVideo({
                       </button>
 
                       <p className="mt-[45px] text-[#646D89]">
-                        Assign within 2 days
+                        {assignment.status_assignment == 1 &&
+                          (((new Date(assignment.due_date) - new Date()) /
+                            (1000 * 60 * 60 * 24) >
+                            1 &&
+                            `assign within ${Math.ceil(
+                              (new Date(assignment.due_date) - new Date()) /
+                                (1000 * 60 * 60 * 24)
+                            )}`) ||
+                            "less than a day")}
                       </p>
                     </div>
                   )}
-                </div>
-                <p
-                  className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded-lg"
-                  key={assignment.sub_lesson_id}
-                >
-                  {(assignment.status_assignment == 0 && "pending") ||
-                    (assignment.status_assignment == 1 && "in progress") ||
-                    (assignment.status_assignment == 2 && "submitted") ||
-                    (assignment.status_assignment == 3 && "overdue")}
-                </p>
-              </>
-            ) : null}
+                  <p
+                    className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded-lg"
+                    key={assignment.sub_lesson_id}
+                  >
+                    {(assignment.status_assignment == 0 && "pending") ||
+                      (assignment.status_assignment == 1 && "in progress") ||
+                      (assignment.status_assignment == 2 && "submitted") ||
+                      (assignment.status_assignment == 3 && "overdue")}
+                  </p>
+                </>
+              ) : (
+                "No assignment"
+              )}
+            </div>
           </form>
         </div>
       </div>

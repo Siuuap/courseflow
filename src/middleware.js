@@ -2,13 +2,28 @@ import { NextResponse } from "next/server";
 import { decode } from "next-auth/jwt";
 
 export async function middleware(request) {
+  let sessionToken = undefined;
+
+  if (request.cookies.get("next-auth.session-token")?.value !== undefined) {
+    sessionToken = request.cookies.get("next-auth.session-token")?.value;
+  }
+
+  if (
+    request.cookies.get("__Secure-next-auth.session-token")?.value !== undefined
+  ) {
+    sessionToken = request.cookies.get(
+      "__Secure-next-auth.session-token"
+    )?.value;
+  }
+
   if (
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/register")
   ) {
     try {
-      const sessionToken = request.cookies.get("next-auth.session-token").value;
-
+      if (sessionToken === undefined) {
+        throw new Error("Error");
+      }
       return NextResponse.redirect(new URL("/", request.url));
     } catch {
       return NextResponse.next();
@@ -17,7 +32,9 @@ export async function middleware(request) {
 
   if (request.nextUrl.pathname.startsWith("/user")) {
     try {
-      const sessionToken = request.cookies.get("next-auth.session-token").value;
+      if (sessionToken === undefined) {
+        throw new Error("Error");
+      }
       return NextResponse.next();
     } catch {
       return NextResponse.redirect(new URL("/", request.url));
@@ -26,7 +43,9 @@ export async function middleware(request) {
 
   if (request.nextUrl.pathname.startsWith("/admin")) {
     try {
-      const sessionToken = request.cookies.get("next-auth.session-token").value;
+      if (sessionToken === undefined) {
+        throw new Error("Error");
+      }
       const result = await decode({
         token: sessionToken,
         secret: process.env.NEXTAUTH_SECRET,

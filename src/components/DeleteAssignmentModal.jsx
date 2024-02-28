@@ -37,7 +37,7 @@ function DeleteAssignmentModal() {
   return (
     <>
       <section
-        className=" flex justify-end min-[375px]:w-[350px] min-[768px]:w-[743px]  min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] text-[#2F5FAC] font-bold hover:underline"
+        className=" flex justify-end min-[375px]:w-[350px] md:w-[743px]  min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] text-[#2F5FAC] font-bold hover:underline"
         onClick={onOpen}
       >
         Delete Assignment

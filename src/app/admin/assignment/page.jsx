@@ -80,7 +80,7 @@ export default function AssignmentPage() {
 
       <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
         {/* Box2 upper*/}
-        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  min-[768px]:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] min-[768px]:gap-[0px]">
+        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px]">
           <div className="flex w-full items-center justify-between relative ">
             <div className="flex gap-[8px] items-center ">
               <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
@@ -93,7 +93,7 @@ export default function AssignmentPage() {
 
             <div className="flex gap-[10px] ">
               <input
-                className="outline-none min-[0px]:absolute min-[0px]:top-[60px] min-[0px]:left-0 min-[0px]:w-full min-[768px]:static min-[768px]:block min-[768px]:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] min-[1440px]:w-[320`px]"
+                className="outline-none min-[0px]:absolute min-[0px]:top-[60px] min-[0px]:left-0 min-[0px]:w-full md:static md:block md:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] min-[1440px]:w-[320`px]"
                 type="search"
                 placeholder="Search..."
                 value={search}
@@ -102,7 +102,7 @@ export default function AssignmentPage() {
                 }}
               />
               <Link href="/admin/addassignment">
-                <button className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] min-[768px]:px-[32px] min-[768px]:py-[18px] rounded-[12px] text-[#fff] min-[768px]:text-[16px] hover:bg-[#5483D0]">
+                <button className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]">
                   + Add Assignment
                 </button>
               </Link>
@@ -110,7 +110,7 @@ export default function AssignmentPage() {
           </div>
         </section>
 
-        <section className="mx-auto min-[0px]:mt-[130px] min-[768px]:mt-[120px] m-[40px] flex flex-col items-center gap-[40px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg">
+        <section className="mx-auto min-[0px]:mt-[130px] md:mt-[120px] m-[40px] flex flex-col items-center gap-[40px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg">
           {/* Box2 Courselist Box*/}
           <div className="border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1168px] min-[1200px]:m-[16px] min-[1440px]:w-[1120px]">
             <div className="bg-[#E4E6ED] flex  justify-start rounded-t-lg text-[14px] min-[0px]:hidden min-[1200px]:block min-[1200px]:w-[1168px] min-[1440px]:w-[1120px]">
@@ -135,15 +135,15 @@ export default function AssignmentPage() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col min-[0px]:gap-[30px] min-[1200px]:gap-0 min-[0px]:w-[343px] min-[0px]:m-[16px] min-[768px]:w-[736px] min-[1200px]:w-[1168px] justify-center min-[1200px]:mx-[0px] min-[1440px]:w-[1120px]">
+            <div className="flex flex-col min-[0px]:gap-[30px] min-[1200px]:gap-0 min-[0px]:w-[343px] min-[0px]:m-[16px] md:w-[736px] min-[1200px]:w-[1168px] justify-center min-[1200px]:mx-[0px] min-[1440px]:w-[1120px]">
               {assignmentData.map((item, index) => {
                 return (
                   <div
-                    className="flex flex-col   min-[768px]:flex-row min-[768px]:justify-center min-[1200px]:justify-center gap-[14px] min-[768px]:gap-[20px] min-[1200px]:gap-[0px] "
+                    className="flex flex-col   md:flex-row md:justify-center min-[1200px]:justify-center gap-[14px] md:gap-[20px] min-[1200px]:gap-[0px] "
                     key={index}
                   >
-                    <div className="flex  min-[0px]:gap-[16px] min-[1200px]:gap-[0px] min-[0px]:flex-col min-[0px]:items-start min-[768px]:w-[50%] min-[1200px]:flex-row min-[1200px]:justify-start min-[1200px]:w-full">
-                      <div className="min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[375px]:w-full min-[375px]:text-[16px]  min-[768px]:text-start min-[375px]:font-bold min-[1200px]:font-normal min-[1200px]:w-[200px]">
+                    <div className="flex  min-[0px]:gap-[16px] min-[1200px]:gap-[0px] min-[0px]:flex-col min-[0px]:items-start md:w-[50%] min-[1200px]:flex-row min-[1200px]:justify-start min-[1200px]:w-full">
+                      <div className="min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[375px]:w-full min-[375px]:text-[16px]  md:text-start min-[375px]:font-bold min-[1200px]:font-normal min-[1200px]:w-[200px]">
                         {handleLength(item.question)}
                       </div>
 
@@ -221,7 +221,7 @@ export default function AssignmentPage() {
               })}
             </div>
           </div>
-          {/* <section className="flex flex-col min-[375px]:block min-[1200px]:hidden min-[375px]:w-[375px] min-[768px]:w-[768px]">
+          {/* <section className="flex flex-col min-[375px]:block min-[1200px]:hidden min-[375px]:w-[375px] md:w-[768px]">
             <AdminCourseLists courseData={courseData} />
           </section> */}
         </section>

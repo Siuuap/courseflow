@@ -40,8 +40,8 @@ function NavBar() {
   };
 
   return (
-    <div className=" shadow-md ">
-      <nav className="min-[768px]:flex justify-between items-center mx-[auto] p-[14px] max-w-[1120px] min-[1200px]:px-[0px] h-[88px]">
+    <div className="shadow-md ">
+      <nav className="flex items-center justify-between gap-[40px] min-[1440px]:w-[1440px] min-[1440px]:h-[88px] min-[1440px]:ml-[160px]">
         <Link href="/">
           <Image
             src="/images/iconCourseFlow.png"
@@ -50,22 +50,21 @@ function NavBar() {
             height={16}
           />
         </Link>
-        <section className="flex items-center justify-between gap-[40px]">
-          <div className="text-[#191C77] font-bold text-[16px] leading-6">
+        <section className="flex min-[1440px]:items-center min-[1440px]:justify-between min-[1440px]:gap-[40px]">
+          <div className="min-[375px]:mt-[20px] min-[375px]:mr-[220px] md:mt-[0px] lg:mr-[450px] text-[#191C77] font-bold text-[16px] leading-6 min-[1440px]:mr-[260px] ">
             <Link href="/course">Our Courses</Link>
           </div>
 
-          <div className="w-[189px]">
+          <div className="flex md:pl-[0px] min-[1440px]:w-[189px]">
             {status === "unauthenticated" && (
               <Link href="/login">
-                <Button className="bg-[#2F5FAC] px-8 py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white font-bold text-[16px] leading-6">
+                <Button className="flex min-[375px]:ml-[70px] min-[375px]:-mt-[20px] min-[375px]:100vw md:-ml-[240px] md:mt-[0px] bg-[#2F5FAC] min-[1440px]:px-8 min-[1440px]:py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white font-bold text-[16px] leading-6">
                   Login
                 </Button>
               </Link>
             )}
 
             {status === "authenticated" && (
-
               <div className="flex  flex-row  justify-start items-center gap-[10px]">
                 <img
                   src={session.user.url}
@@ -81,16 +80,14 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user/edit_profile");
-                      }}
-                    >
+                      }}>
                       <Image src={ProfileIcon} className=" mr-[10px]" />
                       Profile
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
                         router.push("/user");
-                      }}
-                    >
+                      }}>
                       <Image src={MyCourseIcon} className=" mr-[10px]" />
                       My Courses
                     </MenuItem>
@@ -101,8 +98,7 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user/desire_course");
-                      }}
-                    >
+                      }}>
                       <Image src={DesireCourseIcon} className=" mr-[10px]" />
                       My Desire Courses
                     </MenuItem>

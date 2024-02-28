@@ -10,7 +10,7 @@ function SubFooter() {
           Want to start learning?
         </p>
         <section className="pt-[45px]">
-          <Button className="bg-white px-8 py-[18px] rounded-[12px] border-[1px] border-[#F47E20] text-base hover:bg-[#5483D0] text-[#F47E20] font-bold text-[16px] leading-6">
+          <Button className="bg-white px-8 py-[18px] rounded-[12px] border-[1px] border-[#F47E20] text-base hover:bg-[#f5f5f5] text-[#F47E20] font-bold text-[16px] leading-6">
             <Link href="/register">Register</Link>
           </Button>
         </section>

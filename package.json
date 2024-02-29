@@ -24,12 +24,9 @@
     "next-auth": "^4.24.5",
     "react": "^18",
     "react-dom": "^18",
-
     "string-similarity": "^4.0.4",
-
     "sharp": "^0.33.2",
-
-    "stripe": "^14.18.0",
+    "stripe": "^14.18.0 ",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

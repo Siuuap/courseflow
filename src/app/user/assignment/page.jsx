@@ -24,7 +24,7 @@ export default function Assignment() {
       async function fetchCourse() {
         {
           const res = await axios.get(
-            `/api/assignment/?userid=${session?.user?.userId}`
+            `/api/assignment/${session?.user?.userId}`
           );
 
           const updatedStatus = res.data.data.map((data) => data);

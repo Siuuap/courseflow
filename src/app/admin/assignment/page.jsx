@@ -18,7 +18,7 @@ export default function AssignmentPage() {
   const [assignmentData, setAssignmentData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
   const [check, setCheck] = useState(0);
 
   useEffect(() => {
@@ -32,10 +32,8 @@ export default function AssignmentPage() {
   async function getAssignment() {
     setCheck(0);
     setPage(1);
-    const response = await axios.get(
-      `/api/assignment?page=1&search=${search}`
-    );
-    setMaxPage(response.data.maxPage);
+    const response = await axios.get(`/api/assignment?page=1&search=${search}`);
+    setTotalPage(response.data.maxPage);
   }
 
   async function getFilteredAssignments() {
@@ -55,10 +53,12 @@ export default function AssignmentPage() {
     return text;
   }
 
-  function changePage(addPage) {
-    if (page + addPage >= 1 && page + addPage <= maxPage) {
-      setPage(page + addPage);
-    }
+  function changePage(newPage) {
+  
+    if(newPage <=1) setPage(1);
+    else if(newPage >= totalPage ) setPage(totalPage);
+    else setPage(newPage)
+    
   }
 
   function formatDate(d) {
@@ -95,6 +95,40 @@ export default function AssignmentPage() {
             </div>
 
             <div className="flex gap-[10px] ">
+              <div className="flex items-center gap-[8px]">
+                <button
+                  className="bg-[#F47E20] rounded-full w-[20px] h-[20px] text-[#fff] font-bold relative"
+                  onClick={() => {
+                    changePage(page-1);
+                  }}
+                >
+                  <p className="absolute text-[10px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] h-fit">
+                    &lt;
+                  </p>
+                </button>
+                <input
+                  className="outline-none px-[6px] py-[6px] border border-solid border-[#CCD0C7] rounded-lg text-center w-[40px]"
+                  type="number"
+                  value={page}
+                  min={1}
+                  max={totalPage}
+                  onChange={(e) => {
+                    changePage(e.target.value);
+                  }}
+                />
+                <p>/ {totalPage}</p>
+                <button
+                  className="bg-[#F47E20] rounded-full w-[20px] h-[20px] text-[#fff] font-bold relative"
+                  onClick={() => {
+                    changePage(page+1);
+                  }}
+                >
+                  <p className="absolute text-[10px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] h-fit">
+                    &gt;
+                  </p>
+                </button>
+              </div>
+
               <input
                 className="outline-none min-[0px]:absolute min-[0px]:top-[60px] min-[0px]:left-0 min-[0px]:w-full md:static md:block md:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] min-[1440px]:w-[320`px]"
                 type="search"

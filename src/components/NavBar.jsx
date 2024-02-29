@@ -40,25 +40,28 @@ function NavBar() {
   };
 
   return (
-    <div className="shadow-md ">
-      <nav className="flex items-center justify-between gap-[40px] min-[1440px]:w-[1440px] min-[1440px]:h-[88px] min-[1440px]:ml-[160px]">
-        <Link href="/">
-          <Image
-            src="/images/iconCourseFlow.png"
-            alt="icon-CourseFlow"
-            width={140}
-            height={16}
-          />
-        </Link>
-        <section className="flex min-[1440px]:items-center min-[1440px]:justify-between min-[1440px]:gap-[40px]">
-          <div className="min-[375px]:mt-[20px] min-[375px]:mr-[220px] md:mt-[0px] lg:mr-[450px] text-[#191C77] font-bold text-[16px] leading-6 min-[1440px]:mr-[260px] ">
+    <div className="shadow-md px-[80px]">
+      <nav className="relative flex items-center justify-between bg-white h-[88px]">
+        <div className="min-[375px]:-left-[200px]">
+          <Link href="/">
+            <Image
+              src="/images/iconCourseFlow.png"
+              alt="icon-CourseFlow"
+              width={140}
+              height={16}
+              className="h-auto max-w-lg"
+            />
+          </Link>
+        </div>
+        <ul className="md:flex items-center gap-[60px]">
+          <li className="text-[#191C77] font-bold text-[16px] leading-6">
             <Link href="/course">Our Courses</Link>
-          </div>
+          </li>
 
-          <div className="flex md:pl-[0px] min-[1440px]:w-[189px]">
+          <li>
             {status === "unauthenticated" && (
               <Link href="/login">
-                <Button className="flex min-[375px]:ml-[70px] min-[375px]:-mt-[20px] min-[375px]:100vw md:-ml-[240px] md:mt-[0px] bg-[#2F5FAC] min-[1440px]:px-8 min-[1440px]:py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white font-bold text-[16px] leading-6">
+                <Button className=" bg-[#2F5FAC] px-8 py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white font-bold text-[16px] leading-6">
                   Login
                 </Button>
               </Link>
@@ -131,8 +134,8 @@ function NavBar() {
                 </Menu>
               </div>
             )}
-          </div>
-        </section>
+          </li>
+        </ul>
       </nav>
     </div>
   );

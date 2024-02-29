@@ -308,10 +308,6 @@ function CourseVideo({
   const [assignment, setAssignment] = useState({});
   const [answer, setAnswer] = useState("");
 
-  console.log("currentsub", currentSubLesson);
-  console.log("assignment", assignment);
-  console.log("assStatus", assignmentStatus);
-
   useEffect(() => {
     function status() {
       assignmentStatus.find((sub) => {

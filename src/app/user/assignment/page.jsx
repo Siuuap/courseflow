@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import Link from "next/link";
+import cloneDeep from "lodash/cloneDeep";
+
 export default function Assignment() {
   const { data: session, status } = useSession();
   console.log(session, status);
@@ -23,7 +26,28 @@ export default function Assignment() {
           const res = await axios.get(
             `/api/assignment/?userid=${session?.user?.userId}`
           );
-          setCourse(res.data.data);
+
+          const updatedStatus = res.data.data.map((data) => data);
+
+          updatedStatus.filter((course, i) => {
+            if (
+              course.due_date &&
+              new Date() - new Date(course.due_date) > 1 &&
+              course.status_assignment !== 2
+            ) {
+              async function updateDueDate() {
+                const data = { status: 3 };
+                const res = await axios.post(
+                  `/api/learning/${course.course_id}/updateduedate/?userid=${session?.user?.userId}&sublessonid=${course.sub_lesson_id}`,
+                  data
+                );
+                updatedStatus[i] = { ...course, status_assignment: 3 };
+              }
+              updateDueDate();
+            }
+          });
+          console.log(updatedStatus);
+          setCourse(updatedStatus);
         }
       }
       fetchCourse();
@@ -31,7 +55,7 @@ export default function Assignment() {
   }, [session, status]);
 
   useEffect(() => {
-    if (course.length) {
+    if (course?.length) {
       function courseByStatus() {
         setCoursePending(
           course.filter((course) => {
@@ -62,33 +86,46 @@ export default function Assignment() {
 
   async function onSubmit(courseId, subId, event) {
     event.preventDefault();
-    if (!answer) {
+    console.log(course);
+    if (!answer[subId]) {
       return alert("Please answer the question before clicking submit...");
     }
-    const data = { answer: answer, status: 2 };
+    const data = { answer: answer[subId], status: 2 };
 
     const res = await axios.post(
       `/api/learning/${courseId}/sendassignment/?userid=${session?.user?.userId}&sublessonid=${subId}`,
       data
     );
 
-    let newCourse = course.map((c) => c);
-
+    let newCourse = cloneDeep(course);
+    console.log("newCourse", newCourse);
     const newStatus = newCourse.find((courses, i) => {
+      console.log(subId);
       if (subId === courses.sub_lesson_id) {
         newCourse[i] = {
           ...courses,
           status_assignment: 2,
-          answer: answer,
+          answer: answer[subId],
         };
       }
     });
-    setCourse(newStatus);
+    console.log(newStatus);
+    console.log(newCourse);
+    setCourse(newCourse);
   }
 
+  function setAnswerById(eventId, eventValue) {
+    const id = eventId;
+    const value = eventValue;
+
+    setAnswer({ ...answer, [id]: value });
+  }
+  console.log(answer);
   return (
     <>
-      <NavBar />
+      <div className="sticky top-0 z-50 bg-white">
+        <NavBar />
+      </div>
       <div className="flex flex-col items-center mt-[100px]">
         <h1 className="text-[36px]">My Assignments</h1>
         <div className="mt-[50px] mb-[150px]">
@@ -103,12 +140,13 @@ export default function Assignment() {
               </TabList>
 
               <TabPanels className="h-[1200px] overflow-y-auto no-scrollbar ">
-                {course.length ? (
+                {course?.length ? (
                   <Panel
                     course={course}
                     answer={answer}
                     setAnswer={setAnswer}
                     onSubmit={onSubmit}
+                    setAnswerById={setAnswerById}
                   />
                 ) : (
                   <TabPanel>
@@ -122,6 +160,7 @@ export default function Assignment() {
                     answer={answer}
                     setAnswer={setAnswer}
                     onSubmit={onSubmit}
+                    setAnswerById={setAnswerById}
                   />
                 ) : (
                   <TabPanel>
@@ -135,6 +174,7 @@ export default function Assignment() {
                     answer={answer}
                     setAnswer={setAnswer}
                     onSubmit={onSubmit}
+                    setAnswerById={setAnswerById}
                   />
                 ) : (
                   <TabPanel>
@@ -148,6 +188,7 @@ export default function Assignment() {
                     answer={answer}
                     setAnswer={setAnswer}
                     onSubmit={onSubmit}
+                    setAnswerById={setAnswerById}
                   />
                 ) : (
                   <TabPanel>
@@ -161,6 +202,7 @@ export default function Assignment() {
                     answer={answer}
                     setAnswer={setAnswer}
                     onSubmit={onSubmit}
+                    setAnswerById={setAnswerById}
                   />
                 ) : (
                   <TabPanel className="h-[1200px]">
@@ -177,7 +219,7 @@ export default function Assignment() {
   );
 }
 
-function Panel({ course, answer, setAnswer, onSubmit }) {
+function Panel({ course, answer, setAnswer, onSubmit, setAnswerById }) {
   console.log(course);
   return (
     <>
@@ -187,7 +229,6 @@ function Panel({ course, answer, setAnswer, onSubmit }) {
             onSubmit={(event) =>
               onSubmit(course.course_id, course.sub_lesson_id, event)
             }
-            key={course.sub_lesson_id}
           >
             <div className="w-[1120px] h-[354px] bg-[#E5ECF8] px-[96px] py-[40px] rounded-md">
               <div className="pb-[26px] flex flex-row justify-between">
@@ -201,7 +242,17 @@ function Panel({ course, answer, setAnswer, onSubmit }) {
                 </div>
                 <div className="w-[155px] h-[64px] flex flex-col items-end justify-between">
                   <StatusAssignmentIcon status={course.status_assignment} />
-                  <p>assign within 2 day</p>
+                  <p>
+                    {course.status_assignment == 1 &&
+                      (((new Date(course.due_date) - new Date()) /
+                        (1000 * 60 * 60 * 24) >
+                        1 &&
+                        `assign within ${Math.ceil(
+                          (new Date(course.due_date) - new Date()) /
+                            (1000 * 60 * 60 * 24)
+                        )}`) ||
+                        "less than a day")}
+                  </p>
                 </div>
               </div>
               <div
@@ -223,9 +274,12 @@ function Panel({ course, answer, setAnswer, onSubmit }) {
                   ) : (
                     <input
                       placeholder="Answer..."
-                      value={answer}
-                      onChange={(e) => setAnswer(e.target.value)}
+                      value={answer[course.sub_lesson_id]}
+                      onChange={(e) =>
+                        setAnswerById(e.target.id, e.target.value)
+                      }
                       className="w-[720px] h-[96px] border pl-5 "
+                      id={course.sub_lesson_id}
                       key={course.sub_lesson_id}
                     ></input>
                   )}
@@ -239,9 +293,11 @@ function Panel({ course, answer, setAnswer, onSubmit }) {
                       Submit
                     </button>
                   ) : null}
-                  <button className="w-[138px] h-[60px] text-center font-bold text-[#2F5FAC]">
-                    Open in Course
-                  </button>
+                  <Link href={`/user/${course.course_id}/learning`}>
+                    <button className="w-[138px] h-[60px] text-center font-bold text-[#2F5FAC]">
+                      Open in Course
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>

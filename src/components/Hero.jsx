@@ -23,7 +23,7 @@ function Hero() {
       </div>
 
       <Image
-        className="absolute min-[1440px]:right-0 min-[1440px]:top-0 min-[1440px]:h-[700px] min-[1440px]:w-[1032px]"
+        className="absolute invisible xl:visible min-[1440px]:visible min-[1440px]:right-0 min-[1440px]:top-0 min-[1440px]:h-[700px] min-[1440px]:w-[1032px]"
         src="/images/hero-asset1.png"
         alt="hero-asset1"
         width={1032}
@@ -32,7 +32,7 @@ function Hero() {
         priority={true}
       />
       <Image
-        className="absolute min-[1440px]:right-[160px] min-[1440px]:top-[151px] min-[1440px]:h-[448px] min-[1440px]:w-[452px]"
+        className="absolute invisible xl:visible min-[1440px]:visible min-[1440px]:right-[160px] min-[1440px]:top-[151px] min-[1440px]:h-[448px] min-[1440px]:w-[452px]"
         src="/images/hero-asset2.png"
         alt="hero-asset2"
         width={452}

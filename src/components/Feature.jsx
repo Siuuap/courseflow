@@ -2,19 +2,19 @@ import Image from "next/image";
 
 function Feature() {
   return (
-    <div className="feature relative h-[1111px] bg-[#FFF] flex items-center justify-center ">
-      <div className="box-border h-[780px] w-[1120px] ">
-        <div className="box-content1 h-[330px] display: flex flex-row">
+    <div className="feature relative bg-[#FFF] flex items-center justify-center min-[375px]:py-[50px] min-[1440px]:h-[1111px] min-[375px]:w-[375px]">
+      <div className="box-border display:flex min-[1440px]:h-[780px] min-[1440px]:w-[1120px]">
+        <div className="box-content1 display:flex min-[375px]:flex-col min-[375px]:items-center min-[375px]:justify-center min-[375px]:left-[150px] min-[1440px]:flex-row min-[1440px]:h-[330px]">
           <Image
-            className="image w-[454px] h-[330px] rounded-[8px]"
+            className="image rounded-[8px] min-[1440px]:w-[454px] min-[1440px]:h-[330px]"
             src="/images/feature1.png"
             width={454}
             height={330}
             alt="feature1"
-            style={{ objectFit: "cover" }}
+            style={{ objectFit: "scale-down" }}
           />
-          <div className="detail-feature flex-col w-[547px] h-[330px] text-[36px] font-medium pl-[119px]">
-            <div className="topic-feature w-[547px] text-[36px] font-medium leading-[125%] tracking-[-0.72px]">
+          <div className="detail-feature flex-col min-[375px]:px-[10px] min-[375px]:pl-[50px] min-[375px]:w-[355px] min-[1440px]:w-[547px] min-[1440px]:h-[330px] min-[1440px]:text-[36px] min-[1440px]:font-medium min-[1440px]:pl-[119px]">
+            <div className="topic-feature min-[1440px]:w-[547px] min-[1440px]:text-[36px] min-[1440px]:font-medium min-[1440px]:leading-[125%] min-[1440px]:tracking-[-0.72px]">
               Learning experience has been enhanced with new technologies
             </div>
             <div className="unordered-list w-[547px] h-[240px] pt-[40px] text-[36px] font-medium">

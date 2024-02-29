@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-import deleteIcon from "@/assets/images/DeleteIcon.svg";
 import EditIcon from "@/assets/images/EditIcon.svg";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -10,7 +9,6 @@ import SideBar from "@/components/SideBar";
 
 import axios from "axios";
 import { useState } from "react";
-import { supabase } from "@/utils/db";
 
 import HamburgerMenu from "@/components/HamburgerMenu";
 import DeleteAssignmentModal from "@/components/DeleteAssignmentModal";
@@ -20,7 +18,7 @@ export default function AssignmentPage() {
   const [assignmentData, setAssignmentData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
   const [check, setCheck] = useState(0);
 
   useEffect(() => {
@@ -32,29 +30,17 @@ export default function AssignmentPage() {
   }, [page, search, check]);
 
   async function getAssignment() {
-    const limit = 8;
     setCheck(0);
     setPage(1);
-    const { data: allData } = await supabase
-      .from("assignments")
-      .select("*")
-      .ilike("question", `%${search}%`);
-
-    setMaxPage(Math.ceil(allData.length / limit));
-
-    //get limit n data per page
+    const response = await axios.get(`/api/assignment?page=1&search=${search}`);
+    setTotalPage(response.data.maxPage);
   }
 
   async function getFilteredAssignments() {
-    const limit = 8;
-    const { data, error } = await supabase
-      .from("assignments")
-      .select("*, sub_lessons(*, lessons(*, courses(*)))")
-      .ilike("question", `%${search}%`)
-      .order("created_at", { ascending: false })
-      .range(limit * (page - 1), limit * page - 1);
-
-    setAssignmentData(data);
+    const response = await axios.get(
+      `/api/assignment?page=${page}&search=${search}`
+    );
+    setAssignmentData(response.data.data);
   }
 
   function handleLength(text) {
@@ -67,10 +53,12 @@ export default function AssignmentPage() {
     return text;
   }
 
-  function changePage(addPage) {
-    if (page + addPage >= 1 && page + addPage <= maxPage) {
-      setPage(page + addPage);
-    }
+  function changePage(newPage) {
+  
+    if(newPage <=1) setPage(1);
+    else if(newPage >= totalPage ) setPage(totalPage);
+    else setPage(newPage)
+    
   }
 
   function formatDate(d) {
@@ -107,6 +95,40 @@ export default function AssignmentPage() {
             </div>
 
             <div className="flex gap-[10px] ">
+              <div className="flex items-center gap-[8px]">
+                <button
+                  className="bg-[#F47E20] rounded-full w-[20px] h-[20px] text-[#fff] font-bold relative"
+                  onClick={() => {
+                    changePage(page-1);
+                  }}
+                >
+                  <p className="absolute text-[10px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] h-fit">
+                    &lt;
+                  </p>
+                </button>
+                <input
+                  className="outline-none px-[6px] py-[6px] border border-solid border-[#CCD0C7] rounded-lg text-center w-[40px]"
+                  type="number"
+                  value={page}
+                  min={1}
+                  max={totalPage}
+                  onChange={(e) => {
+                    changePage(e.target.value);
+                  }}
+                />
+                <p>/ {totalPage}</p>
+                <button
+                  className="bg-[#F47E20] rounded-full w-[20px] h-[20px] text-[#fff] font-bold relative"
+                  onClick={() => {
+                    changePage(page+1);
+                  }}
+                >
+                  <p className="absolute text-[10px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] h-fit">
+                    &gt;
+                  </p>
+                </button>
+              </div>
+
               <input
                 className="outline-none min-[0px]:absolute min-[0px]:top-[60px] min-[0px]:left-0 min-[0px]:w-full md:static md:block md:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] min-[1440px]:w-[320`px]"
                 type="search"
@@ -157,13 +179,11 @@ export default function AssignmentPage() {
                     className="flex flex-col   md:flex-row md:justify-center min-[1200px]:justify-center gap-[14px] md:gap-[20px] min-[1200px]:gap-[0px] "
                     key={index}
                   >
-
                     <div className="flex  min-[0px]:gap-[16px] min-[1200px]:gap-[0px] min-[0px]:flex-col min-[0px]:items-start min-[768px]:w-[50%] min-[1200px]:flex-row min-[1200px]:justify-start min-[1200px]:w-full">
                       <div
                         className="min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[375px]:w-full min-[375px]:text-[16px]  min-[768px]:text-start min-[375px]:font-bold min-[1200px]:font-normal min-[1200px]:w-[200px]"
                         title={item.question}
                       >
-
                         {handleLength(item.question)}
                       </div>
 

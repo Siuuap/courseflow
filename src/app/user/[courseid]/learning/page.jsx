@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
 import cloneDeep from "lodash/cloneDeep";
+import { useRouter } from "next/navigation";
 
 export default function Learning({ params }) {
   const { data: session, status } = useSession();
@@ -25,8 +26,7 @@ export default function Learning({ params }) {
   const [progress, setProgress] = useState(0);
   const [allSubLesson, setAllSubLesson] = useState({});
   const [assignmentStatus, setAssignmentStatus] = useState([]);
-
-  console.log("subProgress", subLessonProgress);
+  const router = useRouter();
 
   useEffect(() => {
     function sumProgress() {
@@ -149,10 +149,13 @@ export default function Learning({ params }) {
           index = i;
         }
       });
+
       const result = index + current;
 
       result >= 0 && result < allSub.length
         ? setcurrentSubLesson(allSub[result])
+        : window.confirm(`go to "My Courses" page?`)
+        ? router.push("/user")
         : null;
     }
   }

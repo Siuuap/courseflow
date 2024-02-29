@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-import deleteIcon from "@/assets/images/DeleteIcon.svg";
 import EditIcon from "@/assets/images/EditIcon.svg";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -10,7 +9,6 @@ import SideBar from "@/components/SideBar";
 
 import axios from "axios";
 import { useState } from "react";
-import { supabase } from "@/utils/db";
 
 import HamburgerMenu from "@/components/HamburgerMenu";
 import DeleteAssignmentModal from "@/components/DeleteAssignmentModal";
@@ -32,29 +30,19 @@ export default function AssignmentPage() {
   }, [page, search, check]);
 
   async function getAssignment() {
-    const limit = 8;
     setCheck(0);
     setPage(1);
-    const { data: allData } = await supabase
-      .from("assignments")
-      .select("*")
-      .ilike("question", `%${search}%`);
-
-    setMaxPage(Math.ceil(allData.length / limit));
-
-    //get limit n data per page
+    const response = await axios.get(
+      `/api/assignment?page=1&search=${search}`
+    );
+    setMaxPage(response.data.maxPage);
   }
 
   async function getFilteredAssignments() {
-    const limit = 8;
-    const { data, error } = await supabase
-      .from("assignments")
-      .select("*, sub_lessons(*, lessons(*, courses(*)))")
-      .ilike("question", `%${search}%`)
-      .order("created_at", { ascending: false })
-      .range(limit * (page - 1), limit * page - 1);
-
-    setAssignmentData(data);
+    const response = await axios.get(
+      `/api/assignment?page=${page}&search=${search}`
+    );
+    setAssignmentData(response.data.data);
   }
 
   function handleLength(text) {
@@ -157,13 +145,11 @@ export default function AssignmentPage() {
                     className="flex flex-col   md:flex-row md:justify-center min-[1200px]:justify-center gap-[14px] md:gap-[20px] min-[1200px]:gap-[0px] "
                     key={index}
                   >
-
                     <div className="flex  min-[0px]:gap-[16px] min-[1200px]:gap-[0px] min-[0px]:flex-col min-[0px]:items-start min-[768px]:w-[50%] min-[1200px]:flex-row min-[1200px]:justify-start min-[1200px]:w-full">
                       <div
                         className="min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[375px]:w-full min-[375px]:text-[16px]  min-[768px]:text-start min-[375px]:font-bold min-[1200px]:font-normal min-[1200px]:w-[200px]"
                         title={item.question}
                       >
-
                         {handleLength(item.question)}
                       </div>
 

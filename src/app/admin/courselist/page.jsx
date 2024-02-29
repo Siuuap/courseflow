@@ -16,16 +16,19 @@ import ModalWindow from "@/components/ModalWindow";
 export default function DashBoardPage() {
   const [courseData, setCourseData] = useState([]);
   const [search, setSearch] = useState("");
-  const [page, setpage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
   const { resetToDefault } = useLessonContext();
   const limit = 10;
-
+  console.log(`page`, page);
   async function getNumberOfPage() {
     try {
       const response = await axios.get(
         `/api/numberOfPage?search=${search}&page=${page}&limit=${limit}`
       );
-      setCourseData(response.data.data);
+
+      const numberOfTotalPage = Math.ceil(response.data.data.length / 10);
+      setTotalPage(numberOfTotalPage);
     } catch (error) {
       error;
     }
@@ -70,18 +73,23 @@ export default function DashBoardPage() {
     return `${day}/${month}/${year} ${time}`;
   }
   function increasePage() {
-    if (page >= 99) {
-      return;
-    }
-    setpage((page) => page + 1);
-  }
-  function decreasePage() {
-    if (page > 1) {
-      setpage((page) => page - 1);
+    if (Number(page) >= totalPage) {
+      setPage(totalPage);
     } else {
-      setpage(1);
+      setPage((currentPage) => Math.min(totalPage, currentPage + 1));
     }
   }
+
+  function decreasePage() {
+    setPage((currentPage) => Math.max(1, currentPage - 1));
+  }
+
+  function handleInputChange(e) {
+    let newValue = parseInt(e.target.value);
+    newValue = isNaN(newValue) ? 1 : Math.min(Math.max(1, newValue), totalPage);
+    setPage(newValue);
+  }
+
   return (
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
@@ -103,18 +111,36 @@ export default function DashBoardPage() {
             </div>
 
             <div className="flex gap-[10px] ">
-              <div className="flex items-center gap-[16px]">
-                <button onClick={decreasePage}>-</button>
-                <input
-                  className="outline-none px-[6px] py-[6px]  border border-solid border-[#CCD0C7] rounded-lg text-center w-[50px]"
-                  type="number"
-                  value={page}
-                  onChange={(e) => {
-                    setpage(Number(e.target.value));
-                  }}
-                />
-                <button onClick={increasePage}>+</button>
-              </div>
+              {totalPage === 0 ? null : (
+                <div className="flex items-center gap-[8px]">
+                  <button
+                    className="bg-[#F47E20] rounded-full w-[20px] h-[20px] text-[#fff] font-bold relative"
+                    onClick={decreasePage}
+                  >
+                    <p className="absolute text-[10px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] h-fit">
+                      &lt;
+                    </p>
+                  </button>
+                  <input
+                    className="outline-none px-[6px] py-[6px] border border-solid border-[#CCD0C7] rounded-lg text-center w-[40px]"
+                    type="number"
+                    value={page}
+                    min={1}
+                    max={totalPage}
+                    onChange={handleInputChange}
+                  />
+                  <p>/ {totalPage}</p>
+                  <button
+                    className="bg-[#F47E20] rounded-full w-[20px] h-[20px] text-[#fff] font-bold relative"
+                    onClick={increasePage}
+                  >
+                    <p className="absolute text-[10px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] h-fit">
+                      &gt;
+                    </p>
+                  </button>
+                </div>
+              )}
+
               <input
                 className="outline-none min-[0px]:absolute min-[0px]:top-[60px] min-[0px]:left-0 min-[0px]:w-full md:static md:block md:w-fit px-[12px] py-[8px] border border-solid border-[#CCD0D7] rounded-[8px] min-[1440px]:px-[16px] min-[1440px]:py-[12px] min-[1440px]:w-[320`px]"
                 type="search"
@@ -125,8 +151,9 @@ export default function DashBoardPage() {
                 }}
               />
               <Link href="/admin/addcourse">
-                <button className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]">
-                  + Add Course
+                <button className="bg-[#2F5FAC] min-[0px]:text-[6px] md:text-[16px] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff]  hover:bg-[#5483D0]">
+                  <p className="md:hidden">+ Course</p>
+                  <p className="min-[0px]:hidden md:block">+ Add Course</p>
                 </button>
               </Link>
             </div>

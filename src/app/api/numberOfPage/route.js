@@ -20,15 +20,14 @@ export async function GET(request) {
     : await supabase
         .from("courses")
         .select("* , lessons(*)")
-        .range(start, end)
         .order("updated_at", { ascending: false });
 
   if (error) {
     console.error(error);
     throw new Error("Courses can not be reach");
   }
-  return NextResponse.json(
-    { message: "Fetching Successfully", page: data.length },
+  return Response.json(
+    { message: "Fetching Successfully", data: data },
     { status: 200 }
   );
 }

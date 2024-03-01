@@ -25,6 +25,7 @@ import ModalWindow from "@/components/ModalWindow";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import cloneDeep from "lodash/cloneDeep";
+import LoadingPage from "@/components/LoadingPage";
 export default function EditCourse({ params }) {
   const {
     name,
@@ -63,7 +64,7 @@ export default function EditCourse({ params }) {
   const [coverImageStatus, setCoverImageStatus] = useState("");
   const [videoTrailerStatus, setVideoTrailerStatus] = useState("");
   const [deletedLesson, setDeletedLesson] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(true);
   const course_id = params.course_id;
   const router = useRouter();
   console.log(`lessons`, lessons);
@@ -82,6 +83,7 @@ export default function EditCourse({ params }) {
       setAttachedFile(response.data.data[0].attached_file_url);
       lessons.length === 0 ? setLessons(response.data.data[0].lessons) : null;
       setLatestCourseData(cloneDeep(response.data.data[0]));
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -170,6 +172,7 @@ export default function EditCourse({ params }) {
   async function handleSubmit() {
     ////อย่าลืมดตรวจสอบเงื่อนไขว่าเป็น lesson ใหม่หรือไม่ ถ้าเป็น lesson ใหม่ให้สร้างใหม่ ถ้าไม่ใช่ ให้ update
     setStatusToDefault();
+    setIsLoading(true);
     if (
       !name ||
       !price ||
@@ -599,454 +602,477 @@ export default function EditCourse({ params }) {
   }
 
   return (
-    <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
-      <div className="min-[0px]:hidden min-[1440px]:block ">
-        {/* Box1 SideBar*/}
-        <SideBar />
-      </div>
-
-      <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
-        {/* Box2 upper*/}
-        <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px] z-10">
-          <div className="flex w-full items-center justify-between">
-            <div className="flex gap-[8px] items-center">
-              <Link
-                href="/admin/courselist"
-                onClick={() => {
-                  resetToDefault();
-                }}
-              >
-                <button>
-                  <Image src={arrowBack} alt="arrow back icon" />
-                </button>
-              </Link>
-              <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px] text-[#9AA1B9]">
-                Course <span className="text-[#000]">&apos;{name}&apos;</span>
-              </p>
-              <div className="min-[1440px]:hidden border border-solid border-[#D6D9E4] w-[30px] h-[30px] flex justify-center items-center rounded-md">
-                <HamburgerMenu />
-              </div>
-            </div>
-
-            <div className="flex gap-[10px] ">
-              <Link href="/admin/courselist">
-                <button
-                  className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#F47E20] md:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
-                  onClick={() => resetToDefault()}
-                >
-                  Cancel
-                </button>
-              </Link>
-
-              <button
-                className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]"
-                onClick={() => {
-                  handleSubmit();
-                }}
-              >
-                Edit
-              </button>
-            </div>
+    <>
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
+          <div className="min-[0px]:hidden min-[1440px]:block ">
+            {/* Box1 SideBar*/}
+            <SideBar />
           </div>
-        </section>
 
-        {/* Box2 Courselist Box*/}
-        {/* Contaner (outer gray box) */}
-        <section className="mx-auto min-[375px]:mt-[80px] min-[1440px]:mt-[120px] m-[40px] flex flex-col items-center justify-center gap-[30px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg w-full ">
-          {/* Content (inner box) */}
-          <section className="flex flex-col gap-[40px] min-[375px]:w-[350px] md:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
-            <section className="relative flex flex-col gap-[4px]">
-              <label htmlFor="name">Course Name *</label>
-              <input
-                className={`${
-                  nameStatus ? `border-[red]` : `border-[#D6D9E4]`
-                } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
-                id="name"
-                type="text"
-                placeholder="Course Name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-              />
-              {nameStatus && (
-                <p className="absolute text-[red] top-[105%] text-[14px]">
-                  {nameStatus}
-                </p>
-              )}
-            </section>
-            <section className="flex gap-[40px] min-[375px]:flex-col md:flex-row">
-              <section className="relative flex flex-col gap-[4px] basis-1/2">
-                <label htmlFor="price">Price *</label>
-                <input
-                  className={`${
-                    priceStatus ? `border-[red]` : `border-[#D6D9E4]`
-                  } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
-                  id="price"
-                  type="number"
-                  placeholder="Price"
-                  value={price}
-                  onChange={(e) => {
-                    setPrice(e.target.value);
-                  }}
-                />
-                {priceStatus && (
-                  <p className="absolute text-[red] top-[105%] text-[14px]">
-                    {priceStatus}
+          <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
+            {/* Box2 upper*/}
+            <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px] z-10">
+              <div className="flex w-full items-center justify-between">
+                <div className="flex gap-[8px] items-center">
+                  <Link
+                    href="/admin/courselist"
+                    onClick={() => {
+                      resetToDefault();
+                    }}
+                  >
+                    <button>
+                      <Image src={arrowBack} alt="arrow back icon" />
+                    </button>
+                  </Link>
+                  <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px] text-[#9AA1B9]">
+                    Course{" "}
+                    <span className="text-[#000]">&apos;{name}&apos;</span>
                   </p>
-                )}
-              </section>
-              <section className="relative flex flex-col gap-[4px] basis-1/2">
-                <label htmlFor="length">Total Learning Time *</label>
-                <input
-                  className={`${
-                    lengthStatus ? `border-[red]` : `border-[#D6D9E4]`
-                  } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
-                  id="length"
-                  type="text"
-                  placeholder="Total Learning Time"
-                  value={length}
-                  onChange={(e) => {
-                    setLength(e.target.value);
-                  }}
-                />
-                {lengthStatus && (
-                  <p className="absolute text-[red] top-[105%] text-[14px]">
-                    {lengthStatus}
-                  </p>
-                )}
-              </section>
-            </section>
-            <section className="relative flex flex-col gap-[4px]">
-              <label htmlFor="summary">Course Summary *</label>
-              <input
-                className={`${
-                  summaryStatus ? `border-[red]` : `border-[#D6D9E4]`
-                } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
-                id="summary"
-                type="text"
-                placeholder="Course Summary"
-                value={summary}
-                onChange={(e) => {
-                  setSummary(e.target.value);
-                }}
-              />
-              {summaryStatus && (
-                <p className="absolute text-[red] top-[105%] text-[14px]">
-                  {summaryStatus}
-                </p>
-              )}
-            </section>
-            <section className="relative flex flex-col gap-[4px]">
-              <label htmlFor="description">Course Detail *</label>
-              <textarea
-                className={`${
-                  descriptionStatus ? `border-[red]` : `border-[#D6D9E4]`
-                } outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] h-[192px] resize-none overflow-y-auto`}
-                id="description"
-                type="text"
-                placeholder="Course Detail"
-                value={description}
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                }}
-              ></textarea>
-              {descriptionStatus && (
-                <p className="absolute text-[red] top-[105%] text-[14px]">
-                  {descriptionStatus}
-                </p>
-              )}
-            </section>
-
-            <section className={`relative flex flex-col gap-[8px] `}>
-              <p>Course Image *</p>
-
-              {typeof coverImage === "string" ? (
-                <div className="relative w-fit">
-                  <img
-                    src={coverImage}
-                    alt={coverImage.name}
-                    className="h-[240px] rounded-lg"
-                  />
-                  <p>{`${name}_cover image`}</p>
-                  <Image
-                    src={CancelIcon}
-                    alt="cancel icon"
-                    className="absolute -top-[7px] -right-[11px]"
-                    onClick={(e) => {
-                      setCoverImage(null);
-                    }}
-                  />
-                </div>
-              ) : !coverImage?.name ? (
-                <label
-                  htmlFor="coverImage"
-                  className="w-fit cursor-pointer flex flex-col gap-[8px]"
-                >
-                  <Image src={uploadImage} alt="image-with-upload-image-text" />
-                  <input
-                    className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
-                    id="coverImage"
-                    type="file"
-                    accept="image/jpeg, imgae/jpg, image/png "
-                    onChange={handleCoverImage}
-                  />
-                  {coverImageStatus && (
-                    <p className="absolute top-[102%] text-[red] text-[14px]">
-                      {coverImageStatus}
-                    </p>
-                  )}
-                </label>
-              ) : (
-                <div className="relative w-fit">
-                  <img
-                    src={URL.createObjectURL(coverImage)}
-                    alt={coverImage.name}
-                    className="h-[240px] rounded-lg"
-                  />
-                  <p>{coverImage.name}</p>
-                  <Image
-                    src={CancelIcon}
-                    alt="cancel icon"
-                    className="absolute -top-[7px] -right-[11px]"
-                    onClick={(e) => {
-                      setCoverImage(null);
-                    }}
-                  />
-                </div>
-              )}
-            </section>
-            <section className="relative flex flex-col gap-[8px]">
-              <p> Video Trailer *</p>
-              {typeof videoTrailer === "string" ? (
-                <div>
-                  <div className="w-fit relative ">
-                    <video
-                      src={videoTrailer}
-                      alt={`${name}_trailer`}
-                      className="w-[240px] h-[240px] rounded-lg "
-                    ></video>
-
-                    <Image
-                      src={CancelIcon}
-                      alt="cancel icon"
-                      className="absolute -top-[7px] -right-[11px]"
-                      onClick={(e) => {
-                        setVideoTrailer(null);
-                      }}
-                    />
-                    <Image
-                      src={playVideo}
-                      alt="play the video icon"
-                      className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
-                    />
+                  <div className="min-[1440px]:hidden border border-solid border-[#D6D9E4] w-[30px] h-[30px] flex justify-center items-center rounded-md">
+                    <HamburgerMenu />
                   </div>
-                  <p>{`${name}_trailer`}</p>
                 </div>
-              ) : !videoTrailer?.name ? (
-                <label
-                  htmlFor="videoTrailer"
-                  className="w-fit cursor-pointer flex flex-col gap-[8px]"
-                >
-                  <Image src={uploadVideo} alt="image-with-upload-image-text" />
-                  <input
-                    className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
-                    id="videoTrailer"
-                    type="file"
-                    accept="video/mp4,video/mov,video/avi"
-                    onChange={(e) => {
-                      handleVideoTrailer(e);
-                    }}
-                  />
-                  {videoTrailerStatus && (
-                    <p className="absolute top-[102%] text-[red] text-[14px]">
-                      {videoTrailerStatus}
-                    </p>
-                  )}
-                </label>
-              ) : (
-                <div>
-                  <div className="w-fit relative ">
-                    <video
-                      src={URL.createObjectURL(videoTrailer)}
-                      alt={videoTrailer.name}
-                      className="h-[240px] rounded-lg "
-                    ></video>
 
-                    <Image
-                      src={CancelIcon}
-                      alt="cancel icon"
-                      className="absolute -top-[7px] -right-[11px]"
-                      onClick={(e) => {
-                        setVideoTrailer(null);
-                      }}
-                    />
-                    <Image
-                      src={playVideo}
-                      alt="play the video icon"
-                      className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
-                    />
-                  </div>
-                  <p>{videoTrailer.name}</p>
-                </div>
-              )}
-            </section>
-            <section className="flex flex-col gap-[8px]">
-              <p>Attach File (Optional)</p>
-              {typeof attachedFile === "string" ? (
-                <div className="relative flex bg-[#E5ECF8] w-[200px] h-[90px] items-center justify-start p-[16px] rounded-lg gap-[30px]">
-                  <Image src={FileIcon} alt={attachedFile.name} />
-                  <Image
-                    src={CancelIcon}
-                    alt="cancel icon"
-                    className="absolute -top-[7px] -right-[11px]"
-                    onClick={(e) => {
-                      setAttachedFile(null);
-                    }}
-                  />
-                  <p>file.pdf</p>
-                </div>
-              ) : !attachedFile?.name ? (
-                <label
-                  htmlFor="attachFile"
-                  className="w-fit cursor-pointer flex flex-col gap-[8px]"
-                >
-                  <input
-                    id="attachFile"
-                    className="outline-none min-[375px]:w-[200px] border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
-                    type="file"
-                    onChange={(e) => {
-                      handleAttachedFile(e);
-                    }}
-                    accept="application/pdf"
-                  />
-                  <Image src={uploadFile} alt="image-with-upload-file-text" />
-                </label>
-              ) : (
-                <div className="relative flex bg-[#E5ECF8] w-[200px] h-[90px] items-center justify-start p-[16px] rounded-lg gap-[30px]">
-                  <Image src={FileIcon} alt={attachedFile.name} />
-                  <Image
-                    src={CancelIcon}
-                    alt="cancel icon"
-                    className="absolute -top-[7px] -right-[11px]"
-                    onClick={(e) => {
-                      setAttachedFile(null);
-                    }}
-                  />
-                  <p>{attachedFile.name}</p>
-                </div>
-              )}
-            </section>
-          </section>
-          <section className=" min-[375px]:w-[375px] md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]">
-            <section className="flex justify-between items-center mb-[30px] w-full p-[16px]">
-              <p className="text-[24px] ">Lesson</p>
-              <Link href={`/admin/editcourse/${course_id}/addlesson`}>
-                <button className="bg-[#2F5FAC] min-[375px]:px-[12px] min-[375px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]">
-                  + Add Lesson
-                </button>
-              </Link>
-            </section>
-            {/* Lesson Table */}
-            {lessons.length === 0 ? null : (
-              <section className="hidden md:flex bg-[#E4E6ED] rounded-t-lg px-[24px] py-[10px] mx-[16px] min-[1440px]:m-[0px]">
-                <section className="hidden md:block w-[56px] "></section>
-                <section className="hidden md:block w-[48px] "></section>
-                <section className="hidden md:block w-[500px] ">
-                  <p>Lesson name</p>
-                </section>
-                <section className="w-[396px] ">
-                  <p>Sub-lesson</p>
-                </section>
-                <section className="w-[120px] text-center">
-                  <p>Action</p>
-                </section>
-              </section>
-            )}
-
-            <section className="flex flex-col gap-[10px] md:gap-[0px]">
-              {lessons
-                .sort((a, b) => a.lesson_number - b.lesson_number)
-                .map(({ name, sub_lessons, lesson_id }, index) => {
-                  return (
-                    <section
-                      key={index}
-                      className="flex flex-col min-[375px]:mx-auto md:mx-[16px] md:flex-row min-[375px]:gap-[16px] md:gap-[0px] bg-[#fff] min-[375px]:px-[16px] min-[375px]:py-[16px] md:px-[28px] md:py-[32px] min-[1440px]:m-[0px] min-[375px]:w-[350px] md:w-[736px] min-[1200px]:w-[1168px] min-[1440px]:w-[1120px] min-[375px]:rounded-lg md:rounded-none relative "
-                      draggable="true"
-                      onDragStart={() => {
-                        dragLesson.current = index;
-                        console.log(`Dragtart happens`);
-                      }}
-                      onDragEnter={() => {
-                        dragOverLesson.current = index;
-                        console.log(`DragEnter happens`);
-                      }}
-                      onDragEnd={() => {
-                        console.log(`DragEnd happens`);
-                        handleSortLesson();
-                      }}
-                      onDragOver={(e) => {
-                        console.log(`DragOver happens`);
-                        e.preventDefault();
-                      }}
+                <div className="flex gap-[10px] ">
+                  <Link href="/admin/courselist">
+                    <button
+                      className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#F47E20] md:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
+                      onClick={() => resetToDefault()}
                     >
-                      <section className="w-[56px] min-[375px]:hidden md:block">
+                      Cancel
+                    </button>
+                  </Link>
+
+                  <button
+                    className="bg-[#2F5FAC] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]"
+                    onClick={() => {
+                      handleSubmit();
+                    }}
+                  >
+                    Edit
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* Box2 Courselist Box*/}
+            {/* Contaner (outer gray box) */}
+            <section className="mx-auto min-[375px]:mt-[80px] min-[1440px]:mt-[120px] m-[40px] flex flex-col items-center justify-center gap-[30px] min-[1440px]:w-[1200px] bg-[#F6F7FC] rounded-lg w-full ">
+              {/* Content (inner box) */}
+              <section className="flex flex-col gap-[40px] min-[375px]:w-[350px] md:w-[743px] border border-solid border-[#F6F7FC] rounded-lg bg-white min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] p-[40px] min-[1440px]:px-[100px]">
+                <section className="relative flex flex-col gap-[4px]">
+                  <label htmlFor="name">Course Name *</label>
+                  <input
+                    className={`${
+                      nameStatus ? `border-[red]` : `border-[#D6D9E4]`
+                    } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
+                    id="name"
+                    type="text"
+                    placeholder="Course Name"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
+                  />
+                  {nameStatus && (
+                    <p className="absolute text-[red] top-[105%] text-[14px]">
+                      {nameStatus}
+                    </p>
+                  )}
+                </section>
+                <section className="flex gap-[40px] min-[375px]:flex-col md:flex-row">
+                  <section className="relative flex flex-col gap-[4px] basis-1/2">
+                    <label htmlFor="price">Price *</label>
+                    <input
+                      className={`${
+                        priceStatus ? `border-[red]` : `border-[#D6D9E4]`
+                      } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
+                      id="price"
+                      type="number"
+                      placeholder="Price"
+                      value={price}
+                      onChange={(e) => {
+                        setPrice(e.target.value);
+                      }}
+                    />
+                    {priceStatus && (
+                      <p className="absolute text-[red] top-[105%] text-[14px]">
+                        {priceStatus}
+                      </p>
+                    )}
+                  </section>
+                  <section className="relative flex flex-col gap-[4px] basis-1/2">
+                    <label htmlFor="length">Total Learning Time *</label>
+                    <input
+                      className={`${
+                        lengthStatus ? `border-[red]` : `border-[#D6D9E4]`
+                      } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
+                      id="length"
+                      type="text"
+                      placeholder="Total Learning Time"
+                      value={length}
+                      onChange={(e) => {
+                        setLength(e.target.value);
+                      }}
+                    />
+                    {lengthStatus && (
+                      <p className="absolute text-[red] top-[105%] text-[14px]">
+                        {lengthStatus}
+                      </p>
+                    )}
+                  </section>
+                </section>
+                <section className="relative flex flex-col gap-[4px]">
+                  <label htmlFor="summary">Course Summary *</label>
+                  <input
+                    className={`${
+                      summaryStatus ? `border-[red]` : `border-[#D6D9E4]`
+                    } outline-none border border-solid px-[12px] py-[16px] rounded-[8px]`}
+                    id="summary"
+                    type="text"
+                    placeholder="Course Summary"
+                    value={summary}
+                    onChange={(e) => {
+                      setSummary(e.target.value);
+                    }}
+                  />
+                  {summaryStatus && (
+                    <p className="absolute text-[red] top-[105%] text-[14px]">
+                      {summaryStatus}
+                    </p>
+                  )}
+                </section>
+                <section className="relative flex flex-col gap-[4px]">
+                  <label htmlFor="description">Course Detail *</label>
+                  <textarea
+                    className={`${
+                      descriptionStatus ? `border-[red]` : `border-[#D6D9E4]`
+                    } outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] h-[192px] resize-none overflow-y-auto`}
+                    id="description"
+                    type="text"
+                    placeholder="Course Detail"
+                    value={description}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                    }}
+                  ></textarea>
+                  {descriptionStatus && (
+                    <p className="absolute text-[red] top-[105%] text-[14px]">
+                      {descriptionStatus}
+                    </p>
+                  )}
+                </section>
+
+                <section className={`relative flex flex-col gap-[8px] `}>
+                  <p>Course Image *</p>
+
+                  {typeof coverImage === "string" ? (
+                    <div className="relative w-fit">
+                      <img
+                        src={coverImage}
+                        alt={coverImage.name}
+                        className="h-[240px] rounded-lg"
+                      />
+                      <p>{`${name}_cover image`}</p>
+                      <Image
+                        src={CancelIcon}
+                        alt="cancel icon"
+                        className="absolute -top-[7px] -right-[11px]"
+                        onClick={(e) => {
+                          setCoverImage(null);
+                        }}
+                      />
+                    </div>
+                  ) : !coverImage?.name ? (
+                    <label
+                      htmlFor="coverImage"
+                      className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                    >
+                      <Image
+                        src={uploadImage}
+                        alt="image-with-upload-image-text"
+                      />
+                      <input
+                        className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                        id="coverImage"
+                        type="file"
+                        accept="image/jpeg, imgae/jpg, image/png "
+                        onChange={handleCoverImage}
+                      />
+                      {coverImageStatus && (
+                        <p className="absolute top-[102%] text-[red] text-[14px]">
+                          {coverImageStatus}
+                        </p>
+                      )}
+                    </label>
+                  ) : (
+                    <div className="relative w-fit">
+                      <img
+                        src={URL.createObjectURL(coverImage)}
+                        alt={coverImage.name}
+                        className="h-[240px] rounded-lg"
+                      />
+                      <p>{coverImage.name}</p>
+                      <Image
+                        src={CancelIcon}
+                        alt="cancel icon"
+                        className="absolute -top-[7px] -right-[11px]"
+                        onClick={(e) => {
+                          setCoverImage(null);
+                        }}
+                      />
+                    </div>
+                  )}
+                </section>
+                <section className="relative flex flex-col gap-[8px]">
+                  <p> Video Trailer *</p>
+                  {typeof videoTrailer === "string" ? (
+                    <div>
+                      <div className="w-fit relative ">
+                        <video
+                          src={videoTrailer}
+                          alt={`${name}_trailer`}
+                          className="w-[240px] h-[240px] rounded-lg "
+                        ></video>
+
                         <Image
-                          src={DragIcon}
-                          alt="drag-icon"
-                          className="absolute top-0 left-0"
+                          src={CancelIcon}
+                          alt="cancel icon"
+                          className="absolute -top-[7px] -right-[11px]"
+                          onClick={(e) => {
+                            setVideoTrailer(null);
+                          }}
                         />
-                      </section>
-                      <section className="md:w-[48px] flex ">
-                        <p className="md:hidden basis-[110px]">Lesson No.</p>
-                        <p>{index + 1}</p>
-                      </section>
-                      <section className="md:w-[500px] flex">
-                        <p className="md:hidden basis-[110px]">Name</p>
-                        <p>{name}</p>
-                      </section>
-                      <section className="md:w-[396px] flex">
-                        <p className="md:hidden basis-[110px]">Sub-Lesson</p>
-                        <p>{sub_lessons?.length}</p>
-                      </section>
-                      <section className="md:w-[120px] flex justify-center gap-[17px]">
-                        <ModalWindow
-                          className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] md:bg-transparent hover:bg-[#C8CCDB] md:hover:bg-transparent rounded-lg md:p-0"
-                          modalHeader="Confirmation"
-                          modalBody="Are you sure you want to delete this lesson?"
-                          acceptText="Yes, I want to delete this lesson"
-                          declineText="No, keep it"
-                          onClick={() => {
-                            handleDeleteLesson(index, lesson_id);
+                        <Image
+                          src={playVideo}
+                          alt="play the video icon"
+                          className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
+                        />
+                      </div>
+                      <p>{`${name}_trailer`}</p>
+                    </div>
+                  ) : !videoTrailer?.name ? (
+                    <label
+                      htmlFor="videoTrailer"
+                      className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                    >
+                      <Image
+                        src={uploadVideo}
+                        alt="image-with-upload-image-text"
+                      />
+                      <input
+                        className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                        id="videoTrailer"
+                        type="file"
+                        accept="video/mp4,video/mov,video/avi"
+                        onChange={(e) => {
+                          handleVideoTrailer(e);
+                        }}
+                      />
+                      {videoTrailerStatus && (
+                        <p className="absolute top-[102%] text-[red] text-[14px]">
+                          {videoTrailerStatus}
+                        </p>
+                      )}
+                    </label>
+                  ) : (
+                    <div>
+                      <div className="w-fit relative ">
+                        <video
+                          src={URL.createObjectURL(videoTrailer)}
+                          alt={videoTrailer.name}
+                          className="h-[240px] rounded-lg "
+                        ></video>
+
+                        <Image
+                          src={CancelIcon}
+                          alt="cancel icon"
+                          className="absolute -top-[7px] -right-[11px]"
+                          onClick={(e) => {
+                            setVideoTrailer(null);
+                          }}
+                        />
+                        <Image
+                          src={playVideo}
+                          alt="play the video icon"
+                          className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
+                        />
+                      </div>
+                      <p>{videoTrailer.name}</p>
+                    </div>
+                  )}
+                </section>
+                <section className="flex flex-col gap-[8px]">
+                  <p>Attach File (Optional)</p>
+                  {typeof attachedFile === "string" ? (
+                    <div className="relative flex bg-[#E5ECF8] w-[200px] h-[90px] items-center justify-start p-[16px] rounded-lg gap-[30px]">
+                      <Image src={FileIcon} alt={attachedFile.name} />
+                      <Image
+                        src={CancelIcon}
+                        alt="cancel icon"
+                        className="absolute -top-[7px] -right-[11px]"
+                        onClick={(e) => {
+                          setAttachedFile(null);
+                        }}
+                      />
+                      <p>file.pdf</p>
+                    </div>
+                  ) : !attachedFile?.name ? (
+                    <label
+                      htmlFor="attachFile"
+                      className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                    >
+                      <input
+                        id="attachFile"
+                        className="outline-none min-[375px]:w-[200px] border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                        type="file"
+                        onChange={(e) => {
+                          handleAttachedFile(e);
+                        }}
+                        accept="application/pdf"
+                      />
+                      <Image
+                        src={uploadFile}
+                        alt="image-with-upload-file-text"
+                      />
+                    </label>
+                  ) : (
+                    <div className="relative flex bg-[#E5ECF8] w-[200px] h-[90px] items-center justify-start p-[16px] rounded-lg gap-[30px]">
+                      <Image src={FileIcon} alt={attachedFile.name} />
+                      <Image
+                        src={CancelIcon}
+                        alt="cancel icon"
+                        className="absolute -top-[7px] -right-[11px]"
+                        onClick={(e) => {
+                          setAttachedFile(null);
+                        }}
+                      />
+                      <p>{attachedFile.name}</p>
+                    </div>
+                  )}
+                </section>
+              </section>
+              <section className=" min-[375px]:w-[375px] md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1120px]">
+                <section className="flex justify-between items-center mb-[30px] w-full p-[16px]">
+                  <p className="text-[24px] ">Lesson</p>
+                  <Link
+                    href={`/admin/editcourse/${course_id}/addlesson`}
+                    onClick={() => setIsLoading(true)}
+                  >
+                    <button className="bg-[#2F5FAC] min-[375px]:px-[12px] min-[375px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff] md:text-[16px] hover:bg-[#5483D0]">
+                      + Add Lesson
+                    </button>
+                  </Link>
+                </section>
+                {/* Lesson Table */}
+                {lessons.length === 0 ? null : (
+                  <section className="hidden md:flex bg-[#E4E6ED] rounded-t-lg px-[24px] py-[10px] mx-[16px] min-[1440px]:m-[0px]">
+                    <section className="hidden md:block w-[56px] "></section>
+                    <section className="hidden md:block w-[48px] "></section>
+                    <section className="hidden md:block w-[500px] ">
+                      <p>Lesson name</p>
+                    </section>
+                    <section className="w-[396px] ">
+                      <p>Sub-lesson</p>
+                    </section>
+                    <section className="w-[120px] text-center">
+                      <p>Action</p>
+                    </section>
+                  </section>
+                )}
+
+                <section className="flex flex-col gap-[10px] md:gap-[0px]">
+                  {lessons
+                    .sort((a, b) => a.lesson_number - b.lesson_number)
+                    .map(({ name, sub_lessons, lesson_id }, index) => {
+                      return (
+                        <section
+                          key={index}
+                          className="flex flex-col min-[375px]:mx-auto md:mx-[16px] md:flex-row min-[375px]:gap-[16px] md:gap-[0px] bg-[#fff] min-[375px]:px-[16px] min-[375px]:py-[16px] md:px-[28px] md:py-[32px] min-[1440px]:m-[0px] min-[375px]:w-[350px] md:w-[736px] min-[1200px]:w-[1168px] min-[1440px]:w-[1120px] min-[375px]:rounded-lg md:rounded-none relative "
+                          draggable="true"
+                          onDragStart={() => {
+                            dragLesson.current = index;
+                            console.log(`Dragtart happens`);
+                          }}
+                          onDragEnter={() => {
+                            dragOverLesson.current = index;
+                            console.log(`DragEnter happens`);
+                          }}
+                          onDragEnd={() => {
+                            console.log(`DragEnd happens`);
+                            handleSortLesson();
+                          }}
+                          onDragOver={(e) => {
+                            console.log(`DragOver happens`);
+                            e.preventDefault();
                           }}
                         >
-                          <Image
-                            className="w-[24px] h-[24px]"
-                            src={deleteIcon}
-                            alt="delete-icon"
-                          />
-                          <p className="md:hidden">Delete</p>
-                        </ModalWindow>
-                        <Link
-                          href={`/admin/editcourse/${course_id}/editlesson/${lessons[index].lesson_id}`}
-                          onClick={() => console.log(index)}
-                          className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] md:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 md:p-0 md:hover:bg-transparent"
-                        >
-                          <Image
-                            className="w-[24px] h-[24px]"
-                            src={editIcon}
-                            alt="edit-icon"
-                          />
-                          <p className="md:hidden">Edit</p>
-                        </Link>
-                      </section>
-                    </section>
-                  );
-                })}
+                          <section className="w-[56px] min-[375px]:hidden md:block">
+                            <Image
+                              src={DragIcon}
+                              alt="drag-icon"
+                              className="absolute top-0 left-0"
+                            />
+                          </section>
+                          <section className="md:w-[48px] flex ">
+                            <p className="md:hidden basis-[110px]">
+                              Lesson No.
+                            </p>
+                            <p>{index + 1}</p>
+                          </section>
+                          <section className="md:w-[500px] flex">
+                            <p className="md:hidden basis-[110px]">Name</p>
+                            <p>{name}</p>
+                          </section>
+                          <section className="md:w-[396px] flex">
+                            <p className="md:hidden basis-[110px]">
+                              Sub-Lesson
+                            </p>
+                            <p>{sub_lessons?.length}</p>
+                          </section>
+                          <section className="md:w-[120px] flex justify-center gap-[17px]">
+                            <ModalWindow
+                              className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] md:bg-transparent hover:bg-[#C8CCDB] md:hover:bg-transparent rounded-lg md:p-0"
+                              modalHeader="Confirmation"
+                              modalBody="Are you sure you want to delete this lesson?"
+                              acceptText="Yes, I want to delete this lesson"
+                              declineText="No, keep it"
+                              onClick={() => {
+                                handleDeleteLesson(index, lesson_id);
+                              }}
+                            >
+                              <Image
+                                className="w-[24px] h-[24px]"
+                                src={deleteIcon}
+                                alt="delete-icon"
+                              />
+                              <p className="md:hidden">Delete</p>
+                            </ModalWindow>
+                            <Link
+                              href={`/admin/editcourse/${course_id}/editlesson/${lessons[index].lesson_id}`}
+                              onClick={() => console.log(index)}
+                              className="flex justify-center items-center basis-1/2 min-[375px]:bg-[#F1F2F6] md:bg-transparent hover:bg-[#C8CCDB] rounded-lg min-[375px]:p-2 md:p-0 md:hover:bg-transparent"
+                            >
+                              <Image
+                                className="w-[24px] h-[24px]"
+                                src={editIcon}
+                                alt="edit-icon"
+                              />
+                              <p className="md:hidden">Edit</p>
+                            </Link>
+                          </section>
+                        </section>
+                      );
+                    })}
+                </section>
+              </section>
             </section>
           </section>
         </section>
-      </section>
-    </section>
+      )}
+    </>
   );
 }

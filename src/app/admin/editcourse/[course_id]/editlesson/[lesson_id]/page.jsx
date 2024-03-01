@@ -18,7 +18,7 @@ import axios from "axios";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import { v4 as uuidv4 } from "uuid";
 import cloneDeep from "lodash/cloneDeep";
-import { set } from "lodash";
+import LoadingPage from "@/components/LoadingPage";
 export default function EditLessonWhenAdd({ params }) {
   const {
     name,
@@ -44,6 +44,7 @@ export default function EditLessonWhenAdd({ params }) {
   const [subLesson, setSubLesson] = useState(lesson[0]?.sub_lessons);
 
   const [courseName, setCourseName] = useState(name);
+  const [isLoading, setIsLoading] = useState(false);
   console.log(`sublesson`, subLesson);
   function handleAddSubLesson() {
     setSubLesson([

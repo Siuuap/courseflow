@@ -168,7 +168,7 @@ export default function DashBoardPage() {
                     href="/admin/addcourse"
                     onClick={() => setIsLoading(true)}
                   >
-                    <button className="bg-[#2F5FAC] min-[0px]:text-[6px] md:text-[16px] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff]  hover:bg-[#5483D0]">
+                    <button className="bg-[#2F5FAC] min-[0px]:text-[10px] md:text-[16px] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#fff]  hover:bg-[#5483D0]">
                       <p className="md:hidden">+ Course</p>
                       <p className="min-[0px]:hidden md:block">+ Add Course</p>
                     </button>

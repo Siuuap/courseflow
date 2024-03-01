@@ -54,7 +54,9 @@ export default function UserLoginPage() {
     <>
       <NavBar />
       <Image
+
         className="absolute top-0 -z-50 "
+
         src="/images/assets.png"
         alt="blackground"
         width={width}
@@ -62,7 +64,7 @@ export default function UserLoginPage() {
         priority={true}
       />
       <form
-        className="flex flex-col justify-between  items-start gap-[50px] mx-[auto] p-[14px] max-w-[453px]  bg-slate-100 mt-[150px]"
+        className="flex flex-col justify-between  items-start gap-[50px] mx-[auto] p-[14px] max-w-[453px]  mt-[150px]"
         onSubmit={handleSubmit}
       >
         <h1 className="text-[36px] text-[#22269E] w">Welcome back!</h1>
@@ -72,7 +74,7 @@ export default function UserLoginPage() {
           <input
             name="email"
             type="email"
-            className=" w-full h-[48px] p-[14px]"
+            className=" w-full h-[48px] p-[14px] border-[#D6D9E4] border-2 rounded-lg"
             placeholder="Enter Email"
             onChange={(event) => {
               setEmail(event.target.value);
@@ -85,7 +87,7 @@ export default function UserLoginPage() {
           <div>Password</div>
           <input
             name="password"
-            className=" w-full h-[48px] p-[14px]"
+            className=" w-full h-[48px] p-[14px] border-[#D6D9E4] border-2 rounded-lg"
             placeholder="Enter Password"
             type="password"
             onChange={(event) => {
@@ -99,14 +101,19 @@ export default function UserLoginPage() {
           )}
         </div>
 
-        <button className=" bg-slate-300 w-full h-[60px]" type="submit">
+        <button
+          className=" bg-[#2f69ac] text-white font-bold rounded-xl w-full h-[60px] hover:bg-[#686ef1] "
+          type="submit"
+        >
           Log in
         </button>
 
         <div className="flex gap-[5px]">
           <div>Don’t have an account?</div>
           <Link href="/register">
-            <div className=" text-[#2F5FAC] font-bold">Register</div>
+            <div className=" text-[#2F5FAC] font-bold hover:underline">
+              Register
+            </div>
           </Link>
         </div>
       </form>

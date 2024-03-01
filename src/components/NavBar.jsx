@@ -83,7 +83,8 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user/edit_profile");
-                      }}>
+                      }}
+                    >
                       <Image
                         src={ProfileIcon}
                         className=" mr-[10px]"
@@ -94,7 +95,8 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user");
-                      }}>
+                      }}
+                    >
                       <Image
                         src={MyCourseIcon}
                         className=" mr-[10px]"
@@ -113,7 +115,8 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user/desire_course");
-                      }}>
+                      }}
+                    >
                       <Image
                         src={DesireCourseIcon}
                         className=" mr-[10px]"

@@ -153,8 +153,8 @@ export default function EditLessonWhenAdd({ params }) {
       <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
         {/* Box2 upper*/}
         <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px] md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px] z-[2]">
-          <div className="flex w-full items-center justify-between ">
-            <div className="flex items-center gap-[16px]">
+          <div className="flex w-full items-center xs:gap-[8px] justify-between ">
+            <div className="flex items-center xs:gap-[6px] md:gap-[16px]">
               <button
                 onClick={() => {
                   cancleEditLesson();
@@ -164,14 +164,14 @@ export default function EditLessonWhenAdd({ params }) {
               </button>
 
               <div>
-                <p className="min-[375px]:text-[14px] font-medium leading-[30px]  text-[#9AA1B9]">
+                <p className="xs:text-[12px] md:text-[16px] font-medium leading-[30px] text-[#9AA1B9]">
                   Course{" "}
                   <span className="text-[#000]">
                     &apos;{courseName}&apos; &apos;{lessonName}
                     &apos;
                   </span>
                 </p>
-                <div className="flex">
+                <div className="flex gap-[8px]">
                   <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
                     Edit Lesson
                   </p>
@@ -182,7 +182,7 @@ export default function EditLessonWhenAdd({ params }) {
               </div>
             </div>
 
-            <div className="flex gap-[10px] ">
+            <div className="flex xs:gap-[8px] md:gap-[10px]">
               <button
                 className="bg-[#fff] border border-solid border-[#F47E20] min-[0px]:px-[12px] min-[0px]:py-[8px] md:px-[32px] md:py-[18px] rounded-[12px] text-[#F47E20] md:text-[16px] hover:border-[#FBAA1C] hover:text-[#FBAA1C]"
                 onClick={() => {

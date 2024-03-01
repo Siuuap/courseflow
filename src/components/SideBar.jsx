@@ -7,8 +7,7 @@ import TaskIcon from "@/assets/images/TaskIcon.svg";
 import LogoutIcon from "@/assets/images/LogoutIcon.svg";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-
-export default function SideBar() {
+export default function SideBar({ setIsLoading }) {
   return (
     <section className="border border-solid border-[#F6F7FC] border-r-[#D6D9E4] h-screen fixed bg-[#fff] w-[240px] ">
       <div className="flex flex-col items-center p-[24px] pt-[40px]">
@@ -44,6 +43,7 @@ export default function SideBar() {
       <div
         className="flex gap-[16px] py-[16px] px-[24px] hover:bg-[#F1F2F6] cursor-pointer"
         onClick={() => {
+          setIsLoading(true);
           signOut();
         }}
       >

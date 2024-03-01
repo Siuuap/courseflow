@@ -54,6 +54,16 @@ export default function Learning({ params }) {
         const res = await axios.get(
           `/api/learning/${courseId}?userid=${session?.user?.userId}`
         );
+        console.log(
+          res.data.data[0].courses.lessons.sort((a, b) => {
+            return a.lesson_number - b.lesson_number;
+          })
+        );
+        res.data.data[0].courses.lessons.map((lesson) => {
+          return lesson.sub_lessons.sort((a, b) => {
+            return a.sub_lesson_number - b.sub_lesson_number;
+          });
+        });
 
         setCourseById(res.data.data);
 

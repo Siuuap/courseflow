@@ -16,17 +16,19 @@ import Footer from "@/components/Footer";
 import { useSession } from "next-auth/react";
 import cloneDeep from "lodash/cloneDeep";
 import { useRouter } from "next/navigation";
+import LoadingPage from "@/components/LoadingPage";
 
 export default function Learning({ params }) {
   const { data: session, status } = useSession();
   const [courseById, setCourseById] = useState([]);
   const [currentSubLesson, setcurrentSubLesson] = useState({});
-  const [isLoading, setIsloading] = useState(false);
+
   const [subLessonProgress, setSubLessonProgress] = useState([]);
   const [progress, setProgress] = useState(0);
   const [allSubLesson, setAllSubLesson] = useState({});
   const [assignmentStatus, setAssignmentStatus] = useState([]);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     function sumProgress() {
@@ -39,43 +41,45 @@ export default function Learning({ params }) {
       setProgress(Math.round(sumProgress));
     }
     sumProgress();
+    progress !== false && setIsLoading(false);
   }, [subLessonProgress]);
 
   function handleSubLesson(subLesson, index) {
     setcurrentSubLesson(subLesson);
   }
 
-  useEffect(() => {
-    async function fetchCourseById() {
-      console.log(status);
-      if (status === "authenticated") {
-        const courseId = params.courseid;
-        console.log(courseId);
-        const res = await axios.get(
-          `/api/learning/${courseId}?userid=${session?.user?.userId}`
-        );
-        console.log(
-          res.data.data[0].courses.lessons.sort((a, b) => {
-            return a.lesson_number - b.lesson_number;
-          })
-        );
-        res.data.data[0].courses.lessons.map((lesson) => {
-          return lesson.sub_lessons.sort((a, b) => {
-            return a.sub_lesson_number - b.sub_lesson_number;
-          });
+  async function fetchCourseById() {
+    console.log(status);
+    if (status === "authenticated") {
+      const courseId = params.courseid;
+      console.log(courseId);
+      const res = await axios.get(
+        `/api/learning/${courseId}?userid=${session?.user?.userId}`
+      );
+      console.log(
+        res.data.data[0].courses.lessons.sort((a, b) => {
+          return a.lesson_number - b.lesson_number;
+        })
+      );
+      res.data.data[0].courses.lessons.map((lesson) => {
+        return lesson.sub_lessons.sort((a, b) => {
+          return a.sub_lesson_number - b.sub_lesson_number;
         });
+      });
 
-        setCourseById(res.data.data);
+      setCourseById(res.data.data);
 
-        setSubLessonProgress(res?.data?.data[0]?.users_sub_lessons);
-        setcurrentSubLesson(res.data.data[0].courses.lessons[0].sub_lessons[0]);
-        setIsloading(true);
-        setAllSubLesson(
-          res.data.data[0].courses.lessons.map((lesson) => lesson.sub_lessons)
-        );
-        setAssignmentStatus(res.data.data[0].users_sub_lessons);
-      }
+      setSubLessonProgress(res?.data?.data[0]?.users_sub_lessons);
+      setcurrentSubLesson(res.data.data[0].courses.lessons[0].sub_lessons[0]);
+
+      setAllSubLesson(
+        res.data.data[0].courses.lessons.map((lesson) => lesson.sub_lessons)
+      );
+      setAssignmentStatus(res.data.data[0].users_sub_lessons);
     }
+  }
+
+  useEffect(() => {
     fetchCourseById();
   }, [status]);
 
@@ -172,46 +176,52 @@ export default function Learning({ params }) {
 
   return (
     <>
-      <NavBar />
-      <div className="page-container w-[1440px] flex justify-items-center mx-auto mt-[80px] mb-[10px]">
-        {isLoading && subLessonProgress && currentSubLesson && (
-          <LessonAccordion
-            courseById={courseById}
-            handleSubLesson={handleSubLesson}
-            subLessonProgress={subLessonProgress}
-            progress={progress}
-            currentSubLesson={currentSubLesson}
-          />
-        )}
-        {isLoading == true && currentSubLesson && (
-          <CourseVideo
-            courseById={courseById}
-            currentSubLesson={currentSubLesson}
-            handleUpdateSubProgress={handleUpdateSubProgress}
-            session={session}
-            params={params}
-            subLessonProgress={setSubLessonProgress}
-            assignmentStatus={assignmentStatus}
-            setAssignmentStatus={setAssignmentStatus}
-            key={currentSubLesson.sub_lesson_id}
-          />
-        )}
-      </div>
-      <div className="btn-container flex flex-row justify-between w-[1440px] h-[100px] mx-[150px] ">
-        <button
-          className="text-[#2F5FAC] font-bold w-[162px] h-[60px]"
-          onClick={() => handleButton(-1)}
-        >
-          Previous Lesson
-        </button>
-        <button
-          className="bg-[#2F5FAC] text-white font-bold w-[162px] h-[60px] rounded-lg"
-          onClick={() => handleButton(1)}
-        >
-          Next Lesson
-        </button>
-      </div>
-      <Footer />
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <>
+          <NavBar />
+          <div className="page-container w-[1440px] flex justify-items-center mx-auto mt-[80px] mb-[10px]">
+            {subLessonProgress && currentSubLesson && (
+              <LessonAccordion
+                courseById={courseById}
+                handleSubLesson={handleSubLesson}
+                subLessonProgress={subLessonProgress}
+                progress={progress}
+                currentSubLesson={currentSubLesson}
+              />
+            )}
+            {currentSubLesson && (
+              <CourseVideo
+                courseById={courseById}
+                currentSubLesson={currentSubLesson}
+                handleUpdateSubProgress={handleUpdateSubProgress}
+                session={session}
+                params={params}
+                subLessonProgress={setSubLessonProgress}
+                assignmentStatus={assignmentStatus}
+                setAssignmentStatus={setAssignmentStatus}
+                key={currentSubLesson.sub_lesson_id}
+              />
+            )}
+          </div>
+          <div className="btn-container flex flex-row justify-between w-[1440px] h-[100px] mx-[150px] ">
+            <button
+              className="text-[#2F5FAC] font-bold w-[162px] h-[60px]"
+              onClick={() => handleButton(-1)}
+            >
+              Previous Lesson
+            </button>
+            <button
+              className="bg-[#2F5FAC] text-white font-bold w-[162px] h-[60px] rounded-lg"
+              onClick={() => handleButton(1)}
+            >
+              Next Lesson
+            </button>
+          </div>
+          <Footer />
+        </>
+      )}
     </>
   );
 }
@@ -239,12 +249,17 @@ function LessonAccordion({
         <p className="text-[#F47E20] leading-[21px] mb-[26px]">Course</p>
         <div className="w-[310px] h-[86px]">
           <h1 className="text-bold w-[310px] h-[30px]">
-            {course.courses.name}
+            {course?.courses?.name}
           </h1>
-          <p>{course.courses.description.slice(0, 50)}</p>
+          <p>{course?.courses?.description.slice(0, 50)}</p>
         </div>
         <div className="progress h-[40px]">
-          {progress === 100 ? (
+          {!progress ? (
+            <>
+              <span> 0% complete</span>
+              <Progress className="w-[310px] rounded mt-[15px] " value="0" />
+            </>
+          ) : progress === 100 ? (
             <p className="text-[24px] text-white bg-[#2FAC8E]  h-[40px] rounded w-[358px] mx-auto text-center ">
               completed
             </p>
@@ -261,7 +276,7 @@ function LessonAccordion({
       </div>
       <div className="lesson-accordion mt-[20px] overflow-auto h-[600px]">
         <Accordion defaultIndex={[0]} allowMultiple>
-          {course.courses.lessons.map((lesson, i) => (
+          {course?.courses?.lessons.map((lesson, i) => (
             <AccordionItem key={i}>
               <h2>
                 <AccordionButton>
@@ -274,7 +289,7 @@ function LessonAccordion({
                   <AccordionIcon />
                 </AccordionButton>
               </h2>
-              {lesson.sub_lessons.map((subLesson, i) => (
+              {lesson?.sub_lessons.map((subLesson, i) => (
                 <AccordionPanel
                   pb={4}
                   key={i}
@@ -366,7 +381,7 @@ function CourseVideo({
     <div className="my-[30px]">
       <div className="video-container ml-[15px]">
         <h2 className="font-medium text-4xl mb-[30px]">
-          {course.courses.name}
+          {course?.courses.name}
         </h2>
         <video
           width="740"
@@ -392,7 +407,7 @@ function CourseVideo({
                   ) : (
                     <input
                       placeholder="Answer..."
-                      className="w-[692px] h-[96px] rounded-md mt-[20px]"
+                      className="w-[692px] h-[96px] rounded-md mt-[20px] pl-[10px]"
                       value={answer}
                       onChange={(e) => setAnswer(e.target.value)}
                     ></input>

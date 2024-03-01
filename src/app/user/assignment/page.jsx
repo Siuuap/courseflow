@@ -130,8 +130,8 @@ export default function Assignment() {
         <h1 className="text-[36px]">My Assignments</h1>
         <div className="mt-[50px] mb-[150px]">
           <>
-            <Tabs>
-              <TabList>
+            <Tabs isFitted>
+              <TabList className="w-[1152px] ">
                 <Tab>All</Tab>
                 <Tab>Pending</Tab>
                 <Tab>In progress</Tab>

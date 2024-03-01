@@ -40,9 +40,11 @@ function NavBar() {
   };
 
   return (
-    <div className="shadow-md">
-      <nav className="flex justify-center items-center px-16 text-base font-bold leading-6 text-center bg-white shadow-sm max-md:px-5">
-        <div className="flex gap-5 justify-between w-full max-w-[1120px] max-md:flex-wrap max-md:max-w-full">
+
+    <div className="shadow-md ">
+      <nav className="relative flex items-center justify-between bg-white h-[88px] px-[80px]">
+        <div className="min-[375px]:-left-[200px]">
+
           <Link href="/">
             <Image
               src="/images/iconCourseFlow.png"

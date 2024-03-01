@@ -3,8 +3,8 @@ import Image from "next/image";
 function Feature() {
   return (
     <div className="feature relative bg-[#FFF] flex items-center justify-center min-[375px]:py-[50px] min-[1440px]:h-[1111px] min-[375px]:w-[375px]">
-      <div className="box-border display:flex min-[1440px]:h-[780px] min-[1440px]:w-[1120px]">
-        <div className="box-content1 display:flex min-[375px]:flex-col min-[375px]:items-center min-[375px]:justify-center min-[375px]:left-[150px] min-[1440px]:flex-row min-[1440px]:h-[330px]">
+      <div className="box-border display:flex px-10 min-[1440px]:h-[780px] min-[1440px]:w-[1120px]">
+        <div className="box-content1 display:flex flex-col items-center justify-center min-[375px]:left-[150px] min-[1440px]:flex-row min-[1440px]:h-[330px]">
           <Image
             className="image rounded-[8px] min-[1440px]:w-[454px] min-[1440px]:h-[330px]"
             src="/images/feature1.png"

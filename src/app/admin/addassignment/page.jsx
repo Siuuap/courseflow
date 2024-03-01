@@ -19,6 +19,8 @@ export default function AddAssignmentPage() {
   const [assignment, setAssignment] = useState("");
   const [duration, setDuration] = useState(1);
 
+  const [isLoading, setIsLoading] = useState(true)
+
   const durationRange = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
   const [checkFillCourse, setCheckFillCourse] = useState(true);
@@ -99,7 +101,7 @@ export default function AddAssignmentPage() {
     <section className="flex justify-center mx-auto relative min-[1440px]:w-[1440px]">
       <div className="min-[0px]:hidden min-[1440px]:block ">
         {/* Box1 SideBar*/}
-        <SideBar />
+        <SideBar isLoading={isLoading} setIsLoading={setIsLoading} />
       </div>
 
       <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">

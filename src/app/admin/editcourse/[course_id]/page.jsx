@@ -396,9 +396,12 @@ export default function EditCourse({ params }) {
         return a.lesson_number - b.lesson_number;
       });
 
-    console.log(`lessonData`, lessonData);
+    // console.log(`lessonData`, lessonData);
+    let updatedLesson = [];
+    let newLesson = [];
     for (let i = 0; i < lessonData.length; i++) {
       if (latestLessonIdFromServer.includes(lessonData[i].lesson_id)) {
+        updatedLesson.push(lessonData[i]);
         try {
           lessonData[i].lesson_number = i + 1;
           console.log(`lessonData${i}`, lessonData[i]);
@@ -411,6 +414,7 @@ export default function EditCourse({ params }) {
           console.log(error);
         }
       } else {
+        newLesson.push(lessonData[i]);
         try {
           const response = await axios.post("/api/lessons", lessonData[i]);
           console.log(response);
@@ -419,7 +423,8 @@ export default function EditCourse({ params }) {
         }
       }
     }
-
+    console.log(`updatedLesson`, updatedLesson);
+    console.log(`newLesson`, newLesson);
     //sublesson
     await HandleSubLesson(lessonData);
     router.push(`/admin/courselist`);
@@ -615,8 +620,8 @@ export default function EditCourse({ params }) {
           <section className="bg-[#F6F7FC] flex flex-col mx-auto min-[1440px]:ml-[240px]">
             {/* Box2 upper*/}
             <section className="border border-solid border-[#F6F7FC] bg-white flex min-[0px]:flex-col justify-between items-center rounded-lg min-[0px]:w-[375px] min-[0px]:p-[16px]  md:w-[768px] min-[1200px]:w-[1200px] min-[1440px]:w-[1200px] min-[1440px]:justify-between min-[1440px]:px-[40px] min-[1440px]:py-[16px] mx-auto fixed gap-[10px] md:gap-[0px] z-10">
-              <div className="flex w-full items-center justify-between">
-                <div className="flex gap-[8px] items-center">
+              <div className="flex w-full items-center justify-between gap-[8px]">
+                <div className="flex xs:gap-[8px] md:gap-[16px] items-center">
                   <Link
                     href="/admin/courselist"
                     onClick={() => {
@@ -627,7 +632,7 @@ export default function EditCourse({ params }) {
                       <Image src={arrowBack} alt="arrow back icon" />
                     </button>
                   </Link>
-                  <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px] text-[#9AA1B9]">
+                  <p className="xs:text-[12px] md:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px] text-[#9AA1B9]">
                     Course{" "}
                     <span className="text-[#000]">&apos;{name}&apos;</span>
                   </p>

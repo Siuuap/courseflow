@@ -40,9 +40,11 @@ function NavBar() {
   };
 
   return (
+
     <div className="shadow-md ">
       <nav className="relative flex items-center justify-between bg-white h-[88px] px-[80px]">
         <div className="min-[375px]:-left-[200px]">
+
           <Link href="/">
             <Image
               src="/images/iconCourseFlow.png"
@@ -53,15 +55,15 @@ function NavBar() {
             />
           </Link>
         </div>
-        <ul className="md:flex items-center gap-[60px]">
-          <li className="text-[#191C77] font-bold text-[16px] leading-6">
+        <ul className="flex gap-5 justify-between py-3.5 pl-6">
+          <li className="my-auto text-violet-950">
             <Link href="/course">Our Courses</Link>
           </li>
 
           <li>
             {status === "unauthenticated" && (
               <Link href="/login">
-                <Button className=" bg-[#2F5FAC] px-8 py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white font-bold text-[16px] leading-6">
+                <Button className=" justify-center px-8 py-5 text-white whitespace-nowrap bg-blue-800 rounded-xl shadow-lg max-md:px-5">
                   Login
                 </Button>
               </Link>
@@ -83,7 +85,8 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user/edit_profile");
-                      }}>
+                      }}
+                    >
                       <Image
                         src={ProfileIcon}
                         className=" mr-[10px]"
@@ -94,7 +97,8 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user");
-                      }}>
+                      }}
+                    >
                       <Image
                         src={MyCourseIcon}
                         className=" mr-[10px]"
@@ -113,7 +117,8 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user/desire_course");
-                      }}>
+                      }}
+                    >
                       <Image
                         src={DesireCourseIcon}
                         className=" mr-[10px]"

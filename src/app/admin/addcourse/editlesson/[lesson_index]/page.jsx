@@ -112,7 +112,7 @@ export default function EditLessonWhenAdd({ params }) {
                     &apos;{titleCourseName}&apos; &apos;{titleLessonName}&apos;
                   </span>
                 </p>
-                <div className="flex">
+                <div className="flex gap-[8px]">
                   <p className="min-[375px]:text-[20px] font-medium leading-[30px] min-[1440px]:text-[24px]">
                     Add Lesson
                   </p>

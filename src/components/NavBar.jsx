@@ -40,8 +40,8 @@ function NavBar() {
   };
 
   return (
-    <div className="shadow-md px-[80px]">
-      <nav className="relative flex items-center justify-between bg-white h-[88px]">
+    <div className="shadow-md ">
+      <nav className="relative flex items-center justify-between bg-white h-[88px] px-[80px]">
         <div className="min-[375px]:-left-[200px]">
           <Link href="/">
             <Image

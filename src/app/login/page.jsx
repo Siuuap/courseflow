@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
@@ -10,7 +10,7 @@ export default function UserLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
-
+  const [width, setWidth] = useState(window.innerWidth);
   const router = useRouter();
 
   const handleSubmit = async (event) => {
@@ -40,15 +40,24 @@ export default function UserLoginPage() {
       setError(true);
     }
   };
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
 
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [width]);
   return (
     <>
       <NavBar />
       <Image
-        className="absolute pt-[20px] -z-50 "
+        className="absolute top-0 -z-50 "
         src="/images/assets.png"
         alt="blackground"
-        width={1459.64}
+        width={width}
         height={839}
         priority={true}
       />

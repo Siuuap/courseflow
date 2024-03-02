@@ -255,7 +255,9 @@ export default function DashBoardPage() {
                                 Price
                               </p>
                               <p className="min-[1200px]:w-full min-[1200px]:text-center">
-                                {price}
+                                {price.toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                })}
                               </p>
                             </div>
 

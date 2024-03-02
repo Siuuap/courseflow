@@ -21,11 +21,19 @@ export default function CourseDetail({ params, searchParams }) {
   const router = useRouter();
   const id = params?.course_id;
   const status = searchParams.status || null;
-  console.log(status);
+  const [readMore, setReadMore] = useState(false);
   const { data: session } = useSession();
   async function fetchCourse() {
     const res = await axios.get(`/api/courses/${id}`);
     const course = res.data.data;
+    course[0].lessons.sort((a, b) => {
+      return a.lesson_number - b.lesson_number;
+    });
+    course[0].lessons.map((lesson) =>
+      lesson.sub_lessons.sort((a, b) => {
+        return a.sub_lesson_number - b.sub_lesson_number;
+      })
+    );
     setCourseById(course);
     setIsLoading(false);
   }
@@ -76,9 +84,38 @@ export default function CourseDetail({ params, searchParams }) {
               />
               <section className="detail-section my-12 w-[740px] ">
                 <h1 className=" text-[36px] font-medium ">Course Detail</h1>
-                <p className="text-[#646D89] mt-6">
-                  {courseById[0]?.description}
-                </p>
+                {!readMore && (
+                  <p
+                    className="text-[#646D89] mt-6"
+                    key={courseById[0]?.course_id}
+                  >
+                    {courseById[0]?.description.slice(0, 550)}
+
+                    {courseById[0]?.description.length > 550 && (
+                      <span
+                        role="button"
+                        className="text-[#5483D0] "
+                        onClick={() => setReadMore(!readMore)}
+                      >
+                        ...read more
+                      </span>
+                    )}
+                  </p>
+                )}
+                {readMore && (
+                  <p className="text-[#646D89] mt-6">
+                    {courseById[0]?.description}
+                    {courseById[0]?.description.length > 550 && (
+                      <span
+                        role="button"
+                        className="text-[#5483D0]"
+                        onClick={() => setReadMore(false)}
+                      >
+                        ...show less
+                      </span>
+                    )}
+                  </p>
+                )}
               </section>
               <section>
                 <h1 className="font-medium text-3xl my-[24px]">

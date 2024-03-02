@@ -168,7 +168,7 @@ export default function Learning({ params }) {
 
       result >= 0 && result < allSub.length
         ? setcurrentSubLesson(allSub[result])
-        : window.confirm(`go to "My Courses" page?`)
+        : window?.confirm(`go to "My Courses" page?`)
         ? router.push("/user")
         : null;
     }

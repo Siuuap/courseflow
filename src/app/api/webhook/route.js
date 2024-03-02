@@ -14,7 +14,7 @@ export async function POST(request, response) {
     event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
   } catch (error) {
     console.log(`error from stripe`, error);
-    return Response.json({ WebhookError: error.message }, { status: 418 });
+    return Response.json({ WebhookError: error.message }, { status: 400 });
   }
 
   // Handle the event
@@ -45,6 +45,7 @@ export async function POST(request, response) {
           console.log(error);
           return Response.json({ error }, { status: 400 });
         }
+        console.log(`data`, data);
         const users_coursesUpdate = await supabase
           .from("users_courses")
           .insert([{ user_id: data[0].user_id, course_id: data[0].course_id }])

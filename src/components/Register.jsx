@@ -12,7 +12,7 @@ const RegisterForm = () => {
     email: "",
     password: "",
   });
-  const [width, setWidth] = useState(window.innerWidth);
+
   const { register } = useAuth();
   const [error, setError] = useState("");
   const [fullnameError, setfullnameError] = useState("");
@@ -96,25 +96,13 @@ const RegisterForm = () => {
       const response = await register(data);
     }
   };
-  useEffect(() => {
-    const handleResize = () => {
-      setWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [width]);
 
   return (
     <>
-      <Image
-        className="my-auto  absolute pt-[20px] -z-20 top-0 "
+      <img
+        className="my-auto absolute pt-[20px] -z-20 top-0 w-full"
         src="/images/assets.png"
         alt="blackground"
-        width={width}
-        height={839}
       />
       <section className="flex gap-0.5 justify-between px-5 mt-24 items-start  w-full max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
         <div className="self-start rounded-full h-[73px] w-[73px]" />

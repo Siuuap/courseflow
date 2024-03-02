@@ -9,21 +9,54 @@ import SubFooter from "@/components/SubFooter";
 import Footer from "@/components/Footer";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import LoadingPage from "@/components/LoadingPage";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-export default function CourseDetail({ params }) {
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+export default function CourseDetail({ params, searchParams }) {
   const [courseById, setCourseById] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const router = useRouter();
   const id = params?.course_id;
-
+  const status = searchParams.status || null;
+  console.log(status);
+  const { data: session } = useSession();
   async function fetchCourse() {
     const res = await axios.get(`/api/courses/${id}`);
     const course = res.data.data;
     setCourseById(course);
     setIsLoading(false);
   }
+  console.log(courseById);
+
+  async function subscribeToCourse() {
+    const data = {
+      course_id: courseById[0]?.course_id,
+      user_id: session?.user.userId,
+      price: courseById[0]?.price,
+      course_name: courseById[0]?.name,
+    };
+
+    const response = await axios.post(`/api/checkout`, data);
+    console.log(`response`, response);
+    router.push(response.data.url);
+    console.log(`response from checkout`, response);
+  }
 
   useEffect(() => {
+    if (status === "success") {
+      toast.success("Thank you for subscribing !", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+    } else if (status === "fail") {
+      toast.error("Payment fail. Please try again.", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+    }
     fetchCourse();
   }, []);
 
@@ -69,11 +102,17 @@ export default function CourseDetail({ params }) {
                 </h1>
                 <p className="text-[#646D89] mt-2">{courseById[0]?.summary}</p>
                 <p className="text-2xl font-bold text-[#646D89] mt-3">
-                  THB {courseById[0]?.price + ".00"}
+                  THB{" "}
+                  {courseById[0]?.price.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}
                 </p>
               </div>
               <div className="sticky-box-btn-container border-t-2 border-[#d6d9e7] mt-6">
-                <ConfirmationModal course={courseById} />
+                <ConfirmationModal
+                  course={courseById}
+                  subscribeToCourse={subscribeToCourse}
+                />
               </div>
             </div>
           </div>
@@ -87,6 +126,7 @@ export default function CourseDetail({ params }) {
         </>
       )}
       <SubFooter />
+      <ToastContainer />
       <Footer />
     </>
   );

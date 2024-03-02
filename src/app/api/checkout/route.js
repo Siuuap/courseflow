@@ -23,8 +23,8 @@ export async function POST(request) {
       },
     ],
     mode: "payment",
-    success_url: `http://localhost:3000/course/${course_id}?status=success`,
-    cancel_url: `http://localhost:3000/course/${course_id}?status=fail`,
+    success_url: `/course/${course_id}?status=success`,
+    cancel_url: `/course/${course_id}?status=fail`,
   });
   console.log(`session`, session);
   const orderData = {

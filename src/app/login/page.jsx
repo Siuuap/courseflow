@@ -10,7 +10,7 @@ export default function UserLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
-  const [width, setWidth] = useState(window.innerWidth);
+  const [width, setWidth] = useState(window?.innerWidth);
   const router = useRouter();
 
   const handleSubmit = async (event) => {
@@ -42,7 +42,7 @@ export default function UserLoginPage() {
   };
   useEffect(() => {
     const handleResize = () => {
-      setWidth(window.innerWidth);
+      setWidth(window?.innerWidth);
     };
     window.addEventListener("resize", handleResize);
 
@@ -54,9 +54,7 @@ export default function UserLoginPage() {
     <>
       <NavBar />
       <Image
-
         className="absolute top-0 -z-50 "
-
         src="/images/assets.png"
         alt="blackground"
         width={width}

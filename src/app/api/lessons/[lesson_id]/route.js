@@ -34,9 +34,10 @@ export async function DELETE(req, { params }) {
     }
   } catch (error) {
     console.log(`error before sending data to supabase`, error);
+    return Response.json({ message: "Cannot delete lesson", error: error });
   }
 
-  return Response.json({ message: "Create new lesson successfully" });
+  return Response.json({ message: "Delete lesson successfully" });
 }
 
 export async function PUT(request, { params }) {

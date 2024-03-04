@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { supabaseAdmin } from "@/utils/db";
 
@@ -17,6 +17,8 @@ import CancelIcon from "@/assets/images/CancelIcon.svg";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import { v4 as uuidv4 } from "uuid";
 import cloneDeep from "lodash/cloneDeep";
+import VideoComponent from "@/components/VideoComponent";
+import playVideo from "@/assets/images/playVideo.svg";
 export default function AddLesson() {
   const router = useRouter();
 
@@ -242,11 +244,7 @@ export default function AddLesson() {
                           </label>
                         ) : (
                           <div className="relative w-fit">
-                            <video
-                              src={URL.createObjectURL(video)}
-                              className="relative h-[200px]"
-                              accept="video/mov, video/mp4, video/avi"
-                            ></video>
+                            <VideoComponent video={video} />
                             <Image
                               src={CancelIcon}
                               alt="cancel icon"
@@ -254,6 +252,11 @@ export default function AddLesson() {
                               onClick={(e) => {
                                 handleDeleteSubLessonVideo(e, index);
                               }}
+                            />
+                            <Image
+                              src={playVideo}
+                              alt="play the video icon"
+                              className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                             />
                           </div>
                         )}

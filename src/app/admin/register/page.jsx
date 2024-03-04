@@ -60,7 +60,7 @@ export default function AdminRegisterPage() {
           <Image
             className="mb-[24px] w-[315px]"
             src={CourseFlowIcon}
-            alt="course-flow-icon"
+            alt="course flow icon"
             priority
           />
           <p className="text-center text-[24px] text-[#646D89] font-bold leading-[30px]">

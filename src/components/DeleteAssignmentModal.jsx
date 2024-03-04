@@ -32,8 +32,8 @@ function DeleteAssignmentModal({ subLessonId, type, setCheck }) {
       if (error) throw new Error("Cannot delete this assignment");
 
       if (type === 1) router.push("/admin/assignment");
-      if (type === 2) setCheck(1)
-   
+      if (type === 2) setCheck(1);
+
       onClose();
     } catch {
       console.log("Cannot delete this assignment");
@@ -42,7 +42,6 @@ function DeleteAssignmentModal({ subLessonId, type, setCheck }) {
 
   return (
     <>
-
       {type === 1 && (
         <section
           className=" flex justify-end min-[375px]:w-[350px] min-[768px]:w-[743px]  min-[1200px]:w-[1200px] min-[1440px]:w-[1120px] text-[#2F5FAC] font-bold hover:underline"
@@ -60,12 +59,11 @@ function DeleteAssignmentModal({ subLessonId, type, setCheck }) {
           <Image
             className="min-[1200px]:w-[24px] min-[1200px]:h-[24px]"
             src={deleteIcon}
-            alt="delete-icon"
+            alt="delete icon"
           />
           <p className="min-[1200px]:hidden">Delete</p>
         </button>
       )}
-
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

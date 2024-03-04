@@ -16,10 +16,13 @@ import { useRouter } from "next/navigation";
 import CancelIcon from "@/assets/images/CancelIcon.svg";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import cloneDeep from "lodash/cloneDeep";
+import VideoComponent from "@/components/VideoComponent";
+import playVideo from "@/assets/images/playVideo.svg";
 export default function EditLessonWhenAdd({ params }) {
   const router = useRouter();
   const course_id = params.course_id;
   const index = params.lesson_index;
+
   const { name, lessons, setLessons } = useLessonContext();
 
   const titleCourseName = name;
@@ -30,7 +33,7 @@ export default function EditLessonWhenAdd({ params }) {
     ...lessonsClone[index]?.subLesson,
   ]);
   const [lessonNameStatus, setLessonNameStatus] = useState("");
-
+  console.log(`lessonsClone`, lessonsClone);
   function handleAddSubLesson() {
     setSubLesson([...subLesson, { subLessonName: "", video: null }]);
   }
@@ -43,6 +46,7 @@ export default function EditLessonWhenAdd({ params }) {
     newSubLesson.splice(index, 1);
     setSubLesson(newSubLesson);
   }
+
   function handleDeleteSubLessonVideo(e, index) {
     const newSubLesson = [...subLesson];
     newSubLesson[index].video = null;
@@ -66,7 +70,8 @@ export default function EditLessonWhenAdd({ params }) {
     setSubLesson(subLessonList);
   }
 
-  function handleUpdateLesson(e, index) {
+  function handleUpdateLesson() {
+    console.log(`index`, index);
     setLessonNameStatus("");
     if (!lessonName) {
       setLessonNameStatus("Lesson Name is required");
@@ -78,7 +83,8 @@ export default function EditLessonWhenAdd({ params }) {
       }
     }
 
-    const newLesson = [...lessonsClone];
+    const newLesson = cloneDeep(lessonsClone);
+    console.log(`newLesson`, newLesson);
     const data = {
       lessonName: lessonName,
       subLesson: subLesson,
@@ -237,11 +243,17 @@ export default function EditLessonWhenAdd({ params }) {
                           </label>
                         ) : (
                           <div className="relative w-fit">
-                            <video
+                            <VideoComponent video={video} />
+                            {/* <video
                               src={URL.createObjectURL(video)}
                               className="relative w-[400px]"
                               accept="video/mov, video/mp4, video/avi"
-                            ></video>
+                            ></video> */}
+                            <Image
+                              src={playVideo}
+                              alt="play the video icon"
+                              className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
+                            />
                             <Image
                               src={CancelIcon}
                               alt="cancel icon"

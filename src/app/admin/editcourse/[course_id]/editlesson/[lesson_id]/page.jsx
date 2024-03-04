@@ -19,6 +19,8 @@ import HamburgerMenu from "@/components/HamburgerMenu";
 import { v4 as uuidv4 } from "uuid";
 import cloneDeep from "lodash/cloneDeep";
 import LoadingPage from "@/components/LoadingPage";
+import VideoComponent from "@/components/VideoComponent";
+import playVideo from "@/assets/images/playVideo.svg";
 export default function EditLessonWhenAdd({ params }) {
   const {
     name,
@@ -44,9 +46,10 @@ export default function EditLessonWhenAdd({ params }) {
   const [subLesson, setSubLesson] = useState(lesson[0]?.sub_lessons);
 
   const [courseName, setCourseName] = useState(name);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(false);
     if (!name) {
       setIsLoading(true);
       router.push(`/admin/editcourse/${course_id}`);
@@ -137,7 +140,7 @@ export default function EditLessonWhenAdd({ params }) {
       lesson_id: lesson_id,
       sub_lessons: subLesson,
     };
-    const lessonsClone = [...lessons];
+    const lessonsClone = cloneDeep(lessons);
 
     lessonsClone.find((lesson, index) => {
       if (lesson.lesson_id === lesson_id) {
@@ -147,8 +150,12 @@ export default function EditLessonWhenAdd({ params }) {
     });
     router.push(`/admin/editcourse/${course_id}`);
   }
+
   function cancleEditLesson() {
-    setDeletedSubLessonId([]);
+    if (!deletedLessonId) {
+      setDeletedSubLessonId([]);
+    }
+
     router.push(`/admin/editcourse/${course_id}`);
   }
 
@@ -291,11 +298,12 @@ export default function EditLessonWhenAdd({ params }) {
                               <p>Video *</p>
                               {typeof video_url === "string" ? (
                                 <div className="relative w-fit">
-                                  <video
+                                  <VideoComponent video={video_url} />
+                                  {/* <video
                                     src={video_url}
                                     className="relative w-[400px]"
                                     accept="video/mov, video/mp4, video/avi"
-                                  ></video>
+                                  ></video> */}
                                   <Image
                                     src={CancelIcon}
                                     alt="cancel icon"
@@ -303,6 +311,11 @@ export default function EditLessonWhenAdd({ params }) {
                                     onClick={(e) => {
                                       handleDeleteSubLessonVideo(e, index);
                                     }}
+                                  />
+                                  <Image
+                                    src={playVideo}
+                                    alt="play the video icon"
+                                    className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                                   />
                                 </div>
                               ) : !video_url?.name ? (
@@ -334,11 +347,12 @@ export default function EditLessonWhenAdd({ params }) {
                                 </label>
                               ) : (
                                 <div className="relative w-fit">
-                                  <video
+                                  <VideoComponent video={video_url} />
+                                  {/* <video
                                     src={URL.createObjectURL(video_url)}
                                     className="relative w-[400px]"
                                     accept="video/mov, video/mp4, video/avi"
-                                  ></video>
+                                  ></video> */}
                                   <Image
                                     src={CancelIcon}
                                     alt="cancel icon"
@@ -346,6 +360,11 @@ export default function EditLessonWhenAdd({ params }) {
                                     onClick={(e) => {
                                       handleDeleteSubLessonVideo(e, index);
                                     }}
+                                  />
+                                  <Image
+                                    src={playVideo}
+                                    alt="play the video icon"
+                                    className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                                   />
                                 </div>
                               )}

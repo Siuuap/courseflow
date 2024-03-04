@@ -18,6 +18,8 @@ import HamburgerMenu from "@/components/HamburgerMenu";
 import { v4 as uuidv4 } from "uuid";
 import cloneDeep from "lodash";
 import LoadingPage from "@/components/LoadingPage";
+import VideoComponent from "@/components/VideoComponent";
+import playVideo from "@/assets/images/playVideo.svg";
 export default function AddLessonWhenEditCourse({ params }) {
   const course_id = params.course_id;
   const router = useRouter();
@@ -264,11 +266,12 @@ export default function AddLessonWhenEditCourse({ params }) {
                               </label>
                             ) : (
                               <div className="relative w-fit">
-                                <video
+                                <VideoComponent video={video_url} />
+                                {/* <video
                                   src={URL.createObjectURL(video_url)}
                                   className="relative h-[200px]"
                                   accept="video/mov, video/mp4, video/avi"
-                                ></video>
+                                ></video> */}
                                 <Image
                                   src={CancelIcon}
                                   alt="cancel icon"
@@ -276,6 +279,11 @@ export default function AddLessonWhenEditCourse({ params }) {
                                   onClick={(e) => {
                                     handleDeleteSubLessonVideo(e, index);
                                   }}
+                                />
+                                <Image
+                                  src={playVideo}
+                                  alt="play the video icon"
+                                  className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                                 />
                               </div>
                             )}

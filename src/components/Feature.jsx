@@ -2,124 +2,141 @@ import Image from "next/image";
 
 function Feature() {
   return (
-    <div className="feature relative bg-[#FFF] flex items-center justify-center min-[375px]:py-[50px] min-[1440px]:h-[1111px] min-[375px]:w-[375px]">
-      <div className="box-border display:flex px-10 min-[1440px]:h-[780px] min-[1440px]:w-[1120px]">
-        <div className="box-content1 display:flex flex-col items-center justify-center min-[375px]:left-[150px] min-[1440px]:flex-row min-[1440px]:h-[330px]">
-          <Image
-            className="image rounded-[8px] min-[1440px]:w-[454px] min-[1440px]:h-[330px]"
-            src="/images/feature1.png"
-            width={454}
-            height={330}
-            alt="feature1"
-            style={{ objectFit: "scale-down" }}
-          />
-          <div className="detail-feature flex-col min-[375px]:px-[10px] min-[375px]:pl-[50px] min-[375px]:w-[355px] min-[1440px]:w-[547px] min-[1440px]:h-[330px] min-[1440px]:text-[36px] min-[1440px]:font-medium min-[1440px]:pl-[119px]">
-            <div className="topic-feature min-[1440px]:w-[547px] min-[1440px]:text-[36px] min-[1440px]:font-medium min-[1440px]:leading-[125%] min-[1440px]:tracking-[-0.72px]">
-              Learning experience has been enhanced with new technologies
-            </div>
-            <div className="unordered-list w-[547px] h-[240px] pt-[40px] text-[36px] font-medium">
-              <div className="unordered-list1 flex flex-row h-[88px] text-[24px] font-medium">
-                <Image
-                  className="image-icon w-[36px] h-[36px]"
-                  src="/images/iconShield.svg"
-                  width={36}
-                  height={36}
-                  alt="icon-shield"
-                />
-                <div className="text pl-[24px]">
-                  <div className="topic-list1 w-[100%] h-auto text-[24px] font-medium leading-[125%] tracking-[-0.48px]">
-                    Secure & Easy
-                  </div>
-                  <div className="items-list1 w-[100%] h-auto pt-[10px] text-[16px] text-[#646D89] font-medium leading-[150%]">
-                    Duis aute irure dolor in reprehenderit in voluptate velit es
-                    se cillum dolore eu fugiat nulla pariatur. Excepteur sint.
-                  </div>
-                </div>
-              </div>
-              <div className="unordered-list2 flex flex-row h-[88px] pt-[24px] text-[24px] font-medium">
-                <Image
-                  className="image-icon w-[36px] h-[36px]"
-                  src="/images/iconHeart.png"
-                  width={36}
-                  height={36}
-                  alt="icon-shield"
-                />
-                <div className="text pl-[24px]">
-                  <div className="topic-list2 w-[100%] h-auto text-[24px] font-medium leading-[125%] tracking-[-0.48px]">
-                    Supports All Students
-                  </div>
-                  <div className="items-list2 w-[100%] h-auto pt-[10px] text-[16px] text-[#646D89] font-medium leading-[150%]">
-                    Duis aute irure dolor in reprehenderit in voluptate velit es
-                    se cillum dolore eu fugiat nulla pariatur. Excepteur sint.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="box-content2 pt-[120px] h-[450px] display: flex">
-          <div className="detail-feature flex flex-col h-[330px] text-[36px] font-medium">
-            <div className="topic-feature w-[547px] text-[36px] font-medium leading-[125%] tracking-[-0.72px]">
-              Interactions between the tutor and the learners
-            </div>
-            <div className="unordered-list w-[547px] h-[240px] pt-[40px] text-[36px] font-medium">
-              <div className="unordered-list1 flex flex-row h-[88px] text-[24px] font-medium">
-                <Image
-                  className="image-icon w-[36px] h-[36px]"
-                  src="/images/iconShield.svg"
-                  width={36}
-                  height={36}
-                  alt="icon-shield"
-                />
-                <div className="text pl-[24px]">
-                  <div className="topic-list1 w-[100%] h-auto text-[24px] font-medium leading-[125%] tracking-[-0.48px]">
-                    Purely Collaborative
-                  </div>
-                  <div className="items-list1 w-[100%] h-auto pt-[10px] text-[16px] text-[#646D89] font-medium leading-[150%]">
-                    Duis aute irure dolor in reprehenderit in voluptate velit es
-                    se cillum dolore eu fugiat nulla pariatur. Excepteur sint.
-                  </div>
-                </div>
-              </div>
-              <div className="unordered-list2 flex flex-row h-[88px] pt-[24px] text-[24px] font-medium">
-                <Image
-                  className="image-icon w-[36px] h-[36px]"
-                  src="/images/iconHeart.png"
-                  width={36}
-                  height={36}
-                  alt="icon-shield"
-                />
-                <div className="text pl-[24px]">
-                  <div className="topic-list2 w-[100%] h-auto text-[24px] font-medium leading-[125%] tracking-[-0.48px]">
-                    Supports All Students
-                  </div>
-                  <div className="items-list2 w-[100%] h-auto pt-[10px] text-[16px] text-[#646D89] font-medium leading-[150%]">
-                    Duis aute irure dolor in reprehenderit in voluptate velit es
-                    se cillum dolore eu fugiat nulla pariatur. Excepteur sint.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <Image
-            className="image w-[454px] h-[330px] ml-[119px] rounded-[8px]"
-            src="/images/feature2.png"
-            width={454}
-            height={330}
-            alt="feature1"
-          />
-        </div>
-      </div>
+    <div className="relative flex justify-center items-center px-16 bg-white max-md:px-5 min-[1440px]:h-[1111px]">
       <Image
-        className="absolute left-[140px] top-[0px] h-[1111px] w-[1233px]"
         src="/images/feature-asset.png"
-        alt="feature-asset"
+        className="absolute invisible min-[1440px]:visible z-10"
         width={1233}
         height={1111}
-        style={{ objectFit: "cover" }}
-        priority={true}
       />
+      <div className="flex flex-col w-full max-w-[1170px] max-md:max-w-full">
+        <div className="mt-9 max-md:max-w-full">
+          <div className="flex gap-20 max-md:flex-col max-md:gap-0 max-md:">
+            <div className="flex flex-col w-[43%] max-md:ml-0 max-md:w-full">
+              <Image
+                loading="lazy"
+                src="/images/feature1.png"
+                className="grow w-full aspect-[1.37] max-md:mt-10 max-md:max-w-full min-[1440px]:w-[454px] min-[1440px]:h-[330px]"
+                width={454}
+                height={330}
+                alt="feature1"
+              />
+            </div>
+            <div className="flex flex-col ml-5 w-[56%] max-md:ml-0 max-md:w-full">
+              <div className="flex flex-col grow max-md:mt-10 max-md:max-w-full">
+                <div className="text-4xl font-medium tracking-tighter leading-10 text-black max-md:max-w-full">
+                  Learning experience has been enhanced with new technologies{" "}
+                </div>
+                <div className="flex gap-5 justify-between mt-10 max-md:flex-wrap max-md:max-w-full">
+                  <Image
+                    loading="lazy"
+                    src="/images/iconShield.svg"
+                    width={36}
+                    height={36}
+                    alt="icon-shield"
+                    className="self-start w-9 aspect-square"
+                  />
+
+                  <div className="flex flex-col flex-1 max-md:max-w-full">
+                    <div className="text-2xl font-medium tracking-tight text-black max-md:max-w-full">
+                      Secure & Easy
+                    </div>
+                    <div className="mt-2.5 text-base leading-6 text-slate-500 max-md:max-w-full">
+                      Duis aute irure dolor in reprehenderit in voluptate velit
+                      es se cillum dolore eu fugiat nulla pariatur.{" "}
+                      <span className="text-slate-500">Excepteur sint.</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-5 justify-between mt-6 max-md:flex-wrap max-md:max-w-full">
+                  <Image
+                    loading="lazy"
+                    src="/images/iconHeart.png"
+                    width={36}
+                    height={36}
+                    alt="icon-heart"
+                    className="self-start w-9 aspect-square"
+                  />
+
+                  <div className="flex flex-col flex-1 max-md:max-w-full">
+                    <div className="text-2xl font-medium tracking-tight text-black max-md:max-w-full">
+                      Supports All Students
+                    </div>
+                    <div className="mt-2.5 text-base leading-6 text-slate-500 max-md:max-w-full">
+                      Duis aute irure dolor in reprehenderit in voluptate velit
+                      es se cillum dolore eu fugiat nulla pariatur.{" "}
+                      <span className="text-slate-500">Excepteur sint.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="mt-32 max-md:pr-5 max-md:mt-10 max-md:max-w-full">
+          <div className="flex gap-5 max-md:flex-col max-md:gap-0 max-md:">
+            <div className="flex flex-col w-[57%] max-md:ml-0 max-md:w-full">
+              <div className="flex flex-col grow max-md:mt-10 max-md:max-w-full">
+                <div className="text-4xl font-medium tracking-tighter leading-10 text-black max-md:max-w-full">
+                  Interactions between the tutor and the learners{" "}
+                </div>
+                <div className="flex gap-5 justify-between mt-10 max-md:flex-wrap max-md:max-w-full">
+                  <Image
+                    loading="lazy"
+                    src="/images/iconCollab.svg"
+                    width={36}
+                    height={36}
+                    alt="icon-collab"
+                    className="self-start w-9 aspect-square"
+                  />
+
+                  <div className="flex flex-col flex-1 max-md:max-w-full">
+                    <div className="text-2xl font-medium tracking-tight text-black max-md:max-w-full">
+                      Purely Collaborative
+                    </div>
+                    <div className="mt-2.5 text-base leading-6 text-slate-500 max-md:max-w-full">
+                      Duis aute irure dolor in reprehenderit in voluptate velit
+                      es se cillum dolore eu fugiat nulla pariatur.{" "}
+                      <span className="text-slate-500">Excepteur sint.</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-5 justify-between mt-6 max-md:flex-wrap max-md:max-w-full">
+                  <Image
+                    loading="lazy"
+                    src="/images/iconHeart.png"
+                    width={36}
+                    height={36}
+                    alt="icon-heart"
+                    className="self-start w-9 aspect-square"
+                  />
+
+                  <div className="flex flex-col flex-1 max-md:max-w-full">
+                    <div className="text-2xl font-medium tracking-tight text-black max-md:max-w-full">
+                      Supports All Students
+                    </div>
+                    <div className="mt-2.5 text-base leading-6 text-slate-500 max-md:max-w-full">
+                      Duis aute irure dolor in reprehenderit in voluptate velit
+                      es se cillum dolore eu fugiat nulla pariatur.{" "}
+                      <span className="text-slate-500">Excepteur sint.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col ml-20 w-[43%] max-md:ml-0 max-md:w-full">
+              <Image
+                loading="lazy"
+                src="/images/feature2.png"
+                className="grow w-full aspect-[1.37] max-md:mt-10 max-md:max-w-full max-w-[454px]"
+                width={454}
+                height={330}
+                alt="feature2"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

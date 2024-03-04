@@ -398,7 +398,9 @@ function CourseVideo({
               {currentSubLesson.assignments ? (
                 <>
                   <h2>Assignment</h2>
-                  <p>{currentSubLesson.assignments.question}</p>
+                  <p className="mt-[20px]">
+                    {currentSubLesson.assignments.question}
+                  </p>
                   {assignment.answer ? (
                     <div className="mt-[20px]">
                       <p>your Answer :</p>
@@ -435,7 +437,16 @@ function CourseVideo({
                     </div>
                   )}
                   <p
-                    className="absolute top-3 right-4 bg-[#FFFBDB] text-[#996500] p-[5px] rounded-lg"
+                    className={`absolute top-3 right-4  p-[5px] rounded-lg ${
+                      (assignment.status_assignment == 0 &&
+                        "bg-[#FFFBDB]  text-[#996500]") ||
+                      (assignment.status_assignment == 1 &&
+                        "text-[#3557CF] bg-[#EBF0FF]") ||
+                      (assignment.status_assignment == 2 &&
+                        "bg-[#DDF9EF] text-[#0A7B60]") ||
+                      (assignment.status_assignment == 3 &&
+                        "bg-[#FAE7F4] text-[#9B2FAC]")
+                    }`}
                     key={assignment.sub_lesson_id}
                   >
                     {(assignment.status_assignment == 0 && "pending") ||

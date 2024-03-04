@@ -17,13 +17,15 @@ import CancelIcon from "@/assets/images/CancelIcon.svg";
 import uploadFile from "@/assets/images/uploadFile.svg";
 import uploadImage from "@/assets/images/uploadImage.svg";
 import uploadVideo from "@/assets/images/uploadVideo.svg";
-import playVideo from "@/assets/images/playVideo.svg";
 import LoadingPage from "@/components/LoadingPage";
 import { useLessonContext } from "@/contexts/lessonContext";
 
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import cloneDeep from "lodash/cloneDeep";
+import VideoComponent from "@/components/VideoComponent";
+import playVideo from "@/assets/images/playVideo.svg";
+
 export default function AddCourse() {
   const {
     name,
@@ -159,7 +161,7 @@ export default function AddCourse() {
     try {
       const { data, error } = await supabase.storage
         .from("courses")
-        .upload(`${course_id}/coverImage/${coverImage.name}`, coverImage, {
+        .upload(`${course_id}/coverImage/${uuidv4()}`, coverImage, {
           cacheControl: "3600",
           upsert: false,
         });
@@ -175,7 +177,7 @@ export default function AddCourse() {
     try {
       const { data, error } = await supabase.storage
         .from("courses")
-        .upload(`${course_id}/videoTrailer/videotrailer`, videoTrailer, {
+        .upload(`${course_id}/videoTrailer/${uuidv4()}`, videoTrailer, {
           cacheControl: "3600",
           upsert: false,
         });
@@ -191,7 +193,7 @@ export default function AddCourse() {
       try {
         const { data, error } = await supabase.storage
           .from("courses")
-          .upload(`${course_id}/file/file`, attachedFile, {
+          .upload(`${course_id}/attachedFile/${uuidv4()}`, attachedFile, {
             cacheControl: "3600",
             upsert: false,
           });
@@ -436,7 +438,7 @@ export default function AddCourse() {
                     >
                       <Image
                         src={uploadImage}
-                        alt="image-with-upload-image-text"
+                        alt="image with  upload image text"
                       />
                       <input
                         className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
@@ -479,7 +481,7 @@ export default function AddCourse() {
                     >
                       <Image
                         src={uploadVideo}
-                        alt="image-with-upload-image-text"
+                        alt="image with upload image text"
                       />
                       <input
                         className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
@@ -499,11 +501,12 @@ export default function AddCourse() {
                   ) : (
                     <div>
                       <div className="w-fit relative ">
-                        <video
+                        <VideoComponent video={videoTrailer} />
+                        {/* <video
                           src={URL.createObjectURL(videoTrailer)}
                           alt={videoTrailer.name}
                           className="h-[240px] rounded-lg "
-                        ></video>
+                        ></video> */}
 
                         <Image
                           src={CancelIcon}
@@ -541,12 +544,12 @@ export default function AddCourse() {
                       />
                       <Image
                         src={uploadFile}
-                        alt="image-with-upload-file-text"
+                        alt="image with upload file text"
                       />
                     </label>
                   ) : (
                     <div className="relative flex bg-[#E5ECF8] w-[200px] h-[90px] items-center justify-start p-[16px] rounded-lg gap-[30px]">
-                      <Image src={FileIcon} alt={attachedFile.name} />
+                      <Image src={FileIcon} alt={attachedFile?.name} />
                       <Image
                         src={CancelIcon}
                         alt="cancel icon"

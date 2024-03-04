@@ -46,7 +46,9 @@ export default function Learning() {
       setCountInprogress(courseInProgressFiltered.length);
 
       setIsLoading(false);
-    } catch {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function getCourse() {

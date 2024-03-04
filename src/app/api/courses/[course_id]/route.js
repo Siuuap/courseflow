@@ -17,8 +17,8 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   const id = params.course_id;
   const reqData = await request.json();
-  // console.log(reqData.video_url);
-  // console.log(`reqData`, reqData);
+  console.log(reqData.attachedFile);
+  console.log(`reqData put course`, reqData);
   const { data, error } = await supabase
     .from("courses")
     .update({
@@ -30,9 +30,7 @@ export async function PUT(request, { params }) {
       summary: reqData.summary,
       img_url: reqData.img_url,
       video_url: reqData.video_url,
-      attached_file_url: reqData.attached_file_url
-        ? reqData.attached_file_url
-        : null,
+      attached_file_url: reqData.attached_file_url,
       updated_at: new Date(Date.now()).toISOString(),
     })
     .eq("course_id", reqData.course_id);

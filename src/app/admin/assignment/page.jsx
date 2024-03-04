@@ -254,7 +254,7 @@ export default function AssignmentPage() {
                                   <Image
                                     className="min-[1200px]:w-[24px] min-[1200px]:h-[24px]"
                                     src={EditIcon}
-                                    alt="edit-icon"
+                                    alt="edit icon"
                                   />
                                   <p className="min-[1200px]:hidden">Edit</p>
                                 </button>

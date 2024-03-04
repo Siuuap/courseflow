@@ -17,7 +17,6 @@ import CancelIcon from "@/assets/images/CancelIcon.svg";
 import uploadFile from "@/assets/images/uploadFile.svg";
 import uploadImage from "@/assets/images/uploadImage.svg";
 import uploadVideo from "@/assets/images/uploadVideo.svg";
-import playVideo from "@/assets/images/playVideo.svg";
 import arrowBack from "@/assets/images/arrowBack.svg";
 import { useLessonContext } from "@/contexts/lessonContext";
 import ModalWindow from "@/components/ModalWindow";
@@ -26,6 +25,9 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import cloneDeep from "lodash/cloneDeep";
 import LoadingPage from "@/components/LoadingPage";
+import VideoComponent from "@/components/VideoComponent";
+import playVideo from "@/assets/images/playVideo.svg";
+
 export default function EditCourse({ params }) {
   const {
     name,
@@ -72,23 +74,26 @@ export default function EditCourse({ params }) {
   async function getCourseData() {
     try {
       const response = await axios.get(`/api/courses/${course_id}`);
-      // console.log(response.data.data[0]);
-      setName(response.data.data[0].name);
-      setPrice(response.data.data[0].price);
-      setLength(response.data.data[0].length);
-      setSummary(response.data.data[0].summary);
-      setDescription(response.data.data[0].description);
-      setCoverImage(response.data.data[0].img_url);
-      setVideoTrailer(response.data.data[0].video_url);
+      console.log(response.data.data[0]);
+      !name ? setName(response.data.data[0].name) : null;
+      !price ? setPrice(response.data.data[0].price) : null;
+      !length ? setLength(response.data.data[0].length) : null;
+      !summary ? setSummary(response.data.data[0].summary) : null;
+      !description ? setDescription(response.data.data[0].description) : null;
+      !coverImage ? setCoverImage(response.data.data[0].img_url) : null;
+      !videoTrailer ? setVideoTrailer(response.data.data[0].video_url) : null;
+
       setAttachedFile(response.data.data[0].attached_file_url);
+
       lessons.length === 0 ? setLessons(response.data.data[0].lessons) : null;
+
       setLatestCourseData(cloneDeep(response.data.data[0]));
       setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
   }
-
+  console.log(latestCourseData);
   useEffect(() => {
     getCourseData();
   }, []);
@@ -172,7 +177,6 @@ export default function EditCourse({ params }) {
   async function handleSubmit() {
     ////อย่าลืมดตรวจสอบเงื่อนไขว่าเป็น lesson ใหม่หรือไม่ ถ้าเป็น lesson ใหม่ให้สร้างใหม่ ถ้าไม่ใช่ ให้ update
     setStatusToDefault();
-    setIsLoading(true);
     if (
       !name ||
       !price ||
@@ -210,6 +214,7 @@ export default function EditCourse({ params }) {
       console.log(`check status`);
       return;
     }
+    setIsLoading(true);
     const courseData = {
       course_id: course_id,
       description: description,
@@ -224,41 +229,44 @@ export default function EditCourse({ params }) {
       attachedFile: attachedFile,
     };
 
-    if (typeof attachedFile === "object" && attachedFile !== null) {
-      const fileName = findFilePathNames(latestCourseData.attached_file_url);
+    console.log(`latestCourseData`, latestCourseData);
 
-      //remove attach file from storage
+    if (typeof attachedFile === "object" || attachedFile === null) {
+      const fileName = findFilePathNames(latestCourseData.attached_file_url);
+      console.log(`fileName`, fileName);
+      //remove attached file from storage
       try {
         const { data, error } = await supabase.storage
           .from(`courses`)
           .remove(fileName);
+
         if (error) {
           console.log(`error from supabase`, error);
         }
+        courseData.attached_file_url = null;
       } catch (error) {
         console.log(error);
       }
 
-      //upload new file to storage
-      try {
-        const { data, error } = await supabase.storage
-          .from(`courses`)
-          .upload(
-            `${course_id}/videoTrailer/${coverImage.name}`,
-            attachedFile,
-            {
+      //upload new attached file to storage
+      if (attachedFile !== null) {
+        console.log(`attachedFile`, attachedFile);
+        try {
+          const { data, error } = await supabase.storage
+            .from(`courses`)
+            .upload(`${course_id}/attachedFile/${uuidv4()}`, attachedFile, {
               cacheControl: "3600",
               upsert: true,
-            }
-          );
-        if (error) {
-          console.log(`error from supabase`, error);
+            });
+          if (error) {
+            console.log(`error from supabase`, error);
+          }
+          courseData.attached_file_url = supabase.storage
+            .from("courses")
+            .getPublicUrl(data.path).data.publicUrl;
+        } catch (error) {
+          console.log(error);
         }
-        courseData.attached_file_url = supabase.storage
-          .from("courses")
-          .getPublicUrl(data.path).data.publicUrl;
-      } catch (error) {
-        console.log(error);
       }
     }
     // console.log(`attached file`, attachedFile);
@@ -281,7 +289,7 @@ export default function EditCourse({ params }) {
       try {
         const { data, error } = await supabase.storage
           .from(`courses`)
-          .upload(`${course_id}/coverImage/${coverImage.name}`, coverImage, {
+          .upload(`${course_id}/coverImage/${uuidv4()}`, coverImage, {
             cacheControl: "3600",
             upsert: true,
           });
@@ -315,14 +323,10 @@ export default function EditCourse({ params }) {
       try {
         const { data, error } = await supabase.storage
           .from(`courses`)
-          .upload(
-            `${course_id}/videoTrailer/${coverImage.name}`,
-            videoTrailer,
-            {
-              cacheControl: "3600",
-              upsert: true,
-            }
-          );
+          .upload(`${course_id}/videoTrailer/${uuidv4()}`, videoTrailer, {
+            cacheControl: "3600",
+            upsert: true,
+          });
         if (error) {
           console.log(`error`, error);
         }
@@ -396,12 +400,9 @@ export default function EditCourse({ params }) {
         return a.lesson_number - b.lesson_number;
       });
 
-    // console.log(`lessonData`, lessonData);
-    let updatedLesson = [];
-    let newLesson = [];
+    console.log(`lessonData`, lessonData);
     for (let i = 0; i < lessonData.length; i++) {
       if (latestLessonIdFromServer.includes(lessonData[i].lesson_id)) {
-        updatedLesson.push(lessonData[i]);
         try {
           lessonData[i].lesson_number = i + 1;
           console.log(`lessonData${i}`, lessonData[i]);
@@ -413,9 +414,12 @@ export default function EditCourse({ params }) {
         } catch (error) {
           console.log(error);
         }
-      } else {
-        newLesson.push(lessonData[i]);
+      }
+      if (!latestLessonIdFromServer.includes(lessonData[i].lesson_id)) {
         try {
+          lessonData[i].lesson_number = i + 1;
+          lessonData[i].course_id = courseData.course_id;
+          console.log(`lessonData${i}`, lessonData[i]);
           const response = await axios.post("/api/lessons", lessonData[i]);
           console.log(response);
         } catch (error) {
@@ -423,14 +427,13 @@ export default function EditCourse({ params }) {
         }
       }
     }
-    console.log(`updatedLesson`, updatedLesson);
-    console.log(`newLesson`, newLesson);
+
     //sublesson
-    await HandleSubLesson(lessonData);
+    await handleSubLesson(lessonData);
     router.push(`/admin/courselist`);
   }
 
-  async function HandleSubLesson(lessons) {
+  async function handleSubLesson(lessons) {
     const latestSubLessonIdFromServer = latestCourseData.lessons
       .map((lesson) => {
         return lesson.sub_lessons.map((subLesson) => subLesson.sub_lesson_id);
@@ -781,7 +784,7 @@ export default function EditCourse({ params }) {
                         alt={coverImage.name}
                         className="h-[240px] rounded-lg"
                       />
-                      <p>{`${name}_cover image`}</p>
+                      <p className="absolute w-[375px]">{`${name}_cover image`}</p>
                       <Image
                         src={CancelIcon}
                         alt="cancel icon"
@@ -798,7 +801,7 @@ export default function EditCourse({ params }) {
                     >
                       <Image
                         src={uploadImage}
-                        alt="image-with-upload-image-text"
+                        alt="image with upload image text"
                       />
                       <input
                         className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
@@ -837,11 +840,12 @@ export default function EditCourse({ params }) {
                   {typeof videoTrailer === "string" ? (
                     <div>
                       <div className="w-fit relative ">
-                        <video
+                        <VideoComponent video={videoTrailer} />
+                        {/* <video
                           src={videoTrailer}
                           alt={`${name}_trailer`}
                           className="w-[240px] h-[240px] rounded-lg "
-                        ></video>
+                        ></video> */}
 
                         <Image
                           src={CancelIcon}
@@ -857,7 +861,7 @@ export default function EditCourse({ params }) {
                           className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                         />
                       </div>
-                      <p>{`${name}_trailer`}</p>
+                      <p className="absolute w-[375px]">{`${name}_trailer`}</p>
                     </div>
                   ) : !videoTrailer?.name ? (
                     <label
@@ -866,7 +870,7 @@ export default function EditCourse({ params }) {
                     >
                       <Image
                         src={uploadVideo}
-                        alt="image-with-upload-image-text"
+                        alt="image with upload image text"
                       />
                       <input
                         className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
@@ -886,11 +890,12 @@ export default function EditCourse({ params }) {
                   ) : (
                     <div>
                       <div className="w-fit relative ">
-                        <video
+                        <VideoComponent video={videoTrailer} />
+                        {/* <video
                           src={URL.createObjectURL(videoTrailer)}
                           alt={videoTrailer.name}
                           className="h-[240px] rounded-lg "
-                        ></video>
+                        ></video> */}
 
                         <Image
                           src={CancelIcon}
@@ -914,7 +919,7 @@ export default function EditCourse({ params }) {
                   <p>Attach File (Optional)</p>
                   {typeof attachedFile === "string" ? (
                     <div className="relative flex bg-[#E5ECF8] w-[200px] h-[90px] items-center justify-start p-[16px] rounded-lg gap-[30px]">
-                      <Image src={FileIcon} alt={attachedFile.name} />
+                      <Image src={FileIcon} alt="attached file" />
                       <Image
                         src={CancelIcon}
                         alt="cancel icon"
@@ -941,12 +946,12 @@ export default function EditCourse({ params }) {
                       />
                       <Image
                         src={uploadFile}
-                        alt="image-with-upload-file-text"
+                        alt="image with upload file text"
                       />
                     </label>
                   ) : (
                     <div className="relative flex bg-[#E5ECF8] w-[200px] h-[90px] items-center justify-start p-[16px] rounded-lg gap-[30px]">
-                      <Image src={FileIcon} alt={attachedFile.name} />
+                      <Image src={FileIcon} alt="attach file" />
                       <Image
                         src={CancelIcon}
                         alt="cancel icon"
@@ -1018,7 +1023,7 @@ export default function EditCourse({ params }) {
                           <section className="w-[56px] min-[375px]:hidden md:block">
                             <Image
                               src={DragIcon}
-                              alt="drag-icon"
+                              alt="drag icon"
                               className="absolute top-0 left-0"
                             />
                           </section>
@@ -1052,7 +1057,7 @@ export default function EditCourse({ params }) {
                               <Image
                                 className="w-[24px] h-[24px]"
                                 src={deleteIcon}
-                                alt="delete-icon"
+                                alt="delete icon"
                               />
                               <p className="md:hidden">Delete</p>
                             </ModalWindow>
@@ -1064,7 +1069,7 @@ export default function EditCourse({ params }) {
                               <Image
                                 className="w-[24px] h-[24px]"
                                 src={editIcon}
-                                alt="edit-icon"
+                                alt="edit icon"
                               />
                               <p className="md:hidden">Edit</p>
                             </Link>

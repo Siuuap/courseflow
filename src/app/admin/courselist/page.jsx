@@ -21,7 +21,6 @@ export default function DashBoardPage() {
   const [totalPage, setTotalPage] = useState(0);
   const { resetToDefault } = useLessonContext();
   const limit = 10;
-  console.log(`page`, page);
 
   async function getNumberOfPage() {
     try {
@@ -250,7 +249,7 @@ export default function DashBoardPage() {
                               </p>
                             </div>
 
-                            <div className="flex min-[0px]:w-full min-[1200px]:w-[105px] min-[1200px]:px-[16px] min-[1200px]:py-[32px] min-[1200px]:justify-center">
+                            <div className="flex min-[0px]:w-full min-[1200px]:w-[105px] min-[1200px]:px-[0px] min-[1200px]:py-[32px] min-[1200px]:justify-center">
                               <p className="basis-[100px] min-[1200px]:hidden">
                                 Price
                               </p>
@@ -294,7 +293,7 @@ export default function DashBoardPage() {
                                   <Image
                                     className="min-[1200px]:w-[24px] min-[1200px]:h-[24px]"
                                     src={deleteIcon}
-                                    alt="delete-icon"
+                                    alt="delete icon"
                                   />
                                   <p className="min-[1200px]:hidden">Delete</p>
                                 </ModalWindow>
@@ -306,7 +305,7 @@ export default function DashBoardPage() {
                                     <Image
                                       className="min-[1200px]:w-[24px] min-[1200px]:h-[24px]"
                                       src={EditIcon}
-                                      alt="edit-icon"
+                                      alt="edit icon"
                                     />
                                     <p className="min-[1200px]:hidden">Edit</p>
                                   </button>

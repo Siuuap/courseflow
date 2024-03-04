@@ -334,10 +334,11 @@ export default function EditProfileForm() {
                 ) : !image ? (
                   <label
                     htmlFor="image"
-                    className="w-fit cursor-pointer flex flex-col gap-[8px]">
+                    className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                  >
                     <Image
                       src={uploadImage}
-                      alt="image-with-upload-image-text"
+                      alt="image with upload image text"
                       width={358}
                       height={358}
                       className="rounded-[16px] z-20"
@@ -381,7 +382,8 @@ export default function EditProfileForm() {
                 <div className="flex flex-col pr-[13px]">
                   <label
                     htmlFor="userId"
-                    className="pb-[4px] text-black text-[16px] max-md:max-w-full">
+                    className="pb-[4px] text-black text-[16px] max-md:max-w-full"
+                  >
                     Firstname
                   </label>
                   <input
@@ -390,7 +392,8 @@ export default function EditProfileForm() {
                     onChange={(e) => setFirstName(e.target.value)}
                     value={firstName}
                     placeholder={userProfile?.first_name || "Enter firstName"}
-                    className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
+                    className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+                  ></input>
                   {firstNameError && (
                     <span className="text-red-600">{firstNameError}</span>
                   )}
@@ -398,7 +401,8 @@ export default function EditProfileForm() {
                 <div className="flex flex-col">
                   <label
                     htmlFor="userId"
-                    className="pb-[4px] text-black text-[16px] max-md:max-w-full">
+                    className="pb-[4px] text-black text-[16px] max-md:max-w-full"
+                  >
                     Lastname
                   </label>
                   <input
@@ -406,7 +410,8 @@ export default function EditProfileForm() {
                     onChange={(e) => setLastName(e.target.value)}
                     value={lastName}
                     placeholder={userProfile?.last_name || "Enter lastName"}
-                    className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
+                    className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+                  ></input>
                   {lastNameError && (
                     <span className="text-red-600">{lastNameError}</span>
                   )}
@@ -414,7 +419,8 @@ export default function EditProfileForm() {
               </div>
               <label
                 htmlFor="userId"
-                className="pb-[4px] text-black text-[16px] max-md:max-w-full">
+                className="pb-[4px] text-black text-[16px] max-md:max-w-full"
+              >
                 Date of Birth
               </label>
               <input
@@ -423,11 +429,13 @@ export default function EditProfileForm() {
                 onChange={(e) => setDateOfBirth(e.target.value)}
                 type="date"
                 placeholder={userProfile?.date_of_birth || "Enter YYYY-MM-DD"}
-                className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
+                className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+              ></input>
               {dateError && <div className="text-red-600">{dateError}</div>}
               <label
                 htmlFor="userId"
-                className="pb-[4px] text-black text-[16px] max-md:max-w-full">
+                className="pb-[4px] text-black text-[16px] max-md:max-w-full"
+              >
                 Educational Background
               </label>
               <input
@@ -439,7 +447,8 @@ export default function EditProfileForm() {
                   userProfile?.educational_background ||
                   "Enter educational background"
                 }
-                className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
+                className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+              ></input>
               {EducationalBackgroundError && (
                 <p className=" mt-[50px]  text-red-600">
                   {EducationalBackgroundError}
@@ -447,7 +456,8 @@ export default function EditProfileForm() {
               )}
               <label
                 htmlFor="userId"
-                className="pb-[4px] text-black text-[16px] max-md:max-w-full">
+                className="pb-[4px] text-black text-[16px] max-md:max-w-full"
+              >
                 Email
               </label>
               <input
@@ -455,11 +465,13 @@ export default function EditProfileForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={session?.user?.email || "Enter email"}
-                className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"></input>
+                className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+              ></input>
               {emailError && <p className=" text-red-600">{emailError}</p>}
               <button
                 onClick={handleUpdateProfile}
-                className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] bg-[#2F5FAC] rounded-xl shadow justify-center items-center gap-2.5 inline-flex text-white">
+                className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] bg-[#2F5FAC] rounded-xl shadow justify-center items-center gap-2.5 inline-flex text-white"
+              >
                 Update Profile
               </button>
             </div>

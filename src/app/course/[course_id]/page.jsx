@@ -38,7 +38,7 @@ export default function CourseDetail({ params }) {
             <div className="detail-container w-[1120px] self-center ">
               <img
                 src={courseById[0]?.img_url}
-                className="w-[740px] h-[460px] rounded-[8px]"
+                className="w-[740px] h-[460px] rounded-[8px] object-cover "
                 alt={courseById[0]?.name}
               />
               <section className="detail-section my-12 w-[740px] ">

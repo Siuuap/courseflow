@@ -45,7 +45,6 @@ function AuthProvider(props) {
   async function register(data) {
     await axios.post("/api/auth/register", data); // 5 sec
     router.push("/login");
-    router.refresh();
   }
 
   async function logout() {

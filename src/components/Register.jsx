@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/authentication";
 import Image from "next/image";
-
+import axios from "axios";
+import { useRouter } from "next/navigation";
 const RegisterForm = () => {
   const [values, setValues] = useState({
     fullname: "",
@@ -12,7 +13,7 @@ const RegisterForm = () => {
     email: "",
     password: "",
   });
-
+  const router = useRouter();
   const { register } = useAuth();
   const [error, setError] = useState("");
   const [fullnameError, setfullnameError] = useState("");
@@ -26,7 +27,7 @@ const RegisterForm = () => {
   const [emailValid, setemailValid] = useState(false);
   const [passwordlValid, setPasswordValid] = useState(false);
   const [educationValid, seteducationValid] = useState(false);
-
+  const [isOk, setIsOk] = useState(false);
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
@@ -49,8 +50,9 @@ const RegisterForm = () => {
     return errors.dateofBirth;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(`click na`);
     const dateOfBirthError = validateDateofBirth(values.dateofBirth);
     const data = {
       ...values,
@@ -102,6 +104,22 @@ const RegisterForm = () => {
       setPasswordError("");
       setPasswordValid(true);
     }
+    if (isOk) {
+      setIsOk(false);
+    } else {
+      setIsOk(true);
+    }
+  };
+
+  async function handleSubmit2() {
+    console.log(`click na`);
+    console.log(
+      nameValid,
+      dateValid,
+      educationValid,
+      emailValid,
+      passwordlValid
+    );
     if (
       (nameValid,
       dateValid,
@@ -109,9 +127,15 @@ const RegisterForm = () => {
       emailValid,
       passwordlValid === true)
     ) {
-      const response = await register(data);
+      console.log(values);
+      await axios.post("/api/auth/register", values); // 5 sec
+      router.push("/login");
     }
-  };
+  }
+
+  useEffect(() => {
+    handleSubmit2();
+  }, [isOk]);
 
   return (
     <>
@@ -180,7 +204,7 @@ const RegisterForm = () => {
               name="email"
               onChange={handleChange}
               placeholder="Enter Email"
-              className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-center items-start gap-2 leading-[150%] text-slate-400"
+              className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-center items-start gap-2 leading-[150%] "
             ></input>
 
             {emailError && (
@@ -194,7 +218,7 @@ const RegisterForm = () => {
               onChange={handleChange}
               placeholder="Enter password"
               type="password"
-              className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-center items-start gap-2 leading-[150%] text-slate-400"
+              className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-center items-start gap-2 leading-[150%]"
             ></input>
 
             {passwordError && (

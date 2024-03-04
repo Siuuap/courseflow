@@ -50,7 +50,7 @@ export default function UserLoginPage() {
         alt="blackground"
       />
       <form
-        className="flex flex-col justify-between  items-start gap-[50px] mx-[auto] p-[14px] max-w-[453px]  mt-[150px]"
+        className="flex flex-col justify-between  items-start gap-[50px] mx-[auto] p-[14px] max-w-[453px] mt-[150px]"
         onSubmit={handleSubmit}
       >
         <h1 className="text-[36px] text-[#22269E] w">Welcome back!</h1>

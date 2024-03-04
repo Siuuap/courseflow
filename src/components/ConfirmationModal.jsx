@@ -17,7 +17,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 
-function ConfirmationModal({ course, subscribeToCourse }) {
+function ConfirmationModal({ course }) {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
 
@@ -186,7 +186,7 @@ function ConfirmationModal({ course, subscribeToCourse }) {
             <Button variant="ghost" mr={3} onClick={onClose}>
               {denyButtonMessage}
             </Button>
-            <Button onClick={subscribeToCourse} colorScheme="blue">
+            <Button onClick={handleSubmit} colorScheme="blue">
               {confirmButtonMessage}
             </Button>
           </ModalFooter>

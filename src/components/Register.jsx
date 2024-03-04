@@ -60,36 +60,36 @@ const RegisterForm = () => {
       setDateError(
         "Please enter your date of birth and be at least 6 years old"
       );
-      setdateValid(false)
+      setdateValid(false);
     } else {
       setDateError("");
-      setdateValid(true)
+      setdateValid(true);
     }
 
     // ตรวจสอบข้อผิดพลาดอื่น ๆ และตั้งค่า state ตามปกติ
 
     if (!/^[a-zA-Z]+ (?:['-]?[a-zA-Z]+)?$/g.test(values.fullname.trim())) {
       setfullnameError("Please enter name");
-      setnameValid(false)
+      setnameValid(false);
     } else {
       setfullnameError("");
-      setnameValid(true)
+      setnameValid(true);
     }
 
     if (!values.EducationalBackground.trim()) {
       setEducationalBackgroundError("Please enter Educational Background");
-      seteducationValid(false)
+      seteducationValid(false);
     } else {
       setEducationalBackgroundError("");
-      seteducationValid(true)
+      seteducationValid(true);
     }
 
     if (!values.email.match(/^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[A-Za-z]+$/)) {
       setemailError("Email is required");
-      setEmaiValid(false)
+      setemailValid(false);
     } else {
-      setemailError("");  
-      setEmaiValid(true) 
+      setemailError("");
+      setemailValid(true);
     }
 
     if (!values.password.trim()) {
@@ -102,7 +102,13 @@ const RegisterForm = () => {
       setPasswordError("");
       setPasswordValid(true);
     }
-    if (nameValid,dateValid,educationValid,emailValid,passwordlValid === true) {
+    if (
+      (nameValid,
+      dateValid,
+      educationValid,
+      emailValid,
+      passwordlValid === true)
+    ) {
       const response = await register(data);
     }
   };

@@ -4,35 +4,32 @@ import Link from "next/link";
 
 function SubFooter() {
   return (
-    <div className="relative h-[500px] bg-gradient-to-r from-[#2558DD] to-[#5697FF]">
-      <div className="flex-col pt-[125px] min-[768px]:flex mx-[auto] p-[14px] max-w-[1120px] min-[1200px]:px-[0px]">
-        <p className="font-medium  text-[36px] text-white leading-[45px]">
-          Want to start learning?
-        </p>
-        <section className="pt-[45px]">
-          <Button className="bg-white px-8 py-[18px] rounded-[12px] border-[1px] border-[#F47E20] text-base hover:bg-[#f5f5f5] text-[#F47E20] font-bold text-[16px] leading-6">
-            <Link href="/register">Register</Link>
-          </Button>
-        </section>
+    <div className=" bg-gradient-to-r from-[#2558DD] to-[#5697FF]">
+      <div className="max-w-[1440px] mx-auto">
+        <div className="flex gap-5 justify-between px-20 pt-12 max-2xl:flex-wrap min-2xl:px-10">
+          <div className="flex flex-col flex-1 my-auto ml-20 max-md:max-w-full">
+            <div className="text-4xl font-medium tracking-tighter text-white max-md:max-w-full">
+              Want to start learning?
+            </div>
+            <div className="justify-center self-start px-8 py-5 mt-11 text-base font-bold leading-6 text-center text-[#F47E20] whitespace-nowrap bg-white rounded-xl border border-solid shadow-lg border-[#F47E20] max-md:px-5 max-md:mt-10">
+              <Button className="text-base hover:bg-[#5483D0] font-bold text-[16px] leading-6">
+                <Link href="/register">Register</Link>
+              </Button>
+            </div>
+            <div className="self-end mt-32 mr-5 rounded-full h-[26px] stroke-[3px] w-[26px] max-md:mt-10 max-md:mr-2.5" />
+          </div>
+          <img
+            loading="lazy"
+            src="/images/subfooter-asset1.png"
+            className="flex-1 w-full aspect-[1.32] max-md:max-w-full"
+          />
+          <img
+            loading="lazy"
+            src="https://shorturl.at/ktAK0"
+            className="self-start mt-20 aspect-square stroke-[2px] stroke-white w-[35px] max-md:mt-10"
+          />
+        </div>
       </div>
-      <Image
-        className="absolute left-[689px] top-[48.53px] h-[450px] w-[592px]"
-        src="/images/subfooter-asset1.png"
-        alt="subfooter-asset1"
-        width={592}
-        height={450}
-        style={{ objectFit: "cover" }}
-        priority={true}
-      />
-      <Image
-        className="absolute left-[567px] top-[128px] h-[302px] w-[822px]"
-        src="/images/subfooter-asset2.png"
-        alt="subfooter-asset2"
-        width={822}
-        height={302}
-        style={{ objectFit: "cover" }}
-        priority={true}
-      />
     </div>
   );
 }

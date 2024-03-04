@@ -40,30 +40,28 @@ function NavBar() {
   };
 
   return (
+    <div className="max-w-[1440px] mx-auto">
+      <div className="shadow-md">
+        <nav className="flex justify-center items-center pr-[160px] pl-[160px] text-base font-bold leading-6 text-center bg-white shadow-sm max-md:px-5">
+          <div className="flex gap-5 justify-between w-full max-w-[1120px] max-md:flex-wrap max-md:max-w-full">
+            <Link href="/" className="min-[375px]:w-1/2">
+              <Image
+                src="/images/iconCourseFlow.png"
+                alt="icon-CourseFlow"
+                width={140}
+                height={16}
+                className="h-auto min-[375px]:w-1/2 min-[768px]:max-w-lg "
+              />
+            </Link>
+          </div>
+          <div className="flex min-[1440px]:gap-5 justify-between py-3.5 pl-6">
+            <div className="my-auto text-[#191C77] w-[147px] min-[375px]:max-w-[75px] min-[375px]:text-[10px]">
+              <Link href="/course">Our Courses</Link>
+            </div>
 
-    <div className="shadow-md ">
-      <nav className="relative flex items-center justify-between bg-white h-[88px] px-[80px]">
-        <div className="min-[375px]:-left-[200px]">
-
-          <Link href="/">
-            <Image
-              src="/images/iconCourseFlow.png"
-              alt="icon-CourseFlow"
-              width={140}
-              height={16}
-              className="h-auto max-w-lg"
-            />
-          </Link>
-        </div>
-        <ul className="flex gap-5 justify-between py-3.5 pl-6">
-          <li className="my-auto text-violet-950">
-            <Link href="/course">Our Courses</Link>
-          </li>
-
-          <li>
             {status === "unauthenticated" && (
               <Link href="/login">
-                <Button className=" justify-center px-8 py-5 text-white whitespace-nowrap bg-blue-800 rounded-xl shadow-lg max-md:px-5">
+                <Button className=" justify-center px-8 py-5 text-white whitespace-nowrap bg-[#2F5FAC] rounded-xl shadow-lg max-md:px-5 min-[375px]:text-[10px]">
                   Login
                 </Button>
               </Link>
@@ -85,8 +83,7 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user/edit_profile");
-                      }}
-                    >
+                      }}>
                       <Image
                         src={ProfileIcon}
                         className=" mr-[10px]"
@@ -97,8 +94,7 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user");
-                      }}
-                    >
+                      }}>
                       <Image
                         src={MyCourseIcon}
                         className=" mr-[10px]"
@@ -117,8 +113,7 @@ function NavBar() {
                     <MenuItem
                       onClick={() => {
                         router.push("/user/desire_course");
-                      }}
-                    >
+                      }}>
                       <Image
                         src={DesireCourseIcon}
                         className=" mr-[10px]"
@@ -139,9 +134,9 @@ function NavBar() {
                 </Menu>
               </div>
             )}
-          </li>
-        </ul>
-      </nav>
+          </div>
+        </nav>
+      </div>
     </div>
   );
 }

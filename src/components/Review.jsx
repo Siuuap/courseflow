@@ -30,30 +30,32 @@ function Review() {
 
   return (
     <div className="max-w-[1440px] mx-auto">
-      <div className="review relative h-[742px] bg-[#FFF] flex items-center justify-center border-2">
-        <div className="box-border h-[476.33px] w-[1120px]">
+      <div className="review relative h-[742px] bg-[#FFF] flex items-center justify-center">
+        <div className="box-border h-[476.33px] w-fit">
           <div className="topic flex items-center justify-center text-[36px] font-medium leading-[125%] tracking-[-0.72px]">
             Our Graduates
           </div>
           <div
-            className="slideshow"
-            style={{
-              flexWrap: "nowrap",
-              margin: "0 auto",
-              overflow: "hidden",
-              maxWidth: "737.76px",
-              maxHeight: "371px",
-              borderRadius: "8px",
-              paddingTop: "60px",
-              display: "flex",
-            }}>
+            className="flex flex-nowrap slideshow w-[1120px] overflow-hidden mx-0 my-auto max-w-[737.76px] max-h-[371px] rounded-lg pt-[60px]"
+            // style={{
+            //   flexWrap: "nowrap",
+            //   margin: "0 auto",
+            //   overflow: "hidden",
+            //   maxWidth: "737.76px",
+            //   maxHeight: "371px",
+            //   borderRadius: "8px",
+            //   paddingTop: "60px",
+            //   display: "flex",
+            // }}
+          >
             <div
               className="slideshowSlider"
               style={{
                 transform: `translate3d(${-index * 100}%, 0, 0)`,
                 whiteSpace: "nowrap",
                 transition: "ease 1000ms",
-              }}>
+              }}
+            >
               <div
                 className="slide1"
                 key={0}
@@ -65,7 +67,8 @@ function Review() {
                   height: "311px",
                   width: "100%",
                   gap: "50px",
-                }}>
+                }}
+              >
                 <Image
                   className="graduated1"
                   src="/images/graduated1.png"
@@ -91,7 +94,8 @@ function Review() {
                     marginLeft: "158.98px",
                     backgroundColor: "#E5ECF8",
                     borderRadius: "8px",
-                  }}>
+                  }}
+                >
                   <div
                     className="sub-box-text"
                     style={{
@@ -99,14 +103,16 @@ function Review() {
                       flexDirection: "column",
                       justifyContent: "center",
                       backgroundColor: "#E5ECF8",
-                    }}>
+                    }}
+                  >
                     <div
                       className="graduated-name"
                       style={{
                         color: "#2F5FAC",
                         fontSize: "24px",
                         fontWeight: "500",
-                      }}>
+                      }}
+                    >
                       Saiful Islam
                     </div>
                     <div
@@ -117,7 +123,8 @@ function Review() {
                         color: "#646D89",
                         fontSize: "16px",
                         fontWeight: "500",
-                      }}>
+                      }}
+                    >
                       Start with something simple and small, then expand over
                       time. <br />
                       If people call it a ‘toy’ you’re definitely onto
@@ -143,7 +150,8 @@ function Review() {
                   height: "311px",
                   width: "100%",
                   gap: "50px",
-                }}>
+                }}
+              >
                 <Image
                   className="graduated2"
                   src="/images/graduated2.png"
@@ -169,7 +177,8 @@ function Review() {
                     marginLeft: "158.98px",
                     backgroundColor: "#E5ECF8",
                     borderRadius: "8px",
-                  }}>
+                  }}
+                >
                   <div
                     className="sub-box-text"
                     style={{
@@ -177,14 +186,16 @@ function Review() {
                       flexDirection: "column",
                       justifyContent: "center",
                       backgroundColor: "#E5ECF8",
-                    }}>
+                    }}
+                  >
                     <div
                       className="graduated-name"
                       style={{
                         color: "#2F5FAC",
                         fontSize: "24px",
                         fontWeight: "500",
-                      }}>
+                      }}
+                    >
                       Saiful Islam
                     </div>
                     <div
@@ -195,7 +206,8 @@ function Review() {
                         color: "#646D89",
                         fontSize: "16px",
                         fontWeight: "500",
-                      }}>
+                      }}
+                    >
                       Start with something simple and small, then expand over
                       time. <br />
                       If people call it a ‘toy’ you’re definitely onto
@@ -239,7 +251,8 @@ function Review() {
                   height: "311px",
                   width: "100%",
                   gap: "50px",
-                }}>
+                }}
+              >
                 <Image
                   className="graduated3"
                   src="/images/graduated3.png"
@@ -265,7 +278,8 @@ function Review() {
                     marginLeft: "158.98px",
                     backgroundColor: "#E5ECF8",
                     borderRadius: "8px",
-                  }}>
+                  }}
+                >
                   <div
                     className="sub-box-text"
                     style={{
@@ -273,14 +287,16 @@ function Review() {
                       flexDirection: "column",
                       justifyContent: "center",
                       backgroundColor: "#E5ECF8",
-                    }}>
+                    }}
+                  >
                     <div
                       className="graduated-name"
                       style={{
                         color: "#2F5FAC",
                         fontSize: "24px",
                         fontWeight: "500",
-                      }}>
+                      }}
+                    >
                       Saiful Islam
                     </div>
                     <div
@@ -291,7 +307,8 @@ function Review() {
                         color: "#646D89",
                         fontSize: "16px",
                         fontWeight: "500",
-                      }}>
+                      }}
+                    >
                       Start with something simple and small, then expand over
                       time. <br />
                       If people call it a ‘toy’ you’re definitely onto
@@ -311,7 +328,8 @@ function Review() {
               className="slideshowSlider"
               style={{
                 transform: `translate3d(${-index * 100}%, 0, 0)`,
-              }}></div>
+              }}
+            ></div>
 
             <div
               className="slideshowDots"
@@ -321,7 +339,8 @@ function Review() {
                 left: "47%",
                 paddingTop: "220px",
                 zIndex: "50",
-              }}>
+              }}
+            >
               {colors.map((_, idx) => (
                 <div
                   style={
@@ -353,7 +372,8 @@ function Review() {
                   //className={`slideshowDot${index === idx ? " active" : ""}`}
                   onClick={() => {
                     setIndex(idx);
-                  }}></div>
+                  }}
+                ></div>
               ))}
             </div>
           </div>

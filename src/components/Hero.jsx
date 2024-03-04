@@ -4,12 +4,12 @@ import Link from "next/link";
 
 function Hero() {
   return (
-    <div className="relative bg-[#E5ECF8]">
+    <div className="relative bg-[#E5ECF8] -z-[1]">
       <div className="max-w-[1440px] mx-auto h-[700px]">
         <div className="flex gap-5 justify-between items-start py-12 max-md:flex-wrap max-md:pr-5 border-10">
-          <div className="flex gap-5 justify-between self-end mt-24 max-md:flex-wrap max-md:mt-10 max-md:max-w-full max-sm:mt-1.5">
-            <div className="flex flex-col flex-1 self-start mt-3.5 mx-40 max-md:max-w-full">
-              <div className="text-7xl font-medium tracking-tighter text-black leading-[83px] max-sm:text-2xl max-md:max-w-full max-md:text-4xl  max-xl:text-5xl max-md:leading-[56px] max-2xl:text-7xl max-w-[643px]">
+          <div className="flex gap-5 justify-between self-end mt-24 max-md:flex-wrap max-md:mt-10 max-md:max-w-full max-sm:mt-1.5 2xl:px-[160px]">
+            <div className="flex flex-col flex-1 self-start max-md:max-w-full ">
+              <div className="text-7xl font-medium tracking-tighter text-black leading-[83px] max-sm:text-2xl max-md:max-w-full max-md:text-4xl max-xl:text-5xl max-md:leading-[56px] max-2xl:text-7xl max-w-[643px]">
                 Best Virtual Classroom Software
               </div>
               <div className="mt-6 text-xl leading-8 text-slate-500 max-md:max-w-full max-w-[643px] max-sm:text-base">
@@ -26,7 +26,7 @@ function Hero() {
             </div>
             <div>
               <Image
-                className="absolute invisible min-[1440px]:visible min-[1440px]:right-0 min-[1440px]:top-0 min-[1440px]:h-[700px] min-[1440px]:w-[1032px]"
+                className="absolute min-[0px]:hidden 2xl:block min-[1440px]:right-0 min-[1440px]:top-0 min-[1440px]:h-[700px] min-[1440px]:w-[1032px] -z-[1]"
                 src="/images/hero-asset1.png"
                 alt="hero-asset1"
                 width={1032}
@@ -35,7 +35,7 @@ function Hero() {
                 priority={true}
               />
               <Image
-                className="absolute invisible min-[1440px]:visible min-[1440px]:right-[160px] min-[1440px]:top-[151px] min-[1440px]:h-[448px] min-[1440px]:w-[452px]"
+                className="min-[0px]:hidden 2xl:block min-[1440px]:right-[160px] min-[1440px]:top-[151px] min-[1440px]:h-[448px] min-[1440px]:w-[452px] z-[100]"
                 src="/images/hero-asset2.png"
                 alt="hero-asset2"
                 width={452}

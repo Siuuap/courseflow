@@ -5,7 +5,7 @@ import MyCourseIcon from "@/assets/images/NavBar/MyCourseIcon.svg";
 import HomeworkIcon from "@/assets/images/NavBar/HomeworkIcon.svg";
 import DesireCourseIcon from "@/assets/images/NavBar/DesireCourseIcon.svg";
 import LogOutIcon from "@/assets/images/NavBar/LogOutIcon.svg";
-
+import LoadingPage from "./LoadingPage";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,106 +38,133 @@ function NavBar() {
   const handleLogout = async () => {
     signOut();
   };
-
+  const [isLoading, setIsLoading] = useState(true);
+  // useEffect(() => {
+  //   if (status) {
+  //     setIsLoading(false);
+  //   }
+  // }, []);
+  console.log(`status`, status);
   return (
-    <div className="max-w-[1440px] mx-auto">
-      <div className="shadow-md">
-        <nav className="flex justify-center items-center pr-[160px] pl-[160px] text-base font-bold leading-6 text-center bg-white shadow-sm max-md:px-5">
-          <div className="flex gap-5 justify-between w-full max-w-[1120px] max-md:flex-wrap max-md:max-w-full">
-            <Link href="/" className="min-[375px]:w-1/2">
-              <Image
-                src="/images/iconCourseFlow.png"
-                alt="icon-CourseFlow"
-                width={140}
-                height={16}
-                className="h-auto min-[375px]:w-1/2 min-[768px]:max-w-lg "
-              />
-            </Link>
-          </div>
-          <div className="flex min-[1440px]:gap-5 justify-between py-3.5 pl-6">
-            <div className="my-auto text-[#191C77] w-[147px] min-[375px]:max-w-[75px] min-[375px]:text-[10px]">
-              <Link href="/course">Our Courses</Link>
-            </div>
-
-            {status === "unauthenticated" && (
-              <Link href="/login">
-                <Button className=" justify-center px-8 py-5 text-white whitespace-nowrap bg-[#2F5FAC] rounded-xl shadow-lg max-md:px-5 min-[375px]:text-[10px]">
-                  Login
-                </Button>
-              </Link>
-            )}
-
-            {status === "authenticated" && (
-              <div className="flex  flex-row  justify-start items-center gap-[10px]">
-                <img
-                  src={session.user.url}
-                  className=" w-[50px] h-[50px] rounded-[50%]"
-                />
-
-                <Menu isLazy>
-                  <MenuButton>
-                    {session.user.firstName} <ChevronDownIcon />{" "}
-                  </MenuButton>
-                  <MenuList width={"10px"} minW={"200px"}>
-                    {/* MenuItems are not rendered unless Menu is open */}
-                    <MenuItem
-                      onClick={() => {
-                        router.push("/user/edit_profile");
-                      }}>
-                      <Image
-                        src={ProfileIcon}
-                        className=" mr-[10px]"
-                        alt="ProfileIcon"
-                      />
-                      Profile
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        router.push("/user");
-                      }}>
-                      <Image
-                        src={MyCourseIcon}
-                        className=" mr-[10px]"
-                        alt="MyCourseIcon"
-                      />
-                      My Courses
-                    </MenuItem>
-                    <MenuItem>
-                      <Image
-                        src={HomeworkIcon}
-                        className=" mr-[10px]"
-                        alt="HomeworkIcon"
-                      />
-                      My Homework
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        router.push("/user/desire_course");
-                      }}>
-                      <Image
-                        src={DesireCourseIcon}
-                        className=" mr-[10px]"
-                        alt="DesireCourseIcon"
-                      />
-                      My Desire Courses
-                    </MenuItem>
-                    <MenuDivider />
-                    <MenuItem onClick={handleLogout}>
-                      <Image
-                        src={LogOutIcon}
-                        className=" mr-[10px]"
-                        alt="LogOutIcon"
-                      />
-                      Log out
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+    <>
+      {status === "loading" ? (
+        <LoadingPage />
+      ) : (
+        <div className="max-w-[1440px] mx-auto ">
+          <div className="">
+            <nav className="flex justify-between items-center px-[160px] text-base font-bold leading-6 text-center bg-white shadow-sm max-md:px-5 h-[92px]">
+              <div className="flex justify-between ">
+                <Link href="/" className="xs:w-[140px]">
+                  <Image
+                    src="/images/iconCourseFlow.png"
+                    alt="icon-CourseFlow"
+                    width={140}
+                    height={16}
+                  />
+                </Link>
               </div>
-            )}
+              <div className="flex justify-between py-3.5 xs:w-[260px]">
+                <div className="my-auto text-[#191C77] ">
+                  <Link
+                    href="/course"
+                    className="min-[375px]:text-[10px] md:text-[16px]"
+                  >
+                    Our Courses
+                  </Link>
+                </div>
+                {status === "unauthenticated" && (
+                  <Link href="/login">
+                    <Button className="bg-[#2F5FAC] px-8 py-[18px] rounded-xl text-base hover:bg-[#5483D0] text-white font-bold text-[16px] leading-6">
+                      Login
+                    </Button>
+                  </Link>
+                )}
+
+                {status === "authenticated" && (
+                  <div className="flex flex-row justify-start items-center gap-[10px]">
+                    <img
+                      src={session.user.url}
+                      alt="user profile icon"
+                      className=" w-[50px] h-[50px] rounded-[50%]"
+                    />
+
+                    <Menu isLazy>
+                      <MenuButton>
+                        {session.user.firstName} <ChevronDownIcon />{" "}
+                      </MenuButton>
+                      <MenuList
+                        width={"10px"}
+                        minW={"200px"}
+                        className="font-normal"
+                      >
+                        {/* MenuItems are not rendered unless Menu is open */}
+                        <MenuItem
+                          onClick={() => {
+                            router.push("/user/edit_profile");
+                          }}
+                        >
+                          <Image
+                            src={ProfileIcon}
+                            alt="profile icon"
+                            className="mr-[10px]"
+                          />
+                          Profile
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            router.push("/user");
+                          }}
+                        >
+                          <Image
+                            src={MyCourseIcon}
+                            alt="course icon"
+                            className="mr-[10px]"
+                          />
+                          My Courses
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            router.push("/user/assignment");
+                          }}
+                        >
+                          <Image
+                            src={HomeworkIcon}
+                            alt="homework icon"
+                            className="mr-[10px]"
+                          />
+                          My Homework
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            router.push("/user/desire_course");
+                          }}
+                        >
+                          <Image
+                            src={DesireCourseIcon}
+                            className=" mr-[10px]"
+                            alt="desired icon"
+                          />
+                          My Desire Courses
+                        </MenuItem>
+                        <MenuDivider />
+                        <MenuItem onClick={handleLogout}>
+                          <Image
+                            src={LogOutIcon}
+                            alt="log out icon"
+                            className="mr-[10px]"
+                          />
+                          Log out
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  </div>
+                )}
+              </div>
+            </nav>
           </div>
-        </nav>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }
 export default NavBar;

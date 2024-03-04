@@ -143,6 +143,8 @@ export const authOptions = {
 
         if (token.role === "admin") {
           session.user.adminId = token.adminId;
+          session.user.firstName = "Admin";
+          session.user.url = "https://inhlygnonkpslheuiypd.supabase.co/storage/v1/object/public/users/Admin/man-with-the-inscription-admin-icon-outline-style-vector.png";
           session.user.role = token.role;
         }
       }

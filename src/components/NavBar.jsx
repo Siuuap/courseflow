@@ -50,9 +50,9 @@ function NavBar() {
       {status === "loading" ? (
         <LoadingPage />
       ) : (
-        <div className="max-w-[1440px] mx-auto ">
+        <div className=" w-full mx-auto shadow-lg">
           <div className="">
-            <nav className="flex justify-between items-center px-[160px] text-base font-bold leading-6 text-center bg-white shadow-sm max-md:px-5 h-[92px]">
+            <nav className="flex  max-w-[1400px] justify-between mx-auto items-center px-[160px] text-base font-bold leading-6 text-center bg-white max-md:px-5 h-[92px]">
               <div className="flex justify-between ">
                 <Link href="/" className="xs:w-[140px]">
                   <Image
@@ -98,54 +98,58 @@ function NavBar() {
                         className="font-normal"
                       >
                         {/* MenuItems are not rendered unless Menu is open */}
-                        <MenuItem
-                          onClick={() => {
-                            router.push("/user/edit_profile");
-                          }}
-                        >
-                          <Image
-                            src={ProfileIcon}
-                            alt="profile icon"
-                            className="mr-[10px]"
-                          />
-                          Profile
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            router.push("/user");
-                          }}
-                        >
-                          <Image
-                            src={MyCourseIcon}
-                            alt="course icon"
-                            className="mr-[10px]"
-                          />
-                          My Courses
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            router.push("/user/assignment");
-                          }}
-                        >
-                          <Image
-                            src={HomeworkIcon}
-                            alt="homework icon"
-                            className="mr-[10px]"
-                          />
-                          My Homework
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            router.push("/user/desire_course");
-                          }}
-                        >
-                          <Image
-                            src={DesireCourseIcon}
-                            className=" mr-[10px]"
-                            alt="desired icon"
-                          />
-                          My Desire Courses
-                        </MenuItem>
+                        {session.user.role !== "admin" && (
+                          <>
+                            <MenuItem
+                              onClick={() => {
+                                router.push("/user/edit_profile");
+                              }}
+                            >
+                              <Image
+                                src={ProfileIcon}
+                                alt="profile icon"
+                                className="mr-[10px]"
+                              />
+                              Profile
+                            </MenuItem>
+                            <MenuItem
+                              onClick={() => {
+                                router.push("/user");
+                              }}
+                            >
+                              <Image
+                                src={MyCourseIcon}
+                                alt="course icon"
+                                className="mr-[10px]"
+                              />
+                              My Courses
+                            </MenuItem>
+                            <MenuItem
+                              onClick={() => {
+                                router.push("/user/assignment");
+                              }}
+                            >
+                              <Image
+                                src={HomeworkIcon}
+                                alt="homework icon"
+                                className="mr-[10px]"
+                              />
+                              My Homework
+                            </MenuItem>
+                            <MenuItem
+                              onClick={() => {
+                                router.push("/user/desire_course");
+                              }}
+                            >
+                              <Image
+                                src={DesireCourseIcon}
+                                className=" mr-[10px]"
+                                alt="desired icon"
+                              />
+                              My Desire Courses
+                            </MenuItem>
+                          </>
+                        )}
                         <MenuDivider />
                         <MenuItem onClick={handleLogout}>
                           <Image

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 function Hero() {
   return (
-    <div className="relative bg-[#E5ECF8] -z-[1]">
+    <div className="relative bg-[#E5ECF8] z-0">
       <div className="max-w-[1440px] mx-auto h-[700px]">
         <div className="flex gap-5 justify-between items-start py-12 max-md:flex-wrap max-md:pr-5 border-10">
           <div className="flex gap-5 justify-between self-end mt-24 max-md:flex-wrap max-md:mt-10 max-md:max-w-full max-sm:mt-1.5 2xl:px-[160px]">

@@ -17,7 +17,7 @@ const RegisterForm = () => {
   const { register } = useAuth();
   const [error, setError] = useState("");
   const [fullnameError, setfullnameError] = useState("");
-  const [dateError, setDateError] = useState(false);
+  const [dateError, setDateError] = useState("");
   const [emailError, setemailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [EducationalBackgroundError, setEducationalBackgroundError] =

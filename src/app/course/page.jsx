@@ -13,6 +13,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   async function getCourse() {
     const res = await axios.get(`./api/courses?search=${search}&page=${page}`);
@@ -20,8 +21,20 @@ export default function Home() {
     setIsLoading(false);
   }
   console.log(course);
+
   useEffect(() => {
     getCourse();
+  }, [search, page]);
+
+  async function getTotalCourse() {
+    const res = await axios.get(`./api/courses?search=${search}&page=${1}`);
+
+    setTotalPage(res.data.totalPage);
+  }
+
+  console.log(totalPage);
+  useEffect(() => {
+    getTotalCourse();
   }, [search]);
 
   return (
@@ -32,14 +45,36 @@ export default function Home() {
       ) : (
         <>
           <div className="our-course-container flex flex-col justify-item-center mt-16">
-            <h1 className="our-courses text-center text-3xl font-bold">
+            <h1 className="our-courses text-center text-3xl font-bold ">
               Our Courses
             </h1>
 
             <SearchBox search={search} onSearch={setSearch} />
           </div>
-          <div className="mb-[190px]">
+          <div className="mb-[190px] ">
             <CourseList course={course} />
+
+            <div className="pagination-btn flex flex-row justify-between">
+              <button
+                className={` w-[160px] h-[60px] font-bold  rounded ml-[60px] ${
+                  page <= 1 ? "text-gray-400" : "text-[#2F5FAC]"
+                }`}
+                onClick={() => (page <= 1 ? null : setPage(page - 1))}
+              >
+                previous...
+              </button>
+              <span className="text-bold text-[#F47E20] text-xl mt-[10px]">
+                {page}/{totalPage == 0 ? 1 : totalPage}
+              </span>
+              <button
+                className={` w-[160px] h-[60px] font-bold  rounded mr-[60px] ${
+                  page >= totalPage ? "text-gray-400" : "text-[#2F5FAC]"
+                }`}
+                onClick={() => (page >= totalPage ? null : setPage(page + 1))}
+              >
+                ...next
+              </button>
+            </div>
           </div>
         </>
       )}

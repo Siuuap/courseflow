@@ -6,10 +6,17 @@ export async function GET(request) {
 
   const search = searchParams.get("search");
   const page = searchParams.get("page") || 1;
-  const limit = searchParams.get("limit") || 10;
+  const limit = searchParams.get("limit") || 12;
 
   const start = (page - 1) * limit;
   const end = start + limit - 1;
+
+  const { data: allCourse, error: allCourseError } = await supabase
+    .from("courses")
+    .select("*")
+    .ilike("name", `%${search}%`);
+
+  const totalPage = Math.ceil(allCourse.length / limit);
 
   console.log(search);
   const { data, error } = search
@@ -30,7 +37,7 @@ export async function GET(request) {
     throw new Error("Courses can not be reach");
   }
   return NextResponse.json(
-    { message: "Fetching Successfully", data },
+    { message: "Fetching Successfully", data, totalPage: totalPage },
     { status: 200 }
   );
 }

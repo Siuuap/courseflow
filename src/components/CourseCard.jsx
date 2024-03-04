@@ -8,11 +8,11 @@ function CourseCard({ course }) {
     <Link href={`/course/${course.course_id}`}>
       <div className="course-container max-w-xs mb-[16px] relative ">
         <div className="course shadow-[0px_5px_5px_0px_rgba(100,109,137,1)] rounded-md w-[320px] h-[538px]">
-          <div className="course-img ">
+          <div className="course-img  ">
             <img
               src={course.img_url}
               alt={course.course_id}
-              className="course-poster-img mb-6 w-[357px] h-[240px] block rounded-t-md"
+              className="course-poster-img mb-6 w-[357px] h-[240px] block rounded-t-md object-cover"
             />
             <span className=" text-[#F47E20] ml-3">Course</span>
           </div>

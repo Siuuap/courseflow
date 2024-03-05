@@ -58,6 +58,7 @@ export default function CourseDetail({ params }) {
                     ))}
                   </Accordion>
                 </div>
+                <h1 className="font-bold text-[26px]">Attach File</h1>
               </section>
             </div>
 

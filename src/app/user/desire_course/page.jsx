@@ -40,7 +40,7 @@ function DesiredCoursePage() {
       </section>
 
       {courses.length > 0 ? (
-        <div className="flex flex-wrap justify-start w-[1120px] gap-[24px] mx-auto h-[900px]">
+        <div className="flex flex-wrap justify-start w-[1120px] gap-[24px] mx-auto min-h-[900px]">
           {courses.map((item) => {
             return (
               <CourseCard key={item.courses.course_id} course={item.courses} />

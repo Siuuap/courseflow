@@ -7,6 +7,7 @@ import SearchBox from "@/components/SerachBox";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import LoadingPage from "@/components/LoadingPage";
+import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 
 export default function Home() {
   const [course, setCourse] = useState([]);
@@ -54,25 +55,25 @@ export default function Home() {
           <div className="mb-[190px] ">
             <CourseList course={course} />
 
-            <div className="pagination-btn flex flex-row justify-between">
+            <div className="pagination-btn flex flex-row justify-center ">
               <button
-                className={` w-[160px] h-[60px] font-bold  rounded ml-[60px] ${
-                  page <= 1 ? "text-gray-400" : "text-[#2F5FAC]"
+                className={` w-[160px] h-[60px] font-bold  rounded  ${
+                  page <= 1 ? "text-gray-400" : "text-[#F47E20]"
                 }`}
                 onClick={() => (page <= 1 ? null : setPage(page - 1))}
               >
-                previous...
+                <ArrowLeftIcon />
               </button>
-              <span className="text-bold text-[#F47E20] text-xl mt-[10px]">
+              <span className="text-bold text-[#F47E20] text-xl mt-[18px]">
                 {page}/{totalPage == 0 ? 1 : totalPage}
               </span>
               <button
-                className={` w-[160px] h-[60px] font-bold  rounded mr-[60px] ${
-                  page >= totalPage ? "text-gray-400" : "text-[#2F5FAC]"
+                className={` w-[160px] h-[60px] font-bold  rounded  ${
+                  page >= totalPage ? "text-gray-400" : "text-[#F47E20]"
                 }`}
                 onClick={() => (page >= totalPage ? null : setPage(page + 1))}
               >
-                ...next
+                <ArrowRightIcon />
               </button>
             </div>
           </div>

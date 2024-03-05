@@ -150,7 +150,9 @@ export default function Assignment() {
                   />
                 ) : (
                   <TabPanel>
-                    <h1>You Have 0 Assignment</h1>
+                    <h1 className="text-center mt-[30px] text-gray-400">
+                      You Have 0 Assignment
+                    </h1>
                   </TabPanel>
                 )}
 
@@ -164,7 +166,9 @@ export default function Assignment() {
                   />
                 ) : (
                   <TabPanel>
-                    <h1>You Have 0 Pending Assignment</h1>
+                    <h1 className="text-center mt-[30px] text-gray-400">
+                      You Have 0 Pending Assignment
+                    </h1>
                   </TabPanel>
                 )}
 
@@ -178,7 +182,9 @@ export default function Assignment() {
                   />
                 ) : (
                   <TabPanel>
-                    <h1>You Have 0 Inprogress Assignment</h1>
+                    <h1 className="text-center mt-[30px] text-gray-400">
+                      You Have 0 Inprogress Assignment
+                    </h1>
                   </TabPanel>
                 )}
 
@@ -192,7 +198,9 @@ export default function Assignment() {
                   />
                 ) : (
                   <TabPanel>
-                    <h1>You Have 0 Submitted Assignment</h1>
+                    <h1 className="text-center mt-[30px] text-gray-400">
+                      You Have 0 Submitted Assignment
+                    </h1>
                   </TabPanel>
                 )}
 
@@ -206,7 +214,9 @@ export default function Assignment() {
                   />
                 ) : (
                   <TabPanel className="h-[1200px]">
-                    <h1>You Have 0 Overdue Assignment</h1>
+                    <h1 className="text-center mt-[30px] text-gray-400">
+                      You Have 0 Overdue Assignment
+                    </h1>
                   </TabPanel>
                 )}
               </TabPanels>

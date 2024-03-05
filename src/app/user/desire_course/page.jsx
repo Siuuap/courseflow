@@ -36,16 +36,22 @@ function DesiredCoursePage() {
     <>
       <NavBar />
       <section className="flex justify-center ">
-        <div className="text-[36px] mt-[60px] mb-[40px]">Desired Courses</div>
+        <div className="text-[36px] mt-[60px] mb-[40px] ">Desired Courses</div>
       </section>
 
-      <div className="flex flex-wrap justify-start w-[1120px] gap-[24px] mx-auto">
-        {courses.map((item) => {
-          return (
-            <CourseCard key={item.courses.course_id} course={item.courses} />
-          );
-        })}
-      </div>
+      {courses.length > 0 ? (
+        <div className="flex flex-wrap justify-start w-[1120px] gap-[24px] mx-auto min-h-[900px]">
+          {courses.map((item) => {
+            return (
+              <CourseCard key={item.courses.course_id} course={item.courses} />
+            );
+          })}
+        </div>
+      ) : (
+        <p className=" h-[900px] text-center text-[26px] text-gray-400">
+          No Desired Course
+        </p>
+      )}
 
       <Footer />
     </>

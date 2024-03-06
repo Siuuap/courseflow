@@ -18,7 +18,7 @@ function Footer() {
 
         <div className="flex flex-1 justify-center items-center self-stretch px-16 my-auto text-base leading-6 text-slate-300 max-md:px-5 max-md:max-w-full">
           <div className="flex gap-5 justify-between max-sm:-ml-1">
-            <Link href="/ourcourse" className="flex-auto text-center">
+            <Link href="/course" className="flex-auto text-center">
               All Courses
             </Link>
             <div className="flex-auto text-center">Bundle Package</div>

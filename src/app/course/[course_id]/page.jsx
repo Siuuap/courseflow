@@ -36,11 +36,28 @@ export default function CourseDetail({ params }) {
         <>
           <div className="container w-full  my-[30px] flex flex-row mx-auto mt-[100px] ">
             <div className="detail-container w-[1120px] self-center ">
-              <img
-                src={courseById[0]?.img_url}
-                className="w-[740px] h-[460px] rounded-[8px] object-cover "
-                alt={courseById[0]?.name}
-              />
+              {courseById[0]?.video_url ? (
+                <video
+                  width="740"
+                  height="460"
+                  loop="true"
+                  autoplay="autoplay"
+                  controls
+                  muted
+                >
+                  <source
+                    src={courseById[0]?.video_url}
+                    type="video/mp4"
+                  ></source>
+                </video>
+              ) : (
+                <img
+                  src={courseById[0]?.img_url}
+                  className="w-[740px] h-[460px] rounded-[8px] object-cover "
+                  alt={courseById[0]?.name}
+                />
+              )}
+
               <section className="detail-section my-12 w-[740px] ">
                 <h1 className=" text-[36px] font-medium ">Course Detail</h1>
                 <p className="text-[#646D89] mt-6">
@@ -67,7 +84,11 @@ export default function CourseDetail({ params }) {
                 <h1 className="text-2xl font-bold mt-2">
                   {courseById[0]?.name}
                 </h1>
-                <p className="text-[#646D89] mt-2">{courseById[0]?.summary}</p>
+                <p className="text-[#646D89] mt-2">
+                  {courseById[0].summary.length >= 73
+                    ? courseById[0]?.summary.slice(0, 73) + "..."
+                    : courseById[0]?.summary}
+                </p>
                 <p className="text-2xl font-bold text-[#646D89] mt-3">
                   THB {courseById[0]?.price + ".00"}
                 </p>

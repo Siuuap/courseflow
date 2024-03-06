@@ -789,7 +789,7 @@ export default function EditCourse({ params }) {
                         alt={coverImage.name}
                         className="h-[240px] rounded-lg"
                       />
-                      <p className="absolute w-[375px]">{`${name}_cover image`}</p>
+                      <p className="absolute w-[375px]">{`Cover Image`}</p>
                       <Image
                         src={CancelIcon}
                         alt="cancel icon"
@@ -828,7 +828,7 @@ export default function EditCourse({ params }) {
                         alt={coverImage.name}
                         className="h-[240px] rounded-lg"
                       />
-                      <p>{coverImage.name}</p>
+                      <p>{`Cover Image`}</p>
                       <Image
                         src={CancelIcon}
                         alt="cancel icon"
@@ -866,7 +866,7 @@ export default function EditCourse({ params }) {
                           className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                         />
                       </div>
-                      <p className="absolute w-[375px]">{`${name}_trailer`}</p>
+                      <p className="absolute w-[375px]">{`Trailer`}</p>
                     </div>
                   ) : !videoTrailer?.name ? (
                     <label
@@ -916,7 +916,7 @@ export default function EditCourse({ params }) {
                           className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]"
                         />
                       </div>
-                      <p>{videoTrailer.name}</p>
+                      <p>{`Video Trailer`}</p>
                     </div>
                   )}
                 </section>

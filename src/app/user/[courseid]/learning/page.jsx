@@ -431,7 +431,7 @@ function CourseVideo({
                             `assign within ${Math.ceil(
                               (new Date(assignment.due_date) - new Date()) /
                                 (1000 * 60 * 60 * 24)
-                            )}`) ||
+                            )} days`) ||
                             "less than a day")}
                       </p>
                     </div>

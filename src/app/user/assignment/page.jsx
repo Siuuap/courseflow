@@ -260,7 +260,7 @@ function Panel({ course, answer, setAnswer, onSubmit, setAnswerById }) {
                         `assign within ${Math.ceil(
                           (new Date(course.due_date) - new Date()) /
                             (1000 * 60 * 60 * 24)
-                        )}`) ||
+                        )} days`) ||
                         "less than a day")}
                   </p>
                 </div>

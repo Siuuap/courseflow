@@ -965,7 +965,7 @@ export default function EditCourse({ params }) {
                           setAttachedFile(null);
                         }}
                       />
-                      <p>{attachedFile.name}</p>
+                      <p>{`file.pdf`}</p>
                     </div>
                   )}
                 </section>

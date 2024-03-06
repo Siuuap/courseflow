@@ -28,6 +28,9 @@ import LoadingPage from "@/components/LoadingPage";
 import VideoComponent from "@/components/VideoComponent";
 import playVideo from "@/assets/images/playVideo.svg";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function EditCourse({ params }) {
   const {
     name,
@@ -209,7 +212,9 @@ export default function EditCourse({ params }) {
         setVideoTrailerStatus("Please upload video trailer");
       }
       if (lessons.length === 0) {
-        alert("Please add at least one lesson");
+        toast.warning("Please add at least one lesson", {
+          autoClose: 1000,
+        });
       }
       console.log(`check status`);
       return;
@@ -1081,6 +1086,7 @@ export default function EditCourse({ params }) {
               </section>
             </section>
           </section>
+          <ToastContainer />
         </section>
       )}
     </>

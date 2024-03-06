@@ -26,6 +26,9 @@ import cloneDeep from "lodash/cloneDeep";
 import VideoComponent from "@/components/VideoComponent";
 import playVideo from "@/assets/images/playVideo.svg";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function AddCourse() {
   const {
     name,
@@ -139,7 +142,9 @@ export default function AddCourse() {
         setVideoTrailerStatus("Please upload video trailer");
       }
       if (lessons.length === 0) {
-        alert("Please add at least one lesson");
+        toast.warning("Please add at least one lesson", {
+          autoClose: 1000,
+        });
       }
       return;
     }
@@ -671,6 +676,7 @@ export default function AddCourse() {
               </section>
             </section>
           </section>
+          <ToastContainer />
         </section>
       )}
     </>

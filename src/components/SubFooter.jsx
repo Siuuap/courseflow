@@ -12,7 +12,7 @@ function SubFooter() {
               Want to start learning?
             </div>
             <div className="justify-center self-start px-8 py-5 mt-11 text-base font-bold leading-6 text-center text-[#F47E20] whitespace-nowrap bg-white rounded-xl border border-solid shadow-lg border-[#F47E20] max-md:px-5 max-md:mt-10">
-              <Button className="text-base hover:bg-[#5483D0] font-bold text-[16px] leading-6">
+              <Button className="text-base hover:underline font-bold text-[16px] leading-6">
                 <Link href="/register">Register</Link>
               </Button>
             </div>

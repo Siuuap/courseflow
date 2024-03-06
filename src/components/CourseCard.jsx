@@ -14,6 +14,7 @@ function CourseCard({ course }) {
               alt={course.course_id}
               className="course-poster-img mb-6 w-[357px] h-[240px] block rounded-t-md object-cover"
             />
+
             <span className=" text-[#F47E20] ml-3">Course</span>
           </div>
           <div className="course-description-container m-3 ">
@@ -22,7 +23,7 @@ function CourseCard({ course }) {
             </span>
 
             <p className="course-description text-[16px] leading-[24px] pb-3 text-[#646D89]">
-              {course.summary}
+              {course.summary.slice(0, 130)}
             </p>
           </div>
           <div className="course-detail-container  p-[16px] border-t-[1px]  absolute bottom-0 w-[320px]">

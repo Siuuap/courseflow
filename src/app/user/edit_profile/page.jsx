@@ -11,6 +11,7 @@ import CancelIcon from "@/assets/images/CancelIcon.svg";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { supabase } from "@/utils/db";
+import LoadingPage from "@/components/LoadingPage";
 
 export default function EditProfileForm() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function EditProfileForm() {
     email: "",
     image: "",
   });
-
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
@@ -148,6 +149,7 @@ export default function EditProfileForm() {
       setLatestUserData(data);
     }
     setLoading(false);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -286,200 +288,209 @@ export default function EditProfileForm() {
       console.log(error);
     }
     //console.log(req.img_url);
-
+    setIsLoading(true);
     //router.refresh(NavBar);
   };
 
   return (
     <>
-      <NavBar />
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <>
+          <NavBar />
 
-      <section className="flex gap-0.5 justify-between items-start px-5 w-full h-[955px] max-md:flex-wrap max-md:mt-10 max-md:max-w-full mx-[auto]">
-        <Image
-          className="absolute pt-[100px] pl-[43px] -z-50"
-          src="/images/editProfile.png"
-          alt="editProfile"
-          width={1397}
-          height={190}
-          priority={true}
-        />
-        <section className="flex flex-col flex-1 items-center max-md:max-w-full">
-          <div className="text-4xl mt-[100px] font-medium tracking-tighter text-black max-md:max-w-full">
-            Profile
-          </div>
-          <div className="flex flex-row w-[930px] h-[531px] mt-[72px]">
-            <div className="relative bg-blue-100 w-[358px] h-[358px] rounded-[16px] flex justify-center items-center">
-              <section className="relative flex flex-col gap-[8px]">
-                {typeof image === "string" ? (
-                  <div className="relative w-fit">
-                    <img
-                      src={image}
-                      alt={image.name}
-                      className="w-[358px] h-[358px] rounded-[16px] z-20"
-                      width={358}
-                      height={358}
-                    />
-                    {/* <p>{image.name}</p> */}
-                    <Image
-                      src={CancelIcon}
-                      alt="cancel icon"
-                      className="absolute -top-[7px] -right-[15px] z-20"
-                      onClick={(e) => {
-                        setImage(null);
-                      }}
-                      width={80}
-                      height={80}
-                    />
-                  </div>
-                ) : !image ? (
-                  <label
-                    htmlFor="image"
-                    className="w-fit cursor-pointer flex flex-col gap-[8px]"
-                  >
-                    <Image
-                      src={uploadImage}
-                      alt="image with upload image text"
-                      width={358}
-                      height={358}
-                      className="rounded-[16px] z-20"
-                    />
-                    <input
-                      className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
-                      id="image"
-                      type="file"
-                      accept="image/jpeg, image/jpg, image/png "
-                      onChange={handleImage}
-                    />
-                    {imageStatus && (
-                      <p className="absolute top-[102%] text-[red] text-[14px]">
-                        {imageStatus}
-                      </p>
+          <section className="flex gap-0.5 justify-between items-start px-5 w-full h-[955px] max-md:flex-wrap max-md:mt-10 max-md:max-w-full mx-[auto]">
+            <Image
+              className="absolute pt-[100px] pl-[43px] -z-50"
+              src="/images/editProfile.png"
+              alt="editProfile"
+              width={1397}
+              height={190}
+              priority={true}
+            />
+            <section className="flex flex-col flex-1 items-center max-md:max-w-full">
+              <div className="text-4xl mt-[100px] font-medium tracking-tighter text-black max-md:max-w-full">
+                Profile
+              </div>
+              <div className="flex flex-row w-[930px] h-[531px] mt-[72px]">
+                <div className="relative bg-blue-100 w-[358px] h-[358px] rounded-[16px] flex justify-center items-center">
+                  <section className="relative flex flex-col gap-[8px]">
+                    {typeof image === "string" ? (
+                      <div className="relative w-fit">
+                        <img
+                          src={image}
+                          alt={image.name}
+                          className="w-[358px] h-[358px] rounded-[16px] z-20"
+                          width={358}
+                          height={358}
+                        />
+                        {/* <p>{image.name}</p> */}
+                        <Image
+                          src={CancelIcon}
+                          alt="cancel icon"
+                          className="absolute -top-[7px] -right-[15px] z-20"
+                          onClick={(e) => {
+                            setImage(null);
+                          }}
+                          width={80}
+                          height={80}
+                        />
+                      </div>
+                    ) : !image ? (
+                      <label
+                        htmlFor="image"
+                        className="w-fit cursor-pointer flex flex-col gap-[8px]"
+                      >
+                        <Image
+                          src={uploadImage}
+                          alt="image with upload image text"
+                          width={358}
+                          height={358}
+                          className="rounded-[16px] z-20"
+                        />
+                        <input
+                          className="outline-none border border-solid border-[#D6D9E4] px-[12px] py-[16px] rounded-[8px] sr-only"
+                          id="image"
+                          type="file"
+                          accept="image/jpeg, image/jpg, image/png "
+                          onChange={handleImage}
+                        />
+                        {imageStatus && (
+                          <p className="absolute top-[102%] text-[red] text-[14px]">
+                            {imageStatus}
+                          </p>
+                        )}
+                      </label>
+                    ) : (
+                      <div className="relative w-fit">
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={image.name}
+                          className="w-[358px] h-[358px] rounded-[16px] z-20"
+                        />
+                        <Image
+                          src={CancelIcon}
+                          alt="cancel icon"
+                          className="absolute -top-[7px] -right-[15px] z-20"
+                          onClick={(e) => {
+                            setImage(null);
+                          }}
+                          width={80}
+                          height={80}
+                        />
+                      </div>
                     )}
-                  </label>
-                ) : (
-                  <div className="relative w-fit">
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={image.name}
-                      className="w-[358px] h-[358px] rounded-[16px] z-20"
-                    />
-                    <Image
-                      src={CancelIcon}
-                      alt="cancel icon"
-                      className="absolute -top-[7px] -right-[15px] z-20"
-                      onClick={(e) => {
-                        setImage(null);
-                      }}
-                      width={80}
-                      height={80}
-                    />
-                  </div>
-                )}
-              </section>
-            </div>
-            <div className="absolute flex flex-col pl-[477px]">
-              <div className="flex flex-row">
-                <div className="flex flex-col pr-[13px]">
-                  <label
-                    htmlFor="userId"
-                    className="pb-[4px] text-black text-[16px] max-md:max-w-full"
-                  >
-                    Firstname
-                  </label>
-                  <input
-                    id="userId"
-                    name="firstname"
-                    onChange={(e) => setFirstName(e.target.value)}
-                    value={firstName}
-                    placeholder={userProfile?.first_name || "Enter firstName"}
-                    className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
-                  ></input>
-                  {firstNameError && (
-                    <span className="text-red-600">{firstNameError}</span>
-                  )}
+                  </section>
                 </div>
-                <div className="flex flex-col">
+                <div className="absolute flex flex-col pl-[477px]">
+                  <div className="flex flex-row">
+                    <div className="flex flex-col pr-[13px]">
+                      <label
+                        htmlFor="userId"
+                        className="pb-[4px] text-black text-[16px] max-md:max-w-full"
+                      >
+                        Firstname
+                      </label>
+                      <input
+                        id="userId"
+                        name="firstname"
+                        onChange={(e) => setFirstName(e.target.value)}
+                        value={firstName}
+                        placeholder={
+                          userProfile?.first_name || "Enter firstName"
+                        }
+                        className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+                      ></input>
+                      {firstNameError && (
+                        <span className="text-red-600">{firstNameError}</span>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label
+                        htmlFor="userId"
+                        className="pb-[4px] text-black text-[16px] max-md:max-w-full"
+                      >
+                        Lastname
+                      </label>
+                      <input
+                        name="lastname"
+                        onChange={(e) => setLastName(e.target.value)}
+                        value={lastName}
+                        placeholder={userProfile?.last_name || "Enter lastName"}
+                        className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+                      ></input>
+                      {lastNameError && (
+                        <span className="text-red-600">{lastNameError}</span>
+                      )}
+                    </div>
+                  </div>
                   <label
                     htmlFor="userId"
                     className="pb-[4px] text-black text-[16px] max-md:max-w-full"
                   >
-                    Lastname
+                    Date of Birth
                   </label>
                   <input
-                    name="lastname"
-                    onChange={(e) => setLastName(e.target.value)}
-                    value={lastName}
-                    placeholder={userProfile?.last_name || "Enter lastName"}
-                    className="mb-[40px] w-[220px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+                    name="dateOfBirth"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    type="date"
+                    placeholder={
+                      userProfile?.date_of_birth || "Enter YYYY-MM-DD"
+                    }
+                    className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
                   ></input>
-                  {lastNameError && (
-                    <span className="text-red-600">{lastNameError}</span>
+                  {dateError && <div className="text-red-600">{dateError}</div>}
+                  <label
+                    htmlFor="userId"
+                    className="pb-[4px] text-black text-[16px] max-md:max-w-full"
+                  >
+                    Educational Background
+                  </label>
+                  <input
+                    name="EducationalBackground"
+                    onChange={(e) => setEducation(e.target.value)}
+                    value={education}
+                    type="text"
+                    placeholder={
+                      userProfile?.educational_background ||
+                      "Enter educational background"
+                    }
+                    className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+                  ></input>
+                  {EducationalBackgroundError && (
+                    <p className=" mt-[50px]  text-red-600">
+                      {EducationalBackgroundError}
+                    </p>
                   )}
+                  <label
+                    htmlFor="userId"
+                    className="pb-[4px] text-black text-[16px] max-md:max-w-full"
+                  >
+                    Email
+                  </label>
+                  <input
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={session?.user?.email || "Enter email"}
+                    className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
+                  ></input>
+                  {emailError && <p className=" text-red-600">{emailError}</p>}
+                  <button
+                    onClick={handleUpdateProfile}
+                    className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] bg-[#2F5FAC] rounded-xl shadow justify-center items-center gap-2.5 inline-flex text-white"
+                  >
+                    Update Profile
+                  </button>
                 </div>
               </div>
-              <label
-                htmlFor="userId"
-                className="pb-[4px] text-black text-[16px] max-md:max-w-full"
-              >
-                Date of Birth
-              </label>
-              <input
-                name="dateOfBirth"
-                value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
-                type="date"
-                placeholder={userProfile?.date_of_birth || "Enter YYYY-MM-DD"}
-                className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
-              ></input>
-              {dateError && <div className="text-red-600">{dateError}</div>}
-              <label
-                htmlFor="userId"
-                className="pb-[4px] text-black text-[16px] max-md:max-w-full"
-              >
-                Educational Background
-              </label>
-              <input
-                name="EducationalBackground"
-                onChange={(e) => setEducation(e.target.value)}
-                value={education}
-                type="text"
-                placeholder={
-                  userProfile?.educational_background ||
-                  "Enter educational background"
-                }
-                className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
-              ></input>
-              {EducationalBackgroundError && (
-                <p className=" mt-[50px]  text-red-600">
-                  {EducationalBackgroundError}
-                </p>
-              )}
-              <label
-                htmlFor="userId"
-                className="pb-[4px] text-black text-[16px] max-md:max-w-full"
-              >
-                Email
-              </label>
-              <input
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={session?.user?.email || "Enter email"}
-                className="mb-[40px] w-[453px] h-12 pl-3 pr-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-start gap-2 inline-flex"
-              ></input>
-              {emailError && <p className=" text-red-600">{emailError}</p>}
-              <button
-                onClick={handleUpdateProfile}
-                className="mb-[40px] w-[453px] h-[60px] px-8 py-[18px] bg-[#2F5FAC] rounded-xl shadow justify-center items-center gap-2.5 inline-flex text-white"
-              >
-                Update Profile
-              </button>
-            </div>
-          </div>
-        </section>
-      </section>
-
-      <Footer />
+            </section>
+          </section>
+          <Footer />
+        </>
+      )}
     </>
   );
 }

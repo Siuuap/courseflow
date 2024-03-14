@@ -4,6 +4,8 @@ Ref: https://www.vidyalayaschoolsoftware.com/products-services/online-classroom
 
 This is my final group project from TechUp's Full-Stack Software Development bootcamp. It facilitates classroom management for both admins and users. For admins, they can organize homework distribution, curriculum management, homework grading and tracking, and document filing. Meanwhile, users can see all available class contents and materials, subscribe/unsubscribe classes, turn in their homework/projects, and view their performances.
 
+My responsibility is in the admin page which are curriculum management, and document filing.
+
 ## Key Features:
 
 **As users, they:**

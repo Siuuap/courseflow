@@ -54,6 +54,8 @@ export default function AdminLoginPage() {
         router.replace("/admin/courselist");
       } catch {
         setError(true);
+        setIsLoginOk(false);
+        setLoginStatus(`Login fail. Please Check your email and Password`);
       }
     }
   }

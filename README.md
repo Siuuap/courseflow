@@ -34,6 +34,6 @@ The one-stop online class management system that caters to all your educational 
 2. can upload additional PDF files/images to courses and modules.
 3. can CRUD assignments.
 
-Deployed Project: https://interactive-card-details-form-dn.vercel.app/
+Deployed Project: https://courseflow-teal-dn.vercel.app/
 
 

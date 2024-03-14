@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Project Description: CourseFlow (Online Class Management System)
 
-## Getting Started
+Ref: https://www.vidyalayaschoolsoftware.com/products-services/online-classroom
 
-First, run the development server:
+The one-stop online class management system that caters to all your educational needs! Our system facilitates classroom management for both admins and users. For admins, they can organize homework distribution, curriculum management, homework grading and tracking, and document filing. Meanwhile, users can see all available class contents and materials, subscribe/unsubscribe classes, turn in their homework/projects, and view their performances.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Key Features:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**As users, they:**
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. can create their student profile upon registration, with the following details:
+    - Full Name
+    - Age
+    - Educational Background
+    - Email
+    - Password
+2. can view/edit their profile.
+3. can upload their profile picture.
+4. can log into and log out from their profiles with email.
+5. can view all available courses.
+6. can view a course, including:
+    - Course details
+    - Module samples
+    - Subscription Options
+7. can individually subscribe/unsubscribe desired courses in their course list. 
+8. can search for courses with search filter using keywords.
+9. can view their subscribed courses with full content details and accept assignments in My Course.
+10. can view submitted/overdue/pending/in progress assignment status and details in My assignment.
+11. can submit assignments.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+**As admins, they:**
 
-## Learn More
+1. can CRUD courses.
+2. can upload additional PDF files/images to courses and modules.
+3. can CRUD assignments.
 
-To learn more about Next.js, take a look at the following resources:
+Deployed Project: https://interactive-card-details-form-dn.vercel.app/
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

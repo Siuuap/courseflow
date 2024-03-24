@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/authentication";
-import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+
 const RegisterForm = () => {
   const [values, setValues] = useState({
     fullname: "",
@@ -13,6 +13,7 @@ const RegisterForm = () => {
     email: "",
     password: "",
   });
+
   const router = useRouter();
   const { register } = useAuth();
   const [error, setError] = useState("");

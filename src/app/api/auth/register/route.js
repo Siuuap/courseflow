@@ -14,6 +14,16 @@ export async function POST(request) {
   const salt = await bcrypt.genSalt(10);
   password = await bcrypt.hash(password, salt);
 
+  const { data: obj, error: err } = await supabase
+    .from("users")
+    .select("*")
+    .eq(email);
+  if (obj) {
+    return Response.json({
+      status: 400,
+      message: "This email already exist",
+    });
+  }
   const { data, error } = await supabase
     .from("users")
     .insert([

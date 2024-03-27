@@ -37,6 +37,5 @@ My responsibility is in the admin page which are curriculum management, and docu
 2. can upload additional PDF files/images to courses and modules.
 3. can CRUD assignments.
 
-Deployed Project: https://courseflow-teal-dn.vercel.app/
 
 
